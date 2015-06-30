@@ -18,6 +18,13 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <ConsolePause>false</ConsolePause>
+    <CustomCommands>
+      <CustomCommands>
+        <Command type="AfterBuild" command="xcopy /Y &quot;C:\Users\AJ\Desktop\PloppableRCI\PloppableRCI\bin\Debug\PloppableRCI.dll&quot; &quot;E:\SteamLibrary\steamapps\common\Cities_Skylines\Files\Mods\PloppableRCI\&quot;" workingdir="${ProjectDir}" externalConsole="True" />
+        <Command type="BeforeBuild" command="cmd /c &quot;IF EXIST 'E:\SteamLibrary\steamapps\common\Cities_Skylines\Files\Mods\PloppableRCI\PloppableRCI.dll' (del 'E:\SteamLibrary\steamapps\common\Cities_Skylines\Files\Mods\PloppableRCI\PloppableRCI.dll')&quot;" workingdir="${ProjectDir}" externalConsole="True" />
+      </CustomCommands>
+    </CustomCommands>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>full</DebugType>
@@ -26,9 +33,12 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <ConsolePause>false</ConsolePause>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="System" />
+    <Reference Include="System">
+      <HintPath>E:\SteamLibrary\steamapps\common\Cities_Skylines\Cities_Data\Managed\System.dll</HintPath>
+    </Reference>
     <Reference Include="ColossalManaged">
       <HintPath>E:\SteamLibrary\steamapps\common\Cities_Skylines\Cities_Data\Managed\ColossalManaged.dll</HintPath>
     </Reference>
@@ -41,6 +51,9 @@
     <Reference Include="UnityEngine">
       <HintPath>E:\SteamLibrary\steamapps\common\Cities_Skylines\Cities_Data\Managed\UnityEngine.dll</HintPath>
     </Reference>
+    <Reference Include="System.Core">
+      <HintPath>E:\SteamLibrary\steamapps\common\Cities_Skylines\Cities_Data\Managed\System.Core.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -48,6 +61,13 @@
     <Compile Include="OnSave.cs" />
     <Compile Include="PloppableRCI.cs" />
     <Compile Include="ResidentialAI.cs" />
+    <Compile Include="CommercialAI.cs" />
+    <Compile Include="MonumentAI.cs" />
+    <Compile Include="BuildingDetours.cs" />
+    <Compile Include="Properties\RedirectionHelper.cs" />
+    <Compile Include="BuildingToolDetours.cs" />
+    <Compile Include="BuildingSetDetour.cs" />
+    <Compile Include="IndustrialAI.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
 </Project>
