@@ -41,10 +41,7 @@ namespace PloppableAI
 		}
 		public override int  GetMaintenanceCost ()
 		{
-			int result = this.m_maintenanceCost * 100;
-			Singleton<EconomyManager>.instance.m_EconomyWrapper.OnGetMaintenanceCost(ref result, this.m_info.m_class.m_service, this.m_info.m_class.m_subService, this.m_info.m_class.m_level);
-			return result;
-			//return base.GetMaintenanceCost ();
+			return base.GetMaintenanceCost ();
 		}
 
 		public override int CalculateHomeCount (Randomizer r, int width, int length)
