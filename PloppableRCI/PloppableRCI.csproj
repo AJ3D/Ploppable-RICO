@@ -7,7 +7,7 @@
     <OutputType>Library</OutputType>
     <RootNamespace>PloppableRCI</RootNamespace>
     <AssemblyName>PloppableRCI</AssemblyName>
-    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -58,16 +58,13 @@
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="OnLoad.cs" />
-    <Compile Include="OnSave.cs" />
     <Compile Include="PloppableRCI.cs" />
     <Compile Include="ResidentialAI.cs" />
     <Compile Include="CommercialAI.cs" />
     <Compile Include="MonumentAI.cs" />
-    <Compile Include="BuildingDetours.cs" />
     <Compile Include="Properties\RedirectionHelper.cs" />
-    <Compile Include="BuildingToolDetours.cs" />
-    <Compile Include="BuildingSetDetour.cs" />
     <Compile Include="IndustrialAI.cs" />
+    <Compile Include="ServiceInfoWindow.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
 </Project>
