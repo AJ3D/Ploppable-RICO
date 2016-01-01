@@ -13,7 +13,7 @@ When installed and activated, the mod will add a growable sub building to compat
 
 To view the growable sub building info panel, click the blue button just above the unique building info panel. 
 
-Thanks to Boformer and EMF, whose code makes up the backbone of this mod. 
+Thanks to Boformer and EMF, whose code makes up the backbone of this mod. ServiceInfoWindow is based on EMF's Extended Building Info mod, and Sub-Building Enabler was writen by Boformer with a few minor additions for this mod. 
 
 More info about the mod on Simtropolis: 
 http://community.simtropolis.com/forums/topic/68098-aj3ds-wips/?page=3 
