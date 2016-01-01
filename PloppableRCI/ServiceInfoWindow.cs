@@ -6,7 +6,7 @@ using System.Reflection;
 using System.Text;
 using UnityEngine;
 
-namespace PloppableAI
+namespace PloppableRICO
 {
 
 	public class ServiceInfoWindow : MonoBehaviour
@@ -32,6 +32,9 @@ namespace PloppableAI
 			set
 			{
 				var stats = value.Find<UIPanel>("StatsPanel");
+			
+
+
 				info = stats.Find<UILabel>("Info");
 				label1 = stats.AddUIComponent<UILabel>();
 				label1.color = info.color;
@@ -48,21 +51,18 @@ namespace PloppableAI
 				ResTab.isVisible = false;
 		
 				m_servicePanel = value;
-			}}
+			}
+		}
 
 		int lastSelected;
 
 			
 		public void Update()
 		{
-			
-
-
 			if (servicePanel == null) {
 				return;
 			}
 	
-
 			var buildingId = GetParentInstanceId ().Building;
 			if (this.enabled && info.isVisible && BuildingManager.instance != null && ((SimulationManager.instance.m_currentFrameIndex & 15u) == 15u || lastSelected != buildingId)) {
 				Debug.Log ("running");
@@ -72,16 +72,18 @@ namespace PloppableAI
 
 				BID.Building = data.m_subBuilding;
 
+				//UITextField Bname = new UITextField ();
+				//Bname = UIView.GetAView ().FindUIComponent<UITextField>("BuildingName");
+				//Bname.text = data.Info.name.ToString ();
+
 				Building SubB = BuildingManager.instance.m_buildings.m_buffer [data.m_subBuilding];
 
-				if (SubB.Info.m_buildingAI is PloppableResidential) {
-					//label1.text = "";
+				if (SubB.Info.m_buildingAI is PloppableRICO.PloppableResidential || SubB.Info.m_buildingAI is PloppableRICO.PloppableOffice) {
 					ResTab.isVisible = true;
 					ResTab.eventClick += (sender, e) => SelectSub(sender, e, data.m_subBuilding);
 				} else {
 					ResTab.isVisible = false;
 				}
-
 			}
 		}
 		private InstanceID GetParentInstanceId()
@@ -99,22 +101,17 @@ namespace PloppableAI
 			ResTab = Tabs.AddUIComponent<UIButton> ();
 			ResTab.size = new Vector2 (58, 25);
 			ResTab.relativePosition = new Vector2 (offset, 0);
-			ResTab.atlas = UIView.GetAView ().FindUIComponent<UIButton> ("CommercialLow").atlas;
+			//ResTab.atlas = UIView.GetAView ().FindUIComponent<UIButton> ("CommercialLow").atlas;
 			ResTab.normalBgSprite = "SubBarButtonBase";
 			ResTab.pressedBgSprite = "SubBarButtonBasePressed";
 			ResTab.hoveredBgSprite = "SubBarButtonBaseHovered";
 			ResTab.focusedBgSprite = "SubBarButtonBaseFocused";
-
-
-
 			//ResTab.normalFgSprite = Sprite;
-			ResTab.pressedFgSprite = Sprite + "Pressed";
-			ResTab.hoveredFgSprite = Sprite + "Hovered";
-			ResTab.focusedFgSprite = Sprite + "Focused";
+			//ResTab.pressedFgSprite = Sprite + "Pressed";
+			//ResTab.hoveredFgSprite = Sprite + "Hovered";
+			//ResTab.focusedFgSprite = Sprite + "Focused";
 			//ResTab.tabStrip = true;
 		}
-
-
 			
 	
 		private void SelectSub(UIComponent component, UIMouseEventParameter eventParam, ushort ID){
