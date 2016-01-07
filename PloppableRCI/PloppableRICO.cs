@@ -4,6 +4,15 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
+using ColossalFramework;
+using ColossalFramework.Globalization;
+using ColossalFramework.Math;
+using ColossalFramework.Plugins;
+
+using UnityEngine;
+using ColossalFramework.UI;
+
+
 namespace PloppableRICO
 {
 	public class PloppableRCI : IUserMod
@@ -23,4 +32,5 @@ namespace PloppableRICO
 			}
 		}
 	}
+
 }

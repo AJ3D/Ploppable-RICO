@@ -8,47 +8,51 @@ using UnityEngine;
 
 namespace PloppableRICO
 {
+	// The foundation of this class is from EMF's Extended Buiding Informaion mod. I've added the UI elements. Many thanks to him for his work.
 
 	public class ServiceInfoWindow : MonoBehaviour
 	{
 		UILabel info;
 		UILabel label1;
 		FieldInfo baseSub;
-		FieldInfo bSub;
-		UITabstrip Tabs;
-		UIButton ResTab;
-		InstanceID BID = new InstanceID();
+
+		UIPanel Tabs;
+		UIButton Button1;
+		UIButton Button2;
+		UISprite Sprite1;
+		UISprite Sprite2;
+		InstanceID BID = new InstanceID ();
 	
-		Building data;
-		int num;
-
-		//CityServiceWorldInfoPanel tester = UIView.GetAView ().FindUIComponent ("(Library) CityServiceWorldInfoPanel");
-
 
 		CityServiceWorldInfoPanel m_servicePanel;
-		public CityServiceWorldInfoPanel servicePanel
-		{
+
+		public CityServiceWorldInfoPanel servicePanel {
 			get { return m_servicePanel; }
-			set
-			{
-				var stats = value.Find<UIPanel>("StatsPanel");
-			
+			set {
+				var stats = value.Find<UIPanel> ("StatsPanel");
 
-
-				info = stats.Find<UILabel>("Info");
-				label1 = stats.AddUIComponent<UILabel>();
+				info = stats.Find<UILabel> ("Info");
+				label1 = stats.AddUIComponent<UILabel> ();
 				label1.color = info.color;
 				label1.textColor = info.textColor;
 				label1.textScale = info.textScale;
-				label1.relativePosition = new Vector3(0, info.height + info.relativePosition.y - 40);
-				label1.size = new Vector2(230, 84);
+				label1.relativePosition = new Vector3 (0, info.height + info.relativePosition.y - 40);
+				label1.size = new Vector2 (230, 84);
 				label1.font = info.font;
 
-				Tabs = UIView.GetAView ().FindUIComponent ("(Library) CityServiceWorldInfoPanel").AddUIComponent<UITabstrip> ();
+				Tabs = UIView.GetAView ().FindUIComponent ("(Library) CityServiceWorldInfoPanel").AddUIComponent<UIPanel> ();
 				Tabs.size = new Vector2 (432, 25);
 				Tabs.relativePosition = new Vector2 (13, -25);
-				DrawTabs ("ZoningResidentialHigh", 5, "SResidential", 30534);
-				ResTab.isVisible = false;
+				Button1 = Tabs.AddUIComponent<UIButton> ();
+				Sprite1 = Button1.AddUIComponent<UISprite> ();
+				Button2 = Tabs.AddUIComponent<UIButton> ();
+				Sprite2 = Button2.AddUIComponent<UISprite> ();
+
+				Sprite2.atlas = UIView.GetAView ().FindUIComponent<UIButton> ("CommercialLow").atlas;
+
+				DrawTabs (Button1, 5, "Button1");
+				DrawTabs (Button2, 68, "Button2");
+
 		
 				m_servicePanel = value;
 			}
@@ -57,7 +61,7 @@ namespace PloppableRICO
 		int lastSelected;
 
 			
-		public void Update()
+		public void Update ()
 		{
 			if (servicePanel == null) {
 				return;
@@ -65,62 +69,85 @@ namespace PloppableRICO
 	
 			var buildingId = GetParentInstanceId ().Building;
 			if (this.enabled && info.isVisible && BuildingManager.instance != null && ((SimulationManager.instance.m_currentFrameIndex & 15u) == 15u || lastSelected != buildingId)) {
-				Debug.Log ("running");
+				//Debug.Log ("running");
+
 				lastSelected = buildingId;
 
 				Building data = BuildingManager.instance.m_buildings.m_buffer [buildingId];
 
-				BID.Building = data.m_subBuilding;
-
-				//UITextField Bname = new UITextField ();
-				//Bname = UIView.GetAView ().FindUIComponent<UITextField>("BuildingName");
-				//Bname.text = data.Info.name.ToString ();
 
 				Building SubB = BuildingManager.instance.m_buildings.m_buffer [data.m_subBuilding];
 
+
 				if (SubB.Info.m_buildingAI is PloppableRICO.PloppableResidential || SubB.Info.m_buildingAI is PloppableRICO.PloppableOffice) {
-					ResTab.isVisible = true;
-					ResTab.eventClick += (sender, e) => SelectSub(sender, e, data.m_subBuilding);
+
+					Button1.state = UIButton.ButtonState.Focused;
+
+					Button1.isVisible = true;
+					Button2.isVisible = true;
+
+					if (SubB.Info.m_buildingAI is PloppableRICO.PloppableResidential) {
+						SetSprites (Sprite2, "ZoningResidentialHigh");
+					}
+
+					if (SubB.Info.m_buildingAI is PloppableRICO.PloppableOffice) {
+						SetSprites (Sprite2, "ZoningOffice");
+					}
+
+					SetSprites (Sprite1, "FeatureMonumentLevel3");
+
+					Button2.eventClick += (sender, e) => SelectSub (sender, e, data.m_subBuilding);
+					//Button1.eventClick += (sender, e) => SelectSub(sender, e, buildingId);
+
 				} else {
-					ResTab.isVisible = false;
+					Button2.isVisible = false;
+					Button1.isVisible = false;
 				}
 			}
 		}
-		private InstanceID GetParentInstanceId()
+
+		public void DrawTabs (UIButton butto, int offset, string name)
 		{
-			if (baseSub == null)
-			{
-				baseSub = m_servicePanel.GetType().GetField("m_InstanceID", BindingFlags.NonPublic | BindingFlags.Instance);
 
-			}
-			return (InstanceID)baseSub.GetValue(m_servicePanel);
-		}
-		public void DrawTabs(string Sprite, int offset, string name, ushort ID){
+			UIButton button = butto;
+			button.size = new Vector2 (58, 25);
+			button.relativePosition = new Vector2 (offset, 0);
+			button.normalBgSprite = "SubBarButtonBase";
+			button.disabledBgSprite = "SubBarButtonBaseDisabled";
+			button.pressedBgSprite = "SubBarButtonBasePressed";
+			button.hoveredBgSprite = "SubBarButtonBaseHovered";
+			button.focusedBgSprite = "SubBarButtonBaseFocused";
+			button.state = UIButton.ButtonState.Normal;
+			button.name = name;
+			//button.tabStrip = true;
+			button.isVisible = false;
 
-			ResTab = new UIButton ();
-			ResTab = Tabs.AddUIComponent<UIButton> ();
-			ResTab.size = new Vector2 (58, 25);
-			ResTab.relativePosition = new Vector2 (offset, 0);
-			//ResTab.atlas = UIView.GetAView ().FindUIComponent<UIButton> ("CommercialLow").atlas;
-			ResTab.normalBgSprite = "SubBarButtonBase";
-			ResTab.pressedBgSprite = "SubBarButtonBasePressed";
-			ResTab.hoveredBgSprite = "SubBarButtonBaseHovered";
-			ResTab.focusedBgSprite = "SubBarButtonBaseFocused";
-			//ResTab.normalFgSprite = Sprite;
-			//ResTab.pressedFgSprite = Sprite + "Pressed";
-			//ResTab.hoveredFgSprite = Sprite + "Hovered";
-			//ResTab.focusedFgSprite = Sprite + "Focused";
-			//ResTab.tabStrip = true;
 		}
-			
+
+		public void SetSprites (UISprite labe, string sprite)
+		{
+			UISprite label = labe;
+			label.relativePosition = new Vector2 (12, 0);
+			label.spriteName = sprite;
+			label.size = new Vector2 (35, 25);
+		}
+
 	
-		private void SelectSub(UIComponent component, UIMouseEventParameter eventParam, ushort ID){
+		private void SelectSub (UIComponent component, UIMouseEventParameter eventParam, ushort ID)
+		{
 			
-			label1.text = ID.ToString() ;
 			BID.Building = ID;
 			DefaultTool.OpenWorldInfoPanel (BID, new Vector2 (0, 0));
-		
-			//WorldInfoPanel.Show<CityServiceWorldInfoPanel> (new Vector2 (200, 200), BID);
+			//Button1.state = UIButton.ButtonState.Focused;
+		}
+
+		private InstanceID GetParentInstanceId ()
+		{
+			if (baseSub == null) {
+				baseSub = m_servicePanel.GetType ().GetField ("m_InstanceID", BindingFlags.NonPublic | BindingFlags.Instance);
+
+			}
+			return (InstanceID)baseSub.GetValue (m_servicePanel);
 		}
 
 	}

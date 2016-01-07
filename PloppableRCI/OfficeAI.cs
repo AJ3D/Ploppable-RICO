@@ -22,7 +22,7 @@ namespace PloppableRICO
 
 		public int BID = 2;
 		int Tester = 1;
-		private int timer = 1;
+		public int timer = 0;
 		string OriginalN;
 
 
@@ -50,7 +50,9 @@ namespace PloppableRICO
 		public override void SimulationStep (ushort buildingID, ref Building data)
 		{
 			
-
+			if (timer == 0) {
+				OriginalN = data.Info.name;
+			}
 
 			data.UpdateBuilding ((ushort)data.m_buildIndex);
 
@@ -59,18 +61,14 @@ namespace PloppableRICO
 			data.m_problems = Notification.Problem.None;
 			data.m_flags &= ~Building.Flags.Abandoned;
 
-			OriginalN = data.Info.name;
+			//OriginalN = data.Info.name;
 
 			data.m_levelUpProgress = 240;
 
-			if (timer == 1) {
+			if (data.Info.m_class.m_service != ItemClass.Service.Office){
 
-				OriginalN = data.Info.name;
-				//data.Info = PrefabCollection<BuildingInfo>.FindLoaded (OriginalN + "_Level1");
-				data.Info.m_class = new ItemClass ();
-				data.Info.m_class.m_service = ItemClass.Service.Office;
-				data.Info.m_class.m_level = ItemClass.Level.Level3;
-				timer = 0;
+				data.Info = PrefabCollection<BuildingInfo>.FindLoaded (OriginalN + "_Level3");
+		
 			}
 
 
