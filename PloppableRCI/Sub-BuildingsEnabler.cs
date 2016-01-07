@@ -10,9 +10,16 @@ using ColossalFramework.Packaging;
 using System.ComponentModel;
 using System.IO;
 using System.Xml.Serialization;
+<<<<<<< HEAD
 
 // This is Boformers Sub-Building Enabler mod. I've added some code that's commented. Many thanks to him for his work.
 
+=======
+/*
+Tthis is boformers sub building enabler mod. I just added a few properties to the xml, 
+and a few lines of code between the ADDED comments. Many thanks to him for his work. 
+*/
+>>>>>>> origin/master
 namespace PloppableRICO
 {
 	public class Sub_BuildingsEnabler
