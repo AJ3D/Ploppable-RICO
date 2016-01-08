@@ -5,7 +5,7 @@ using ColossalFramework.IO;
 using ICities;
 using UnityEngine;
 
-namespace PloppableRCIO
+namespace PloppableRICO
 {
 
 	/// <summary>
