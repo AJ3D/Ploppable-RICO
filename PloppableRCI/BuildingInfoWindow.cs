@@ -76,7 +76,7 @@ namespace PloppableRICO
 
 			//namepan.text = "test";
 
-			if (data.Info.m_buildingAI is PloppableRICO.PloppableResidential || data.Info.m_buildingAI is PloppableRICO.PloppableOffice) {
+			if (data.Info.m_buildingAI is PloppableRICO.PloppableResidential || data.Info.m_buildingAI is PloppableRICO.PloppableOffice || data.Info.m_buildingAI is PloppableRICO.PloppableExtractor) {
 
 				Button4.state = UIButton.ButtonState.Focused;
 
@@ -87,6 +87,9 @@ namespace PloppableRICO
 
 				if (data.Info.m_buildingAI is PloppableRICO.PloppableOffice) {
 					SetSprites (Sprite2, "ZoningOffice");
+				}
+				if (data.Info.m_buildingAI is PloppableRICO.PloppableExtractor) {
+					SetSprites (Sprite2, "ZoningIndustrial");
 				}
 
 

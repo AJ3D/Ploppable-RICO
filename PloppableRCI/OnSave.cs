@@ -31,9 +31,11 @@ namespace PloppableRICO
 			//Since the list of BuildingInfos is generated fresh from the asset list at scene load, 
 			// if you leave the Building objects InfoIndex pointed at one of the instances, it will throw a null referance error on scene load and delete the building object. 
 
+			try {
+
 
 			int count = (int)BuildingManager.instance.m_buildings.m_size;
-			for (int i = 1; i < count; i++) {
+				for (int i = 1; i < count ; i++) {
 
 				// if the building has one of the new AI's
 				if (Singleton<BuildingManager>.instance.m_buildings.m_buffer [i].Info.m_buildingAI is PloppableResidential || Singleton<BuildingManager>.instance.m_buildings.m_buffer [i].Info.m_buildingAI is PloppableOffice)
@@ -45,19 +47,26 @@ namespace PloppableRICO
 						//then reassign the BuildingInfo back to the orginial
 						string name = BuildingManager.instance.m_buildings.m_buffer [i].Info.name;
 
-						name = name.Remove (name.Length - 7); //Since I added 7 characters to the name of each instance, I just need to subtract 7 characters to get the original name. 
+						 
 
 						if (PrefabCollection<BuildingInfo>.FindLoaded (name) != null) {
-							BuildingManager.instance.m_buildings.m_buffer [i].Info = PrefabCollection<BuildingInfo>.FindLoaded (name);
-							BuildingManager.instance.m_buildings.m_buffer [i].m_infoIndex = (ushort)PrefabCollection<BuildingInfo>.FindLoaded (name).m_prefabDataIndex;
+							name = name.Remove (name.Length - 7); //Since I added 7 characters to the name of each instance, I just need to subtract 7 characters to get the original name.
+								BuildingManager.instance.m_buildings.m_buffer [(ushort)i].Info = PrefabCollection<BuildingInfo>.FindLoaded (name);
+									BuildingManager.instance.m_buildings.m_buffer [(ushort)i].m_infoIndex = (ushort)PrefabCollection<BuildingInfo>.FindLoaded (name).m_prefabDataIndex;
 							Debug.Log (name + "Set back to orginial info");
 
+								//BuildingManager.instance.m_buildings.m_buffer [i].Info.name = name; 
+
 						}else{
-							Debug.Log ( name + "Original Prefab not found");
-							BuildingManager.instance.m_buildings.m_buffer [i].m_infoIndex = 0;
+							Debug.Log ("Original Prefab not found");
+								BuildingManager.instance.m_buildings.m_buffer [i].m_infoIndex = (ushort)0;
 						}
 					}
 				}
+			}
+
+			} catch (Exception e) {
+				Debug.Log (e.ToString ());
 			}
 			base.OnSaveData ();
 		}

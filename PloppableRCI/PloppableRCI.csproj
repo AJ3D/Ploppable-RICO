@@ -69,9 +69,8 @@
     <Compile Include="BuildingInfoWindow.cs" />
     <Compile Include="PloppableTool.cs" />
     <Compile Include="PloppableRICO.cs" />
+    <Compile Include="Properties\ExtractorAI.cs" />
+    <Compile Include="BuildingData.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
-  <ItemGroup>
-    <None Include="BuildingData.cs" />
-  </ItemGroup>
 </Project>

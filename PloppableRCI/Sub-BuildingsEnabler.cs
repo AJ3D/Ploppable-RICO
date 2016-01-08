@@ -10,16 +10,14 @@ using ColossalFramework.Packaging;
 using System.ComponentModel;
 using System.IO;
 using System.Xml.Serialization;
-<<<<<<< HEAD
+
 
 // This is Boformers Sub-Building Enabler mod. I've added some code that's commented. Many thanks to him for his work.
-
-=======
 /*
 Tthis is boformers sub building enabler mod. I just added a few properties to the xml, 
 and a few lines of code between the ADDED comments. Many thanks to him for his work. 
 */
->>>>>>> origin/master
+
 namespace PloppableRICO
 {
 	public class Sub_BuildingsEnabler
@@ -144,16 +142,13 @@ namespace PloppableRICO
 							subBuildingPrefab.m_buildingAI.InitializePrefab ();
 							subBuildingPrefab.InitializePrefab ();
 							// generate new infos for leveling
-							makeInfos (subBuildingPrefab, subBuildingDef.type);
-					
-	
+							makeInfos (subBuildingPrefab, subBuildingDef.type, subBuildingDef.subtype);
+
 						}
 
 						if (subBuildingDef.type == "Office") {
 
-	
 							subBuildingPrefab.gameObject.AddComponent<PloppableOffice> ();
-
 							subBuildingPrefab.m_buildingAI = subBuildingPrefab.GetComponent<PloppableOffice> ();
 							PloppableOffice prefabai = subBuildingPrefab.m_buildingAI as PloppableOffice;
 
@@ -164,7 +159,39 @@ namespace PloppableRICO
 							subBuildingPrefab.m_buildingAI.InitializePrefab ();
 							subBuildingPrefab.InitializePrefab ();
 
-							makeInfos (subBuildingPrefab, subBuildingDef.type);
+							makeInfos (subBuildingPrefab, subBuildingDef.type, subBuildingDef.subtype);
+						}
+
+						if (subBuildingDef.type == "Industrial") {
+							subBuildingPrefab.gameObject.AddComponent<PloppableIndustrial> ();
+							subBuildingPrefab.m_buildingAI = subBuildingPrefab.GetComponent<PloppableIndustrial> ();
+							PloppableIndustrial prefabai = subBuildingPrefab.m_buildingAI as PloppableIndustrial;
+
+							//prefabai.m_housemulti = subBuildingDef.multi;
+							prefabai.m_constructionTime = 0;
+
+							subBuildingPrefab.m_buildingAI.m_info = subBuildingPrefab;
+							subBuildingPrefab.m_buildingAI.InitializePrefab ();
+							subBuildingPrefab.InitializePrefab ();
+
+							makeInfos (subBuildingPrefab, subBuildingDef.type, subBuildingDef.subtype);
+						
+						}
+
+						if (subBuildingDef.type == "Extractor") {
+							subBuildingPrefab.gameObject.AddComponent<PloppableExtractor> ();
+							subBuildingPrefab.m_buildingAI = subBuildingPrefab.GetComponent<PloppableExtractor> ();
+							PloppableExtractor prefabai = subBuildingPrefab.m_buildingAI as PloppableExtractor;
+
+							//prefabai.m_housemulti = subBuildingDef.multi;
+							prefabai.m_constructionTime = 0;
+
+							subBuildingPrefab.m_buildingAI.m_info = subBuildingPrefab;
+							subBuildingPrefab.m_buildingAI.InitializePrefab ();
+							subBuildingPrefab.InitializePrefab ();
+
+							makeInfos (subBuildingPrefab, subBuildingDef.type, subBuildingDef.subtype);
+
 						}
 							
 						/////////////////////////////ADDED
@@ -208,7 +235,7 @@ namespace PloppableRICO
 		//////////////////////////////////This is code that I've added for the Ploppable RICO mod
 	
 
-		public void makeInfos (BuildingInfo Holder, string Type)
+		public void makeInfos (BuildingInfo Holder, string Type, string subtype)
 		{
 
 			//BNames.Add(Holder.name);
@@ -217,143 +244,133 @@ namespace PloppableRICO
 				Debug.Log ("Building Info Found and destroyed");
 				
 			}
-
+			 // Make new BuildingInfos for leveling
 			if (PrefabCollection<BuildingInfo>.FindLoaded (Holder.name + "_level1") == null) {
-				
-				BuildingInfo Level1 = BuildingInfo.Instantiate (Holder);
-				Level1.name = Holder.name + "_Level1";
-				this.SetThings (Holder, Level1);
 
-				BuildingInfo Level2 = BuildingInfo.Instantiate (Holder);
-				Level2.name = Holder.name + "_Level2";
-				this.SetThings (Holder, Level2);
+				if (Type == "Residential" || Type == "Office" || (Type == "Industrial" & subtype == "Generic")) { 
 
-				BuildingInfo Level3 = BuildingInfo.Instantiate (Holder);
-				Level3.name = Holder.name + "_Level3";
-				this.SetThings (Holder, Level3);
+					BuildingInfo Level1 = BuildingInfo.Instantiate (Holder);
+					Level1.name = Holder.name + "_Level1";
+					this.SetThings (Holder, Level1);
 
-				BuildingInfo Level4 = BuildingInfo.Instantiate (Holder);
-				Level4.name = Holder.name + "_Level4";
-				this.SetThings (Holder, Level4);
+					BuildingInfo Level2 = BuildingInfo.Instantiate (Holder);
+					Level2.name = Holder.name + "_Level2";
+					this.SetThings (Holder, Level2);
 
-				BuildingInfo Level5 = BuildingInfo.Instantiate (Holder);
-				Level5.name = Holder.name + "_Level5";
-				this.SetThings (Holder, Level5);
+					BuildingInfo Level3 = BuildingInfo.Instantiate (Holder);
+					Level3.name = Holder.name + "_Level3";
+					this.SetThings (Holder, Level3);
 
-				BuildingInfo[] bray = new BuildingInfo[] { Level1, Level2, Level3, Level4, Level5 };
-				string[] stra = new string[] { Level1.name, Level2.name, Level3.name, Level4.name, Level5.name };
+					if (Type == "Residential") {
 
-				PrefabCollection<BuildingInfo>.InitializePrefabs ("BuildingInfo", bray, stra); //initlaize the instances so they can be referenced by the Buliding objects. 
-				PrefabCollection<BuildingInfo>.BindPrefabs ();
-				Debug.Log ("Building Info Gnerated");
-			}
+						BuildingInfo Level4 = BuildingInfo.Instantiate (Holder);
+						Level4.name = Holder.name + "_Level4";
+						this.SetThings (Holder, Level4);
 
-			if (Type == "Residential") {
-	
-				if (ItemClassCollection.FindClass (Holder.name + "_cLevel1") != null) {
+						BuildingInfo Level5 = BuildingInfo.Instantiate (Holder);
+						Level5.name = Holder.name + "_Level5";
+						this.SetThings (Holder, Level5);
 
-					ItemClass[] cray = new ItemClass[] { 
-					
-						ItemClassCollection.FindClass (Holder.name + "_cLevel1"),
-						ItemClassCollection.FindClass (Holder.name + "_cLevel2"),
-						ItemClassCollection.FindClass (Holder.name + "_cLevel3"),
-						ItemClassCollection.FindClass (Holder.name + "_cLevel4"),
-						ItemClassCollection.FindClass (Holder.name + "_cLevel5")
-					};
+						BuildingInfo[] bray = new BuildingInfo[] {Level4, Level5 };
+						string[] stra = new string[] {Level4.name, Level5.name };
 
-					ItemClassCollection.DestroyClasses (cray);
-					Debug.Log ("cLevel Found and destroyed");
+						PrefabCollection<BuildingInfo>.InitializePrefabs ("BuildingInfo", bray, stra); //initlaize the instances so they can be referenced by the Buliding objects. 
+						PrefabCollection<BuildingInfo>.BindPrefabs ();
+
+					}
+
+
+					BuildingInfo[] bray2 = new BuildingInfo[] {Level1, Level2, Level3};
+					string[] stra2 = new string[] { Level1.name, Level2.name, Level3.name};
+
+					PrefabCollection<BuildingInfo>.InitializePrefabs ("BuildingInfo", bray2, stra2); //initlaize the instances so they can be referenced by the Buliding objects. 
+					PrefabCollection<BuildingInfo>.BindPrefabs ();
+					Debug.Log ("Building Info Gnerated");
 				}
-				
+			}
+			//Assign Item classes to sub buildings
+			if (Type == "Residential") {
 
+				if (subtype == "Low") {
+					PrefabCollection<BuildingInfo>.FindLoaded (Holder.name + "_Level1").m_class = ItemClassCollection.FindClass ("Low Residential - Level1");
+					PrefabCollection<BuildingInfo>.FindLoaded (Holder.name + "_Level2").m_class = ItemClassCollection.FindClass ("Low Residential - Level2");
+					PrefabCollection<BuildingInfo>.FindLoaded (Holder.name + "_Level3").m_class = ItemClassCollection.FindClass ("Low Residential - Level3");
+					PrefabCollection<BuildingInfo>.FindLoaded (Holder.name + "_Level4").m_class = ItemClassCollection.FindClass ("Low Residential - Level4");
+					PrefabCollection<BuildingInfo>.FindLoaded (Holder.name + "_Level5").m_class = ItemClassCollection.FindClass ("Low Residential - Level5");
 
-				ItemClass cLevel1 = ScriptableObject.CreateInstance<ItemClass> ();
-				cLevel1.name = Holder.name + "_cLevel1";
-				cLevel1.m_service = ItemClass.Service.Residential;
-				cLevel1.m_subService = ItemClass.SubService.ResidentialHigh;
-				cLevel1.m_level = ItemClass.Level.Level1;
+				} else {
 
-				ItemClass cLevel2 = ScriptableObject.CreateInstance<ItemClass> ();
-				cLevel2.name = Holder.name + "_cLevel2";
-				cLevel2.m_service = ItemClass.Service.Residential;
-				cLevel2.m_subService = ItemClass.SubService.ResidentialHigh;
-				cLevel2.m_level = ItemClass.Level.Level2;
+					PrefabCollection<BuildingInfo>.FindLoaded (Holder.name + "_Level1").m_class = ItemClassCollection.FindClass ("High Residential - Level1");
+					PrefabCollection<BuildingInfo>.FindLoaded (Holder.name + "_Level2").m_class = ItemClassCollection.FindClass ("High Residential - Level2");
+					PrefabCollection<BuildingInfo>.FindLoaded (Holder.name + "_Level3").m_class = ItemClassCollection.FindClass ("High Residential - Level3");
+					PrefabCollection<BuildingInfo>.FindLoaded (Holder.name + "_Level4").m_class = ItemClassCollection.FindClass ("High Residential - Level4");
+					PrefabCollection<BuildingInfo>.FindLoaded (Holder.name + "_Level5").m_class = ItemClassCollection.FindClass ("High Residential - Level5");
+				}
+			}
+			if (Type == "Commercial") {
 
-				ItemClass cLevel3 = ScriptableObject.CreateInstance<ItemClass> ();
-				cLevel3.name = Holder.name + "_cLevel3";
-				cLevel3.m_service = ItemClass.Service.Residential;
-				cLevel3.m_subService = ItemClass.SubService.ResidentialHigh;
-				cLevel3.m_level = ItemClass.Level.Level3;
+				if (subtype == "Low") {
+					
+					PrefabCollection<BuildingInfo>.FindLoaded (Holder.name + "_Level1").m_class = ItemClassCollection.FindClass ("Low Commercial - Level1");
+					PrefabCollection<BuildingInfo>.FindLoaded (Holder.name + "_Level2").m_class = ItemClassCollection.FindClass ("Low Commercial - Level2");
+					PrefabCollection<BuildingInfo>.FindLoaded (Holder.name + "_Level3").m_class = ItemClassCollection.FindClass ("Low Commercial - Level3");
 
-				ItemClass cLevel4 = ScriptableObject.CreateInstance<ItemClass> ();
-				cLevel4.name = Holder.name + "_cLevel4";
-				cLevel4.m_service = ItemClass.Service.Residential;
-				cLevel4.m_subService = ItemClass.SubService.ResidentialHigh;
-				cLevel4.m_level = ItemClass.Level.Level4;
+				} else {
 
-				ItemClass cLevel5 = ScriptableObject.CreateInstance<ItemClass> ();
-				cLevel5.name = Holder.name + "_cLevel5";
-				cLevel5.m_service = ItemClass.Service.Residential;
-				cLevel5.m_subService = ItemClass.SubService.ResidentialHigh;
-				cLevel5.m_level = ItemClass.Level.Level5;
-
-
-				ItemClass[] ccray = new ItemClass[] { cLevel1, cLevel2, cLevel3, cLevel4, cLevel5 };
-
-				ItemClassCollection.InitializeClasses (ccray);
-
-				PrefabCollection<BuildingInfo>.FindLoaded (Holder.name + "_Level1").m_class = ItemClassCollection.FindClass (Holder.name + "_cLevel1");
-				PrefabCollection<BuildingInfo>.FindLoaded (Holder.name + "_Level2").m_class = ItemClassCollection.FindClass (Holder.name + "_cLevel2");
-				PrefabCollection<BuildingInfo>.FindLoaded (Holder.name + "_Level3").m_class = ItemClassCollection.FindClass (Holder.name + "_cLevel3");
-				PrefabCollection<BuildingInfo>.FindLoaded (Holder.name + "_Level4").m_class = ItemClassCollection.FindClass (Holder.name + "_cLevel4");
-				PrefabCollection<BuildingInfo>.FindLoaded (Holder.name + "_Level5").m_class = ItemClassCollection.FindClass (Holder.name + "_cLevel5");
+					PrefabCollection<BuildingInfo>.FindLoaded (Holder.name + "_Level1").m_class = ItemClassCollection.FindClass ("High Commercial - Level1");
+					PrefabCollection<BuildingInfo>.FindLoaded (Holder.name + "_Level2").m_class = ItemClassCollection.FindClass ("High Commercial - Level2");
+					PrefabCollection<BuildingInfo>.FindLoaded (Holder.name + "_Level3").m_class = ItemClassCollection.FindClass ("High Commercial - Level3");
+				}
 			}
 
 			if (Type == "Office") {
 
-				if (ItemClassCollection.FindClass (Holder.name + "_cLevel1") != null) {
+				PrefabCollection<BuildingInfo>.FindLoaded (Holder.name + "_Level1").m_class = ItemClassCollection.FindClass ("Office - Level1");
+				PrefabCollection<BuildingInfo>.FindLoaded (Holder.name + "_Level2").m_class = ItemClassCollection.FindClass ("Office - Level2");
+				PrefabCollection<BuildingInfo>.FindLoaded (Holder.name + "_Level3").m_class = ItemClassCollection.FindClass ("Office - Level3");
+			}
+			if (Type == "Industrial") {
 
-					ItemClass[] cray = new ItemClass[] { 
-
-						ItemClassCollection.FindClass (Holder.name + "_cLevel1"),
-						ItemClassCollection.FindClass (Holder.name + "_cLevel2"),
-						ItemClassCollection.FindClass (Holder.name + "_cLevel3"),
-					};
-
-					ItemClassCollection.DestroyClasses (cray);
-					Debug.Log ("cLevel Found and destroyed");
+				if (subtype == "Farming") {
+					PrefabCollection<BuildingInfo>.FindLoaded (Holder.name).m_class = ItemClassCollection.FindClass ("Farming - Processing");
 				}
+				if(subtype == "Forest"){
+					PrefabCollection<BuildingInfo>.FindLoaded (Holder.name).m_class = ItemClassCollection.FindClass ("Forest - Processing");
+				} 
+				if
+				 (subtype == "Oil"){
+					PrefabCollection<BuildingInfo>.FindLoaded (Holder.name).m_class = ItemClassCollection.FindClass ("Oil - Processing");
+				}
+				if (subtype == "Ore"){
+					PrefabCollection<BuildingInfo>.FindLoaded (Holder.name).m_class = ItemClassCollection.FindClass ("Ore - Processing");
+				} 
+				if (subtype == "Generic"){
 
-				ItemClass cLevel1 = ScriptableObject.CreateInstance<ItemClass> ();
-				cLevel1.name = Holder.name + "_cLevel1";
-				cLevel1.m_service = ItemClass.Service.Office;
-	
-				cLevel1.m_level = ItemClass.Level.Level1;
-
-				ItemClass cLevel2 = ScriptableObject.CreateInstance<ItemClass> ();
-				cLevel2.name = Holder.name + "_cLevel2";
-				cLevel2.m_service = ItemClass.Service.Office;
-				cLevel2.m_level = ItemClass.Level.Level2;
-
-				ItemClass cLevel3 = ScriptableObject.CreateInstance<ItemClass> ();
-				cLevel3.name = Holder.name + "_cLevel3";
-				cLevel3.m_service = ItemClass.Service.Office;
-				cLevel3.m_level = ItemClass.Level.Level3;
-
-				ItemClass[] ccray = new ItemClass[] { cLevel1, cLevel2, cLevel3 };
-
-				ItemClassCollection.InitializeClasses (ccray);
-
-				PrefabCollection<BuildingInfo>.FindLoaded (Holder.name + "_Level1").m_class = ItemClassCollection.FindClass (Holder.name + "_cLevel1");
-				PrefabCollection<BuildingInfo>.FindLoaded (Holder.name + "_Level2").m_class = ItemClassCollection.FindClass (Holder.name + "_cLevel2");
-				PrefabCollection<BuildingInfo>.FindLoaded (Holder.name + "_Level3").m_class = ItemClassCollection.FindClass (Holder.name + "_cLevel3");
+				PrefabCollection<BuildingInfo>.FindLoaded (Holder.name + "_Level1").m_class = ItemClassCollection.FindClass ("Industrial - Level1");
+				PrefabCollection<BuildingInfo>.FindLoaded (Holder.name + "_Level2").m_class = ItemClassCollection.FindClass ("Industrial - Level2");
+				PrefabCollection<BuildingInfo>.FindLoaded (Holder.name + "_Level3").m_class = ItemClassCollection.FindClass ("Industrial - Level3");
+				}
+			}
+			if (Type == "Extractor"){
+				
+				if (subtype == "Farming"){
+					PrefabCollection<BuildingInfo>.FindLoaded (Holder.name).m_class = ItemClassCollection.FindClass ("Farming - Extractor");
+				}else if
+					(subtype == "Forest"){
+					PrefabCollection<BuildingInfo>.FindLoaded (Holder.name).m_class = ItemClassCollection.FindClass ("Forest - Extractor");
+				}else if
+					(subtype == "Oil"){
+					PrefabCollection<BuildingInfo>.FindLoaded (Holder.name).m_class = ItemClassCollection.FindClass ("Oil - Extractor");
+				}else {
+					PrefabCollection<BuildingInfo>.FindLoaded (Holder.name).m_class = ItemClassCollection.FindClass ("Ore - Extractor");
+				}
 			}
 
 
 			//}
 
 			//return BNames;
-		}
+			}
 
 		public void SetThings (BuildingInfo original, BuildingInfo newone)
 		{
@@ -432,6 +449,9 @@ namespace PloppableRICO
 
 			[XmlAttribute ("type"), DefaultValue ("dummy")]
 			public string type { get; set; }
+
+			[XmlAttribute ("subtype"), DefaultValue ("dummy")]
+			public string subtype { get; set; }
 
 			[XmlAttribute ("multi"), DefaultValue (0)]
 			public int multi { get; set; }

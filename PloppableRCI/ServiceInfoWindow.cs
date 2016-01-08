@@ -79,7 +79,7 @@ namespace PloppableRICO
 				Building SubB = BuildingManager.instance.m_buildings.m_buffer [data.m_subBuilding];
 
 
-				if (SubB.Info.m_buildingAI is PloppableRICO.PloppableResidential || SubB.Info.m_buildingAI is PloppableRICO.PloppableOffice) {
+				if (SubB.Info.m_buildingAI is PloppableRICO.PloppableResidential || SubB.Info.m_buildingAI is PloppableRICO.PloppableOffice || SubB.Info.m_buildingAI is PloppableRICO.PloppableExtractor) {
 
 					Button1.state = UIButton.ButtonState.Focused;
 
@@ -92,6 +92,9 @@ namespace PloppableRICO
 
 					if (SubB.Info.m_buildingAI is PloppableRICO.PloppableOffice) {
 						SetSprites (Sprite2, "ZoningOffice");
+					}
+					if (SubB.Info.m_buildingAI is PloppableRICO.PloppableExtractor) {
+						SetSprites (Sprite2, "ZoningIndustrial");
 					}
 
 					SetSprites (Sprite1, "FeatureMonumentLevel3");

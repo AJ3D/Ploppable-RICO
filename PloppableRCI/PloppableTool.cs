@@ -179,6 +179,9 @@ namespace PloppableRICO
 			if (type == "Office") {
 				BBut = BuildingPanels [4].AddUIComponent<UIButton> ();
 			}
+			if (type == "Extractor") {
+				BBut = BuildingPanels [6].AddUIComponent<UIButton> ();
+			}
 
 			//BBut.name = name;
 			BBut.size = new Vector2 (109, 100);

@@ -12,14 +12,9 @@ namespace PloppableRICO
 	public class PloppableOffice : OfficeBuildingAI
 
 	{
-		[CustomizableProperty("Level Min", "Gameplay common")]
 		public int m_levelmin = 1;
-		[CustomizableProperty("Level Max", "Gameplay common")]
 		public int m_levelmax = 1;
-
-		[CustomizableProperty("Household Multi", "Gameplay common")]
 		public int m_housemulti = 0;
-
 		public int BID = 2;
 		int Tester = 1;
 		public int timer = 0;
@@ -55,11 +50,7 @@ namespace PloppableRICO
 			}
 
 			data.UpdateBuilding ((ushort)data.m_buildIndex);
-
-
-			data.m_flags &= ~Building.Flags.ZonesUpdated;
-			data.m_problems = Notification.Problem.None;
-			data.m_flags &= ~Building.Flags.Abandoned;
+		
 
 			//OriginalN = data.Info.name;
 
@@ -71,10 +62,26 @@ namespace PloppableRICO
 		
 			}
 
+			data.m_garbageBuffer = 0;
+			data.m_fireHazard = 0;
+			data.m_fireIntensity = 0;
+			data.m_majorProblemTimer = 0;
 
-
+			data.m_problems = Notification.Problem.None;
+			data.m_flags = Building.Flags.None;
+			data.m_flags |= Building.Flags.Active;
+			data.m_flags |= Building.Flags.Created;
+			data.m_flags |= Building.Flags.Completed;
+			data.m_flags |= Building.Flags.FixedHeight;
 
 			base.SimulationStep(buildingID, ref data);
+
+			data.m_problems = Notification.Problem.None;
+			data.m_flags = Building.Flags.None;
+			data.m_flags |= Building.Flags.Active;
+			data.m_flags |= Building.Flags.Created;
+			data.m_flags |= Building.Flags.Completed;
+			data.m_flags |= Building.Flags.FixedHeight;
 
 
 		}
