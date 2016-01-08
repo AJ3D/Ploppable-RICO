@@ -48,9 +48,10 @@ namespace PloppableRICO
 
 		public override void OnCreated(ISerializableData serializableData)
 		{
+
+
 			Debug.Log ("Created Array");
 		base.OnCreated(serializableData);
-		Instance = this;
 
 		
 			// Create new empty data array (length of the buildings array, ~32k)
