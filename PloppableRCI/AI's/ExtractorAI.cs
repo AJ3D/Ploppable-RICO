@@ -14,15 +14,13 @@ namespace PloppableRICO
 	{
 
 		public int m_levelmin = 1;
-
 		public int m_levelmax = 1;
-
 		public int m_maintenanceCost = 100;
+		public int m_constructionCost = 1;
+		public int m_housemulti = 1;
 
-		public int BID = 2;
-		int Tester = 1;
-		private int timer = 0;
-		string OriginalN;
+		BuildingData Bdata;
+
 
 		float m_pollutionRadius = 400f;
 
@@ -41,22 +39,62 @@ namespace PloppableRICO
 			maxLength = 16;
 		}
 
-		public override int CalculateHomeCount (Randomizer r, int width, int length)
+		public override int GetConstructionCost()
 		{
-			//width = width * 2
-			//length = length * 2 ;
-			return base.CalculateHomeCount (r, width, length);
+			int result = (m_constructionCost * 100);
+			Singleton<EconomyManager>.instance.m_EconomyWrapper.OnGetConstructionCost(ref result, this.m_info.m_class.m_service, this.m_info.m_class.m_subService, this.m_info.m_class.m_level);
+			return result;
+		}
+
+		public override bool ClearOccupiedZoning ()
+		{
+			return true;
+		}
+
+		public override void CalculateWorkplaceCount(Randomizer r, int width, int length, out int level0, out int level1, out int level2, out int level3)
+		{
+			int widths = m_housemulti;
+
+			base.CalculateWorkplaceCount (r, widths, 1 ,out level0,out level1,out level2, out level3);
 		}
 
 		public override void SimulationStep (ushort buildingID, ref Building buildingData, ref Building.Frame frameData)
 
 		{
+			
+		
+			buildingData.UpdateBuilding ((ushort)buildingID);
+
+			BuildingData[] dataArray = BuildingDataManager.buildingData;		
+			Bdata = dataArray [(int)buildingID];
+
+			if (Bdata == null) {
+
+				Bdata = new BuildingData ();
+				dataArray [(int)buildingID] = Bdata;
+				Bdata.Name = buildingData.Info.name;
+				Bdata.level = 1;
+				Bdata.saveflag = false;
+			}
+
+			if (Bdata.saveflag == false) {
+				//buildingData.Info = PrefabCollection<BuildingInfo>.FindLoaded (Bdata.fieldA + "_Level1");
+				Bdata.saveflag = true;
+			}
+
 			//Singleton<NaturalResourceManager>.instance.TryDumpResource(NaturalResourceManager.Resource.Pollution, 500, 500, data.m_position, this.m_pollutionRadius);
-			buildingData.m_problems = Notification.Problem.None;
+
+			//buildingData.m_problems = Notification.Problem.None;
 			buildingData.m_flags = Building.Flags.None;
 			buildingData.m_flags |= Building.Flags.Created;
 			buildingData.m_flags |= Building.Flags.Completed;
+	
+
+			buildingData.m_garbageBuffer = 0;
+			buildingData.m_fireHazard = 0;
+			buildingData.m_fireIntensity = 0;
 			buildingData.m_majorProblemTimer = 0;
+
 
 			/////////////////////////////COMMON BUILDING AI
 	 
@@ -298,14 +336,11 @@ namespace PloppableRICO
 
 			//base.SimulationStep(buildingID, ref data);
 
-			buildingData.m_problems = Notification.Problem.None;
+			//buildingData.m_problems = Notification.Problem.None;
 			buildingData.m_flags = Building.Flags.None;
 			buildingData.m_flags |= Building.Flags.Created;
 			buildingData.m_flags |= Building.Flags.Completed;
 
-
-
 		}
-
 	}
 }

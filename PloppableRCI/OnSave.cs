@@ -7,69 +7,61 @@ using ColossalFramework;
 using ColossalFramework.Globalization;
 using ColossalFramework.Math;
 using ColossalFramework.Plugins;
-using System;
 using UnityEngine;
-using ICities;
-using ColossalFramework.UI;
 
 namespace PloppableRICO
 {
+	/// <summary>
+	/// If a building has a cloned prefab assgined, this will reassgin the orginal prefab when the city is saved. 
+	/// </summary>
 
 	public class save : SerializableDataExtensionBase
 	{
 
-		//List<BuildingInfo> Prefabs;
-		//string collect;
-		//string[] replace = new string[]{};
+		BuildingData Bdata;
+		Building CustomB;
+		int count = (int)BuildingManager.instance.m_buildings.m_size;
+		BuildingData[] dataArray;
+
 		public override void OnSaveData ()
 		{
 
-			//This loops though every building in the scene, and finds ones with the custom AI.
-			//It also sorts by service. The original BuildingInfos are set to Monument service in thier ItemClass. We want to leave the originals alone.
-			//It then reassigns the original BuildingInfo object. 
-			//This is so when the scene is reloaded, the Building object will have a vaild BuildingInfo, since the instances would not have been created yet.
-			//Since the list of BuildingInfos is generated fresh from the asset list at scene load, 
-			// if you leave the Building objects InfoIndex pointed at one of the instances, it will throw a null referance error on scene load and delete the building object. 
-
 			try {
 
+				for (int i = 1; i < count; i++) {
 
-			int count = (int)BuildingManager.instance.m_buildings.m_size;
-				for (int i = 1; i < count ; i++) {
+					CustomB = Singleton<BuildingManager>.instance.m_buildings.m_buffer [(ushort)i];
 
-				// if the building has one of the new AI's
-				if (Singleton<BuildingManager>.instance.m_buildings.m_buffer [i].Info.m_buildingAI is PloppableResidential || Singleton<BuildingManager>.instance.m_buildings.m_buffer [i].Info.m_buildingAI is PloppableOffice)
-				{
+					if (CustomB.Info.m_buildingAI is PloppableResidential || CustomB.Info.m_buildingAI is PloppableOffice || CustomB.Info.m_buildingAI is PloppableCommercial || CustomB.Info.m_buildingAI is PloppableIndustrial) {
 
-					//and if on those buildings, if the service is office or residential
-					if (ItemClass.Service.Residential == Singleton<BuildingManager>.instance.m_buildings.m_buffer [i].Info.m_class.m_service || ItemClass.Service.Office == Singleton<BuildingManager>.instance.m_buildings.m_buffer [i].Info.m_class.m_service) {
+						dataArray = BuildingDataManager.buildingData;
 
-						//then reassign the BuildingInfo back to the orginial
-						string name = BuildingManager.instance.m_buildings.m_buffer [i].Info.name;
+						Bdata = dataArray [(int)i];
 
-						 
+						if (Bdata != null) {
+							if (Bdata.level != 1) {
 
-						if (PrefabCollection<BuildingInfo>.FindLoaded (name) != null) {
-							name = name.Remove (name.Length - 7); //Since I added 7 characters to the name of each instance, I just need to subtract 7 characters to get the original name.
-								BuildingManager.instance.m_buildings.m_buffer [(ushort)i].Info = PrefabCollection<BuildingInfo>.FindLoaded (name);
-									BuildingManager.instance.m_buildings.m_buffer [(ushort)i].m_infoIndex = (ushort)PrefabCollection<BuildingInfo>.FindLoaded (name).m_prefabDataIndex;
-							Debug.Log (name + "Set back to orginial info");
+								//Debug.Log ("On Save name is " + Bdata.Name);
 
-								//BuildingManager.instance.m_buildings.m_buffer [i].Info.name = name; 
+								BuildingManager.instance.m_buildings.m_buffer [(ushort)i].Info = PrefabCollection<BuildingInfo>.FindLoaded (Bdata.Name);
+								BuildingManager.instance.m_buildings.m_buffer [(ushort)i].m_infoIndex = (ushort)PrefabCollection<BuildingInfo>.FindLoaded (Bdata.Name).m_prefabDataIndex;
+								Bdata.saveflag = false;
 
-						}else{
-							Debug.Log ("Original Prefab not found");
-								BuildingManager.instance.m_buildings.m_buffer [i].m_infoIndex = (ushort)0;
+							}
 						}
 					}
 				}
-			}
+
 
 			} catch (Exception e) {
 				Debug.Log (e.ToString ());
 			}
+
 			base.OnSaveData ();
+							
 		}
 
 	}
+		
+
 }

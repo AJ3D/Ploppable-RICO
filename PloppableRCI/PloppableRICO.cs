@@ -28,7 +28,7 @@ namespace PloppableRICO
 		{
 			get
 			{
-				return "Allows Plopping of Residential Buildings";
+				return "Allows Plopping of RICO Buildings";
 			}
 		}
 	}

@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
@@ -61,18 +61,27 @@
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="OnLoad.cs" />
-    <Compile Include="ResidentialAI.cs" />
-    <Compile Include="Properties\RedirectionHelper.cs" />
-    <Compile Include="IndustrialAI.cs" />
-    <Compile Include="ServiceInfoWindow.cs" />
-    <Compile Include="Sub-BuildingsEnabler.cs" />
     <Compile Include="OnSave.cs" />
-    <Compile Include="OfficeAI.cs" />
-    <Compile Include="BuildingInfoWindow.cs" />
-    <Compile Include="PloppableTool.cs" />
     <Compile Include="PloppableRICO.cs" />
     <Compile Include="BuildingData.cs" />
-    <Compile Include="ExtractorAI.cs" />
+    <Compile Include="InitRICOPrefabs.cs" />
+    <Compile Include="AI%27s\ResidentialAI.cs" />
+    <Compile Include="AI%27s\IndustrialAI.cs" />
+    <Compile Include="AI%27s\ExtractorAI.cs" />
+    <Compile Include="AI%27s\OfficeAI.cs" />
+    <Compile Include="GUI\PloppableTool.cs" />
+    <Compile Include="GUI\InfoTabs.cs" />
+    <Compile Include="AI%27s\CommercialAI.cs" />
+    <Compile Include="Detour\Detour.cs" />
+    <Compile Include="Detour\RedirectionHelper.cs" />
+    <Compile Include="LoadRICO.cs" />
+    <Compile Include="GUI\ZonedInfoPanel.cs" />
+    <Compile Include="GUI\ServiceInfopanel.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+  <ItemGroup>
+    <Folder Include="AI%27s\" />
+    <Folder Include="GUI\" />
+    <Folder Include="Detour\" />
+  </ItemGroup>
 </Project>

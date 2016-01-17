@@ -36,7 +36,7 @@ namespace PloppableRICO
     */
 		public static BuildingData[] buildingData;
 
-	public static BuildingDataManager Instance;
+		public static BuildingDataManager Instance;
 
 		// The key for our data in the savegame
 		public const string DataId = "PRCIO";
@@ -46,74 +46,57 @@ namespace PloppableRICO
 		// You can start with 0
 		public const uint DataVersion = 0;
 
-		public override void OnCreated(ISerializableData serializableData)
+		public override void OnCreated (ISerializableData serializableData)
 		{
 
+			base.OnCreated (serializableData);
 
-			Debug.Log ("Created Array");
-		base.OnCreated(serializableData);
-
-		
 			// Create new empty data array (length of the buildings array, ~32k)
 			buildingData = new BuildingData[BuildingManager.instance.m_buildings.m_size];
 
-
 		}
 
-		public override void OnLoadData()
+		public override void OnLoadData ()
 		{
-			base.OnLoadData();
+			base.OnLoadData ();
 
 			// Get bytes from savegame
-			byte[] bytes = serializableDataManager.LoadData(DataId);
-			if (bytes == null) return;
+			byte[] bytes = serializableDataManager.LoadData (DataId);
+			if (bytes == null)
+				return;
 
 			// Convert the bytes to an array of BuildingData objects
-			using (var stream = new MemoryStream(bytes))
-			{
-				buildingData = DataSerializer.DeserializeArray<BuildingData>(stream, DataSerializer.Mode.Memory);
+			using (var stream = new MemoryStream (bytes)) {
+				buildingData = DataSerializer.DeserializeArray<BuildingData> (stream, DataSerializer.Mode.Memory);
 			}
 
-			Debug.LogFormat("Data loaded (Size in bytes: {0})", bytes.Length);
+			Debug.LogFormat ("Data loaded (Size in bytes: {0})", bytes.Length);
+
 		}
 
-		public override void OnSaveData()
+		public override void OnSaveData ()
 		{
-			base.OnSaveData();
+			base.OnSaveData ();
 
 			byte[] bytes;
 
-
-			//var data = BuildingDataManager.buildingData[1000];
-			//if (data != null)
-			//{
-
-			//buildingData = new BuildingData[BuildingManager.instance.m_buildings.m_size];
-
-			//buildingData[1000].fieldB = 3;
-
-				//data.fieldB = 3;
-			//Debug.Log (buildingData[1000].fieldB);
-			//}
-
 			// Convert the array of BuildingData objects to bytes
-			using (var stream = new MemoryStream())
-			{
-				DataSerializer.SerializeArray(stream, DataSerializer.Mode.Memory, DataVersion, buildingData);
-				bytes = stream.ToArray();
+			using (var stream = new MemoryStream ()) {
+				DataSerializer.SerializeArray (stream, DataSerializer.Mode.Memory, DataVersion, buildingData);
+				bytes = stream.ToArray ();
 			}
 
 			// Save bytes in savegame
-			serializableDataManager.SaveData(DataId, bytes);
+			serializableDataManager.SaveData (DataId, bytes);
 
-			Debug.LogFormat("Data Saved (Size in bytes: {0})", bytes.Length);
+			Debug.LogFormat ("Data Saved (Size in bytes: {0})", bytes.Length);
 			//Debug.Log (data.fieldB.ToString ());
 
 		}
 
-		public override void OnReleased()
+		public override void OnReleased ()
 		{
-			base.OnReleased();
+			base.OnReleased ();
 
 			// Clear to save memory
 			buildingData = null;
@@ -128,8 +111,9 @@ namespace PloppableRICO
 	/// </summary>
 	public class BuildingData : IDataContainer
 	{
-		public string fieldA;
-		public int fieldB;
+		public string Name;
+		public int level;
+		public bool saveflag;
 
 		public int fieldCAddedInV1;
 
@@ -137,42 +121,42 @@ namespace PloppableRICO
 		public string fieldEAddedInV2;
 
 		// This serializes the object (to bytes)
-		public void Serialize(DataSerializer s)
+		public void Serialize (DataSerializer s)
 		{
-			s.WriteSharedString(fieldA);
-			s.WriteInt32(fieldB);
+			s.WriteSharedString (Name);
+			s.WriteInt32 (level);
+			s.WriteBool (saveflag);
 
-			if (s.version >= 1)
-			{
-				s.WriteInt32(fieldCAddedInV1);
+			if (s.version >= 1) {
+				s.WriteInt32 (fieldCAddedInV1);
 			}
 
-			if (s.version >= 2)
-			{
-				s.WriteBool(fieldDAddedInV2);
-				s.WriteSharedString(fieldEAddedInV2);
+			if (s.version >= 2) {
+				s.WriteBool (fieldDAddedInV2);
+				s.WriteSharedString (fieldEAddedInV2);
 			}
 		}
 
 		// This reads the object (from bytes)
-		public void Deserialize(DataSerializer s)
+		public void Deserialize (DataSerializer s)
 		{
-			fieldA = s.ReadSharedString();
-			fieldB = s.ReadInt32();
+			Name = s.ReadSharedString ();
+			level = s.ReadInt32 ();
+			saveflag = s.ReadBool ();
 
-			if (s.version >= 1)
-			{
-				fieldCAddedInV1 = s.ReadInt32();
+			if (s.version >= 1) {
+				fieldCAddedInV1 = s.ReadInt32 ();
 			}
 
-			if (s.version >= 2)
-			{
-				fieldDAddedInV2 = s.ReadBool();
-				fieldEAddedInV2 = s.ReadSharedString();
+			if (s.version >= 2) {
+				fieldDAddedInV2 = s.ReadBool ();
+				fieldEAddedInV2 = s.ReadSharedString ();
 			}
 		}
 
-		public void AfterDeserialize(DataSerializer s) {}
+		public void AfterDeserialize (DataSerializer s)
+		{
+		}
 	}
 
 }
