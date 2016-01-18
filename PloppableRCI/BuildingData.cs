@@ -115,10 +115,6 @@ namespace PloppableRICO
 		public int level;
 		public bool saveflag;
 
-		public int fieldCAddedInV1;
-
-		public bool fieldDAddedInV2;
-		public string fieldEAddedInV2;
 
 		// This serializes the object (to bytes)
 		public void Serialize (DataSerializer s)
@@ -128,12 +124,12 @@ namespace PloppableRICO
 			s.WriteBool (saveflag);
 
 			if (s.version >= 1) {
-				s.WriteInt32 (fieldCAddedInV1);
+				//s.WriteInt32 (fieldCAddedInV1);
 			}
 
 			if (s.version >= 2) {
-				s.WriteBool (fieldDAddedInV2);
-				s.WriteSharedString (fieldEAddedInV2);
+				//s.WriteBool (fieldDAddedInV2);
+				//s.WriteSharedString (fieldEAddedInV2);
 			}
 		}
 
@@ -145,12 +141,12 @@ namespace PloppableRICO
 			saveflag = s.ReadBool ();
 
 			if (s.version >= 1) {
-				fieldCAddedInV1 = s.ReadInt32 ();
+				//fieldCAddedInV1 = s.ReadInt32 ();
 			}
 
 			if (s.version >= 2) {
-				fieldDAddedInV2 = s.ReadBool ();
-				fieldEAddedInV2 = s.ReadSharedString ();
+				//fieldDAddedInV2 = s.ReadBool ();
+				//fieldEAddedInV2 = s.ReadSharedString ();
 			}
 		}
 

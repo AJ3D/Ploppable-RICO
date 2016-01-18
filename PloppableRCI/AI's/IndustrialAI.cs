@@ -34,6 +34,11 @@ namespace PloppableRICO
 			maxLength = 16;
 		}
 
+		public override bool ClearOccupiedZoning ()
+		{
+			return true;
+		}
+
 		public override int GetConstructionCost()
 		{
 			int result = (m_constructionCost * 100);

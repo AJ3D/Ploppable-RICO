@@ -15,7 +15,7 @@ namespace PloppableRICO.Detour
 	/// </summary>
 
 
-	public class BuildingToolDetour : ItemClass
+	public class BuildingToolDetour
 	{
 		private static bool deployed = false;
 	
@@ -26,8 +26,22 @@ namespace PloppableRICO.Detour
 		public static void Deploy ()
 		{
 			if (!deployed) {
-				_BuildingTool_CheckCollidingBuildings_original = typeof(BuildingTool).GetMethod ("CheckCollidingBuildings", BindingFlags.Static | BindingFlags.Public);
-				_BuildingTool_CheckCollidingBuildings_detour = typeof(BuildingToolDetour).GetMethod ("CheckCollidingBuildings", BindingFlags.Static | BindingFlags.Public);
+				_BuildingTool_CheckCollidingBuildings_original = typeof(BuildingTool).GetMethod (
+					"IsImportantBuilding",
+					BindingFlags.Static | BindingFlags.NonPublic,
+					null,
+					new Type [] {typeof(BuildingInfo), typeof(Building).MakeByRefType()}, 
+					null
+				);
+
+				_BuildingTool_CheckCollidingBuildings_detour = typeof(BuildingToolDetour).GetMethod(
+					"IsImportantBuilding",
+					BindingFlags.Static | BindingFlags.NonPublic,
+					null,
+					new Type [] {typeof(BuildingInfo), typeof(Building).MakeByRefType()}, 
+					null
+				);
+					
 				_BuildingTool_CheckCollidingBuildings_state = RedirectionHelper.RedirectCalls (_BuildingTool_CheckCollidingBuildings_original, _BuildingTool_CheckCollidingBuildings_detour);
 		
 				deployed = true;
@@ -48,37 +62,7 @@ namespace PloppableRICO.Detour
 				//Debug.Log("BuildingTool Methods restored");
 			}
 		}
-
-		private static bool CheckParentNode (ushort building, ulong[] buildingMask, ulong[] segmentMask)
-		{
-			ushort num = Singleton<BuildingManager>.instance.m_buildings.m_buffer [(int)building].FindParentNode (building);
-			NetManager instance = Singleton<NetManager>.instance;
-			if (num == 0) {
-				return true;
-			}
-			NetInfo info = instance.m_nodes.m_buffer [(int)num].Info;
-			int publicServiceIndex = ItemClass.GetPublicServiceIndex (info.m_class.m_service);
-			if ((publicServiceIndex != -1 && !info.m_autoRemove) || (instance.m_nodes.m_buffer [(int)num].m_flags & NetNode.Flags.Untouchable) != NetNode.Flags.None) {
-				return true;
-			}
-			bool flag = false;
-			for (int i = 0; i < 8; i++) {
-				ushort segment = instance.m_nodes.m_buffer [(int)num].GetSegment (i);
-				if (segment != 0 && (segmentMask [segment >> 6] & 1uL << (int)segment) == 0uL) {
-					info = instance.m_segments.m_buffer [(int)segment].Info;
-					publicServiceIndex = ItemClass.GetPublicServiceIndex (info.m_class.m_service);
-					if ((publicServiceIndex != -1 && !info.m_autoRemove) || (instance.m_segments.m_buffer [(int)segment].m_flags & NetSegment.Flags.Untouchable) != NetSegment.Flags.None) {
-						flag = true;
-					} else {
-						segmentMask [segment >> 6] |= 1uL << (int)segment;
-					}
-				}
-			}
-			if (!flag) {
-				buildingMask [building >> 6] &= ~(1uL << (int)building);
-			}
-			return flag;
-		}
+			
 
 		private static bool IsImportantBuilding (BuildingInfo info, ref Building building)
 		{
@@ -102,35 +86,7 @@ namespace PloppableRICO.Detour
 		}
 
 
-		public static bool CheckCollidingBuildings (ulong[] buildingMask, ulong[] segmentMask)
-		{
-			BuildingManager instance = Singleton<BuildingManager>.instance;
-			int num = buildingMask.Length;
-			bool result = false;
-			for (int i = 0; i < num; i++) {
-				ulong num2 = buildingMask [i];
-				if (num2 != 0uL) {
-					for (int j = 0; j < 64; j++) {
-						if ((num2 & 1uL << j) != 0uL) {
-							int num3 = i << 6 | j;
-							BuildingInfo info = instance.m_buildings.m_buffer [num3].Info;
-							if ((instance.m_buildings.m_buffer [num3].m_flags & Building.Flags.Untouchable) != Building.Flags.None) {
-								if (CheckParentNode ((ushort)num3, buildingMask, segmentMask)) {
-									result = true;
-								}
-							} else if (IsImportantBuilding (info, (ushort)num3)) {
 
-
-								result = true;
-
-							}
-						}
-					}
-				}
-			}
-			//Debug.Log ("Detour Worked");
-			return result;
-		}
 
 	}
 }

@@ -25,6 +25,11 @@ namespace PloppableRICO
 			maxWidth = 32;
 		}
 
+		public override bool ClearOccupiedZoning ()
+		{
+			return true;
+		}
+
 		public override void GetLengthRange (out int minLength, out int maxLength)
 		{
 			base.GetLengthRange (out minLength, out maxLength);
