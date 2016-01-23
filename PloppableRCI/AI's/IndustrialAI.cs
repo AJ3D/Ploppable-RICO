@@ -92,10 +92,10 @@ namespace PloppableRICO
 			buildingData.m_majorProblemTimer = 0;
 
 			//data.m_problems = Notification.Problem.None;
-			buildingData.m_flags = Building.Flags.None;
+			//buildingData.m_flags = Building.Flags.None;
 			//data.m_flags |= Building.Flags.Active;
-			buildingData.m_flags |= Building.Flags.Created;
-			buildingData.m_flags |= Building.Flags.Completed;
+			////buildingData.m_flags |= Building.Flags.Created;
+			//buildingData.m_flags |= Building.Flags.Completed;
 
 
 			/////////////////////////////COMMON BUILDING AI
@@ -284,11 +284,11 @@ namespace PloppableRICO
 			}
 	
 			//data.m_problems = Notification.Problem.None;
-			buildingData.m_flags = Building.Flags.None;
+			//buildingData.m_flags = Building.Flags.None;
 			//data.m_flags |= Building.Flags.Active;
-			buildingData.m_flags |= Building.Flags.Created;
+			//buildingData.m_flags |= Building.Flags.Created;
 
-			buildingData.m_flags |= Building.Flags.Completed;
+			//buildingData.m_flags |= Building.Flags.Completed;
 
 		}
 			

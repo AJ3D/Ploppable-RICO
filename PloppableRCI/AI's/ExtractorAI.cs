@@ -85,7 +85,7 @@ namespace PloppableRICO
 			//Singleton<NaturalResourceManager>.instance.TryDumpResource(NaturalResourceManager.Resource.Pollution, 500, 500, data.m_position, this.m_pollutionRadius);
 
 			//buildingData.m_problems = Notification.Problem.None;
-			buildingData.m_flags = Building.Flags.None;
+			//buildingData.m_flags = Building.Flags.None;
 			buildingData.m_flags |= Building.Flags.Created;
 			buildingData.m_flags |= Building.Flags.Completed;
 	
@@ -337,7 +337,7 @@ namespace PloppableRICO
 			//base.SimulationStep(buildingID, ref data);
 
 			//buildingData.m_problems = Notification.Problem.None;
-			buildingData.m_flags = Building.Flags.None;
+			//buildingData.m_flags = Building.Flags.None;
 			buildingData.m_flags |= Building.Flags.Created;
 			buildingData.m_flags |= Building.Flags.Completed;
 

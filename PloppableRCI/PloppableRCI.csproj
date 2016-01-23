@@ -75,8 +75,8 @@
     <Compile Include="Detour\Detour.cs" />
     <Compile Include="Detour\RedirectionHelper.cs" />
     <Compile Include="LoadRICO.cs" />
-    <Compile Include="GUI\ZonedInfoPanel.cs" />
-    <Compile Include="GUI\ServiceInfopanel.cs" />
+    <Compile Include="AI%27s\ResidentialNew.cs" />
+    <Compile Include="GUI\TabUpdater.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
