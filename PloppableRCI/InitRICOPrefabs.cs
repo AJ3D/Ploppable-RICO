@@ -98,11 +98,10 @@ namespace PloppableRICO
 			}
 
 			if (type == "Residential" || type == "Extractor" || type == "Industrial" || type == "Office" || type == "Commercial") {
-
+				
 				BuildingPrefab.m_buildingAI.m_info = BuildingPrefab;
-
 				BuildingPrefab.InitializePrefab ();
-	
+
 
 				// Make new BuildingInfos for leveling
 				if (PrefabCollection<BuildingInfo>.FindLoaded (BuildingPrefab.name + "_level2") == null) {
@@ -228,7 +227,7 @@ namespace PloppableRICO
 			}
 		}
 
-	
+
 
 		public void SetThings (BuildingInfo original, BuildingInfo newone)
 		{

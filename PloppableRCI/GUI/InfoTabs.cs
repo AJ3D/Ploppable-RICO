@@ -22,8 +22,6 @@ namespace PloppableRICO
 		UISprite[] TabSprites = new UISprite[6];
 		UIButton[] TabButtons = new UIButton[6];
 
-
-
 		List<ushort> IDList;
 		Building ParentBuilding;
 		Building SubBuilding;
@@ -116,7 +114,7 @@ namespace PloppableRICO
 
 					if (!(TabBuilding.Info.m_buildingAI is DummyBuildingAI)) { //dont draw tabs for dummy buildings.
 
-						TabButtons [counter].eventClick += (sender, e) => SelectSub (sender, e, ID);
+						TabButtons[counter].eventClick += (sender, e) => SelectSub (sender, e, ID);
 						TabButtons [counter].isVisible = true;
 						//TabButtons [counter].name = BuildingID.ToString ();
 

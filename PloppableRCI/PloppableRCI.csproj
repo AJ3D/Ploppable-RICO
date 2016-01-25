@@ -20,12 +20,11 @@
     <ConsolePause>false</ConsolePause>
     <CustomCommands>
       <CustomCommands>
-        <Command type="AfterBuild" command="xcopy /Y &quot;C:\Users\AJ\Desktop\PloppableRCI\PloppableRCI\bin\Debug\PloppableRCI.dll&quot; &quot;E:\SteamLibrary\steamapps\common\Cities_Skylines\Files\Mods\PloppableRCI\&quot;" workingdir="${ProjectDir}" externalConsole="True" />
+        <Command type="AfterBuild" command="xcopy /Y &quot;C:\Users\AJ\Desktop\PloppableRCI\PloppableRCI\bin\Debug\PloppableRCI.dll&quot; &quot;F:\SteamLibrary\steamapps\common\Cities_Skylines\Files\Mods\PloppableRCI\&quot;" workingdir="${ProjectDir}" externalConsole="True" />
         <Command type="BeforeBuild" command="cmd /c &quot;IF EXIST 'E:\SteamLibrary\steamapps\common\Cities_Skylines\Files\Mods\PloppableRCI\PloppableRCI.dll' (del 'E:\SteamLibrary\steamapps\common\Cities_Skylines\Files\Mods\PloppableRCI\PloppableRCI.dll')&quot;" workingdir="${ProjectDir}" externalConsole="True" />
       </CustomCommands>
     </CustomCommands>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-    <LangVersion>5</LangVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>full</DebugType>
@@ -35,7 +34,6 @@
     <WarningLevel>4</WarningLevel>
     <ConsolePause>false</ConsolePause>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-    <LangVersion>5</LangVersion>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System">
@@ -53,14 +51,13 @@
     <Reference Include="UnityEngine">
       <HintPath>E:\SteamLibrary\steamapps\common\Cities_Skylines\Cities_Data\Managed\UnityEngine.dll</HintPath>
     </Reference>
+    <Reference Include="System.Xml" />
     <Reference Include="System.Core">
       <HintPath>E:\SteamLibrary\steamapps\common\Cities_Skylines\Cities_Data\Managed\System.Core.dll</HintPath>
     </Reference>
-    <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="OnLoad.cs" />
     <Compile Include="OnSave.cs" />
     <Compile Include="PloppableRICO.cs" />
     <Compile Include="BuildingData.cs" />
@@ -70,18 +67,21 @@
     <Compile Include="AI%27s\ExtractorAI.cs" />
     <Compile Include="AI%27s\OfficeAI.cs" />
     <Compile Include="GUI\PloppableTool.cs" />
-    <Compile Include="GUI\InfoTabs.cs" />
     <Compile Include="AI%27s\CommercialAI.cs" />
     <Compile Include="Detour\Detour.cs" />
     <Compile Include="Detour\RedirectionHelper.cs" />
     <Compile Include="LoadRICO.cs" />
-    <Compile Include="AI%27s\ResidentialNew.cs" />
-    <Compile Include="GUI\TabUpdater.cs" />
+    <Compile Include="LoadingExtension.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
     <Folder Include="AI%27s\" />
     <Folder Include="GUI\" />
     <Folder Include="Detour\" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="AI%27s\ResidentialNew.cs" />
+    <None Include="GUI\InfoTabs.cs" />
+    <None Include="GUI\TabUpdater.cs" />
   </ItemGroup>
 </Project>

@@ -65,8 +65,8 @@ namespace PloppableRICO
 
 								//Debug.Log ("On Save name is " + Bdata.Name);
 
-								BuildingManager.instance.m_buildings.m_buffer [(ushort)i].Info = PrefabCollection<BuildingInfo>.FindLoaded (Bdata.Name);
-								BuildingManager.instance.m_buildings.m_buffer [(ushort)i].m_infoIndex = (ushort)PrefabCollection<BuildingInfo>.FindLoaded (Bdata.Name).m_prefabDataIndex;
+								BuildingManager.instance.m_buildings.m_buffer [(ushort)i].Info = BuildingManager.instance.m_buildings.m_buffer [(ushort)i].Info.m_buildingAI.m_info;
+								BuildingManager.instance.m_buildings.m_buffer [(ushort)i].m_infoIndex = (ushort)BuildingManager.instance.m_buildings.m_buffer [(ushort)i].Info.m_buildingAI.m_info.m_prefabDataIndex;
 								Bdata.saveflag = false;
 
 							}
@@ -81,47 +81,52 @@ namespace PloppableRICO
 
 			base.OnSaveData ();
 
-			for (int i = 1; i < count; i++) {
+			/*
+			try {
+				for (int i = 1; i < count; i++) {
 
-				CustomB = Singleton<BuildingManager>.instance.m_buildings.m_buffer [(ushort)i];
+					CustomB = Singleton<BuildingManager>.instance.m_buildings.m_buffer [(ushort)i];
 
-				if (CustomB.Info.m_buildingAI is PloppableResidential || CustomB.Info.m_buildingAI is PloppableOffice || CustomB.Info.m_buildingAI is PloppableCommercial || CustomB.Info.m_buildingAI is PloppableIndustrial) {
+					if (CustomB.Info.m_buildingAI is PloppableResidential || CustomB.Info.m_buildingAI is PloppableOffice || CustomB.Info.m_buildingAI is PloppableCommercial || CustomB.Info.m_buildingAI is PloppableIndustrial) {
 
-					dataArray = BuildingDataManager.buildingData;
+						dataArray = BuildingDataManager.buildingData;
 
-					Bdata = dataArray [(int)i];
+						Bdata = dataArray [(int)i];
 
-					if (Bdata != null) {
+						if (Bdata != null) {
 
-						if (Bdata.level == 2) {
-							BuildingManager.instance.m_buildings.m_buffer [(ushort)i].Info = PrefabCollection<BuildingInfo>.FindLoaded (Bdata.Name + "_Level2");
-							BuildingManager.instance.m_buildings.m_buffer [(ushort)i].m_infoIndex = (ushort)PrefabCollection<BuildingInfo>.FindLoaded (Bdata.Name + "_Level2").m_prefabDataIndex;
+							if (Bdata.level == 2) {
+								BuildingManager.instance.m_buildings.m_buffer [(ushort)i].Info = PrefabCollection<BuildingInfo>.FindLoaded (Bdata.Name + "_Level2");
+								BuildingManager.instance.m_buildings.m_buffer [(ushort)i].m_infoIndex = (ushort)PrefabCollection<BuildingInfo>.FindLoaded (Bdata.Name + "_Level2").m_prefabDataIndex;
 
+							}
+							if (Bdata.level == 3) { 
+
+								BuildingManager.instance.m_buildings.m_buffer [(ushort)i].Info = PrefabCollection<BuildingInfo>.FindLoaded (Bdata.Name + "_Level3");
+								BuildingManager.instance.m_buildings.m_buffer [(ushort)i].m_infoIndex = (ushort)PrefabCollection<BuildingInfo>.FindLoaded (Bdata.Name + "_Level3").m_prefabDataIndex;
+
+							}
+							if (Bdata.level == 4) {
+
+								BuildingManager.instance.m_buildings.m_buffer [(ushort)i].Info = PrefabCollection<BuildingInfo>.FindLoaded (Bdata.Name + "_Level4");
+								BuildingManager.instance.m_buildings.m_buffer [(ushort)i].m_infoIndex = (ushort)PrefabCollection<BuildingInfo>.FindLoaded (Bdata.Name + "_Level4").m_prefabDataIndex;
+
+							}
+							if (Bdata.level == 5) {
+
+								BuildingManager.instance.m_buildings.m_buffer [(ushort)i].Info = PrefabCollection<BuildingInfo>.FindLoaded (Bdata.Name + "_Level5");
+								BuildingManager.instance.m_buildings.m_buffer [(ushort)i].m_infoIndex = (ushort)PrefabCollection<BuildingInfo>.FindLoaded (Bdata.Name + "_Level5").m_prefabDataIndex;
+
+							}
+							//Bdata.saveflag = true;
 						}
-						if (Bdata.level == 3) { 
-
-							BuildingManager.instance.m_buildings.m_buffer [(ushort)i].Info = PrefabCollection<BuildingInfo>.FindLoaded (Bdata.Name + "_Level3");
-							BuildingManager.instance.m_buildings.m_buffer [(ushort)i].m_infoIndex = (ushort)PrefabCollection<BuildingInfo>.FindLoaded (Bdata.Name + "_Level3").m_prefabDataIndex;
-
-						}
-						if (Bdata.level == 4) {
-
-							BuildingManager.instance.m_buildings.m_buffer [(ushort)i].Info = PrefabCollection<BuildingInfo>.FindLoaded (Bdata.Name + "_Level4");
-							BuildingManager.instance.m_buildings.m_buffer [(ushort)i].m_infoIndex = (ushort)PrefabCollection<BuildingInfo>.FindLoaded (Bdata.Name + "_Level4").m_prefabDataIndex;
-
-						}
-						if (Bdata.level == 5) {
-
-							BuildingManager.instance.m_buildings.m_buffer [(ushort)i].Info = PrefabCollection<BuildingInfo>.FindLoaded (Bdata.Name + "_Level5");
-							BuildingManager.instance.m_buildings.m_buffer [(ushort)i].m_infoIndex = (ushort)PrefabCollection<BuildingInfo>.FindLoaded (Bdata.Name + "_Level5").m_prefabDataIndex;
-
-						}
-						//Bdata.saveflag = true;
+					
 					}
-
-
 				}
-			}
+
+			} catch (Exception e) {
+				Debug.Log (e.ToString ());
+			}*/
 		}
 	}
 

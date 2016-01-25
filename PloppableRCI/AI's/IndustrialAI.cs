@@ -22,14 +22,12 @@ namespace PloppableRICO
 
 		public override void GetWidthRange (out int minWidth, out int maxWidth)
 		{
-			base.GetWidthRange (out minWidth, out maxWidth);
 			minWidth = 1;
 			maxWidth = 32;
 		}
 
 		public override void GetLengthRange (out int minLength, out int maxLength)
 		{
-			base.GetLengthRange (out minLength, out maxLength);
 			minLength = 1;
 			maxLength = 16;
 		}
