@@ -28,7 +28,7 @@ namespace PloppableRICO
 		Building ParentBuilding;
 		Building SubBuilding;
 
-		public ushort lastselected = 1;
+		public ushort selected = 1;
 
 		int types = 5;
 
@@ -55,7 +55,6 @@ namespace PloppableRICO
 				TabButtons [i].focusedBgSprite = "SubBarButtonBaseFocused";
 				TabButtons [i].name = name;
 				TabButtons [i].isVisible = false;
-
 				TabSprites [i] = new UISprite ();
 				TabSprites [i] = TabButtons [i].AddUIComponent<UISprite> ();
 				TabSprites [i].size = new Vector2 (35, 25);
@@ -66,16 +65,17 @@ namespace PloppableRICO
 
 		public void UpdateInfoPanelTabs (ushort BuildingID)
 		{
-			//this method creates a list of the sub building chain, and applies the approprate settings to the tabs. 
+			//this method creates a list of the sub building chain, and applies the approprate settings to the tabs.
+
+			selected = BuildingID;
+
+			foreach (var button in TabButtons) { 
+				button.isVisible = false;
+			}
 
 			Building SelectedBuilding = BuildingManager.instance.m_buildings.m_buffer [BuildingID];
 
-			if ((SelectedBuilding.m_parentBuilding == 0) & (SelectedBuilding.m_subBuilding == 0)) { 
-
-				foreach (var button in TabButtons) { //if there are no subbuildings, hide tabs
-					button.isVisible = false;
-				}
-			} else { //but if there are sub/parent buildings, draw the tabs
+			if (!((SelectedBuilding.m_parentBuilding == 0) && (SelectedBuilding.m_subBuilding == 0))) {//if there are sub/parent buildings, draw the tabs
 
 				if (SelectedBuilding.m_parentBuilding != 0) { //work up the building chain, and grab all parent IDs. 
 
@@ -116,14 +116,39 @@ namespace PloppableRICO
 
 					if (!(TabBuilding.Info.m_buildingAI is DummyBuildingAI)) { //dont draw tabs for dummy buildings.
 
-						TabButtons [counter].isVisible = true;
 						TabButtons [counter].eventClick += (sender, e) => SelectSub (sender, e, ID);
-						TabButtons [counter].name = BuildingID.ToString ();
-
-					
+						TabButtons [counter].isVisible = true;
+						//TabButtons [counter].name = BuildingID.ToString ();
 
 						if (TabBuilding.Info.m_buildingAI is MonumentAI) { //draw the sprite on the buttons. 
-							TabSprites [counter].spriteName = "FeatureMonumentLevel3";
+							TabSprites [counter].atlas = UIView.GetAView ().FindUIComponent<UIButton> ("Zoning").atlas;
+							TabSprites [counter].spriteName = "ToolbarIconMonuments";
+
+						}
+						if (TabBuilding.Info.m_buildingAI is SchoolAI) { //draw the sprite on the buttons. 
+							TabSprites [counter].atlas = UIView.GetAView ().FindUIComponent<UIButton> ("Zoning").atlas;
+							TabSprites [counter].spriteName = "ToolbarIconEducation";
+
+						}
+						if (TabBuilding.Info.m_buildingAI is HospitalAI) { //draw the sprite on the buttons. 
+							TabSprites [counter].atlas = UIView.GetAView ().FindUIComponent<UIButton> ("Zoning").atlas;
+							TabSprites [counter].spriteName = "ToolbarIconHealthcare";
+	
+						}
+						if (TabBuilding.Info.m_buildingAI is PoliceStationAI) { //draw the sprite on the buttons. 
+							TabSprites [counter].atlas = UIView.GetAView ().FindUIComponent<UIButton> ("Zoning").atlas;
+							TabSprites [counter].spriteName = "ToolbarIconPolice";
+				
+						}
+						if (TabBuilding.Info.m_buildingAI is FireStationAI) { //draw the sprite on the buttons. 
+							TabSprites [counter].atlas = UIView.GetAView ().FindUIComponent<UIButton> ("Zoning").atlas;
+							TabSprites [counter].spriteName = "ToolbarIconFireDepartment";
+			
+						}
+						if (TabBuilding.Info.m_buildingAI is PowerPlantAI) { //draw the sprite on the buttons. 
+							TabSprites [counter].atlas = UIView.GetAView ().FindUIComponent<UIButton> ("Zoning").atlas;
+							TabSprites [counter].spriteName = "ToolbarIconElectricity";
+						
 						}
 
 						if (TabBuilding.Info.m_buildingAI is PloppableOffice) {
@@ -134,7 +159,8 @@ namespace PloppableRICO
 							TabSprites [counter].atlas = UIView.GetAView ().FindUIComponent<UIButton> ("CommercialLow").atlas;
 							TabSprites [counter].spriteName = "ZoningResidentialHigh";
 						}
-						if (TabBuilding.Info.m_buildingAI is PloppableExtractor) {
+					
+						if (TabBuilding.Info.m_buildingAI is PloppableExtractor || TabBuilding.Info.m_buildingAI is PloppableIndustrial ) {
 							TabSprites [counter].atlas = UIView.GetAView ().FindUIComponent<UIButton> ("CommercialLow").atlas;
 							TabSprites [counter].spriteName = "ZoningIndustrial";
 						}
@@ -157,6 +183,7 @@ namespace PloppableRICO
 					TabButtons [0].isVisible = false;
 				}
 
+				Debug.Log ("Tabs Redrawn for " + BuildingID);
 				IDList.Clear ();
 			} 
 		}
