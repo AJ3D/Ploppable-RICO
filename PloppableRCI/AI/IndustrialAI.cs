@@ -12,15 +12,15 @@ namespace PloppableRICO
 	public class PloppableIndustrial : IndustrialBuildingAI
 
 	{
-
-		public int m_levelmin = 1;
-		public int m_levelmax = 1;
 		public int m_constructionCost = 1;
-		BuildingData Bdata;
-		float m_pollutionRadius = 400f;
-		public int m_housemulti = 1;
+		public int m_workplaceCount = 1;
 
-		public override void GetWidthRange (out int minWidth, out int maxWidth)
+        public override string GenerateName(ushort buildingID, InstanceID caller)
+        {
+            return base.m_info.GetUncheckedLocalizedTitle();
+        }
+
+        public override void GetWidthRange (out int minWidth, out int maxWidth)
 		{
 			minWidth = 1;
 			maxWidth = 32;
@@ -46,7 +46,7 @@ namespace PloppableRICO
 
 		public override void CalculateWorkplaceCount(Randomizer r, int width, int length, out int level0, out int level1, out int level2, out int level3)
 		{
-			int widths = m_housemulti;
+			int widths = m_workplaceCount;
 
 			base.CalculateWorkplaceCount (r, widths, 1 ,out level0,out level1,out level2, out level3);
 		}
@@ -56,33 +56,6 @@ namespace PloppableRICO
 		{
 			//Singleton<NaturalResourceManager>.instance.TryDumpResource(NaturalResourceManager.Resource.Pollution, 500, 500, data.m_position, this.m_pollutionRadius);
 			buildingData.UpdateBuilding ((ushort)buildingData.m_buildIndex);
-
-			BuildingData[] dataArray = BuildingDataManager.buildingData;		
-			Bdata = dataArray [(int)buildingID];
-
-			if (Bdata == null) {
-
-				Bdata = new BuildingData ();
-				dataArray [(int)buildingID] = Bdata;
-				Bdata.level = m_levelmin;
-				Bdata.Name = buildingData.Info.name;
-				Bdata.saveflag = false;
-			}
-
-
-			if (Bdata.saveflag == false){
-
-				if (Bdata.level == 2) {
-					buildingData.Info = PrefabCollection<BuildingInfo>.FindLoaded (Bdata.Name + "_Level2");
-				}
-				if (Bdata.level == 3) {
-
-					buildingData.Info = PrefabCollection<BuildingInfo>.FindLoaded (Bdata.Name + "_Level3");
-				}
-
-				Bdata.saveflag = true;
-			}
-
 
 			buildingData.m_garbageBuffer = 0;
 			buildingData.m_fireHazard = 0;
@@ -253,9 +226,10 @@ namespace PloppableRICO
 								num4 += 1.57079637f;
 								num3 = width;
 							}
-							ushort num5;
 
-							/*
+
+                            /*
+                            ushort num5;
 							if (Singleton<BuildingManager>.instance.CreateBuilding(out num5, ref Singleton<SimulationManager>.instance.m_randomizer, randomBuildingInfo, buildingData.m_position, buildingData.m_angle, num3, Singleton<SimulationManager>.instance.m_currentBuildIndex))
 							{
 								Singleton<SimulationManager>.instance.m_currentBuildIndex += 1u;
@@ -275,7 +249,7 @@ namespace PloppableRICO
 									break;
 								}
 							}  */
-							instance3.m_currentBuildIndex += 1u;
+                            instance3.m_currentBuildIndex += 1u;
 						}
 					}
 				}

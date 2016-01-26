@@ -19,20 +19,12 @@ namespace PloppableRICO
 	public class PloppableTool : ToolBase
 	{
 		UIButton PloppableButton;
-		BuildingInfo BuildingIm;
 		UIPanel BuildingPanel;
 		UITabstrip Tabs;
-		bool m_active;
 		UIButton BBut;
 	
-		UISprite resbutton;
-		UISprite combutton;
-		UISprite offbutton;
-		UISprite indbutton;
-
 
 		int types = 9;
-		UISprite TabSprite;
 		UISprite[] TabSprites = new UISprite[10];
 		UIScrollablePanel[] BuildingPanels = new UIScrollablePanel[10];
 		UIButton[] TabButtons = new UIButton[10];
@@ -55,7 +47,7 @@ namespace PloppableRICO
 		int taboffsetstart = 5;
 
 
-		public void InitGui (List<string[]> BuildingNames)
+		public void InitGui (Dictionary<BuildingInfo, string> prefabToCategoryMap)
 		{
 
 			UIView uiView = UIView.GetAView ();
@@ -191,14 +183,10 @@ namespace PloppableRICO
 				BuildingPanels [0].isVisible = true; //start with lowres panel visible. 
 				//TabButtons [0].state = UIButton.ButtonState.Focused;
 
-				string[][] Bdnames = new string[][]{ };
-				Bdnames = BuildingNames.ToArray ();
 				int Offset = 0;
+				foreach (var entry in prefabToCategoryMap) { //this loops though BuildingNames, and draws a button for each one. 
 
-				foreach (string[] test in Bdnames) { //this loops though BuildingNames, and draws a button for each one. 
-
-					BuildingIm = PrefabCollection<BuildingInfo>.FindLoaded (test [0]);
-					GenBButton (BuildingIm, Offset, test [1]);
+					GenBButton (entry.Key, Offset, entry.Value);
 					Offset = Offset + 109;
 				}
 					

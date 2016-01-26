@@ -9,20 +9,11 @@ using ICities;
 namespace PloppableRICO
 {
 
-	public class PloppableExtractor : IndustrialExtractorAI
-
+	public class PloppableCommercial : CommercialBuildingAI
 	{
-
-		public int m_levelmin = 1;
-		public int m_levelmax = 1;
-		public int m_maintenanceCost = 100;
+		public int m_workplaceCount = 1;
 		public int m_constructionCost = 1;
-		public int m_housemulti = 1;
-
-		BuildingData Bdata;
-
-
-		float m_pollutionRadius = 400f;
+		public string m_subtype = "Low";
 
 		public override void GetWidthRange (out int minWidth, out int maxWidth)
 		{
@@ -31,6 +22,10 @@ namespace PloppableRICO
 			maxWidth = 32;
 		}
 
+		public override bool ClearOccupiedZoning ()
+		{
+			return true;
+		}
 
 		public override void GetLengthRange (out int minLength, out int maxLength)
 		{
@@ -38,66 +33,73 @@ namespace PloppableRICO
 			minLength = 1;
 			maxLength = 16;
 		}
+        public override string GenerateName(ushort buildingID, InstanceID caller)
+        {
+            return base.m_info.GetUncheckedLocalizedTitle();
+        }
 
-		public override int GetConstructionCost()
+        public override int GetConstructionCost()
 		{
 			int result = (m_constructionCost * 100);
 			Singleton<EconomyManager>.instance.m_EconomyWrapper.OnGetConstructionCost(ref result, this.m_info.m_class.m_service, this.m_info.m_class.m_subService, this.m_info.m_class.m_level);
 			return result;
 		}
 
-		public override bool ClearOccupiedZoning ()
+
+		public override void CalculateWorkplaceCount (Randomizer r, int width, int length, out int level1,out int level2,out int level3, out int level4)
 		{
-			return true;
+			int widths = 1;
+
+			if (m_subtype == "Low") {
+				widths = (m_workplaceCount + (m_workplaceCount / 3));
+			}
+			if (m_subtype == "High") {
+				widths = (m_workplaceCount + m_workplaceCount);
+			}
+
+			base.CalculateWorkplaceCount (r, widths, 1 ,out level1,out level2,out level3, out level4);
 		}
 
-		public override void CalculateWorkplaceCount(Randomizer r, int width, int length, out int level0, out int level1, out int level2, out int level3)
-		{
-			int widths = m_housemulti;
+		public void RenderLevelUpEffect(ushort buildingID, ref Building buildingData){
 
-			base.CalculateWorkplaceCount (r, widths, 1 ,out level0,out level1,out level2, out level3);
+			BuildingManager instance = Singleton<BuildingManager>.instance;
+			instance.UpdateBuildingRenderer(buildingID, true);
+			EffectInfo levelupEffect = instance.m_properties.m_levelupEffect;
+			if (levelupEffect != null)
+			{
+				InstanceID instance2 = default(InstanceID);
+				instance2.Building = buildingID;
+				Vector3 pos;
+				Quaternion q;
+				buildingData.CalculateMeshPosition(out pos, out q);
+				Matrix4x4 matrix = Matrix4x4.TRS(pos, q, Vector3.one);
+				EffectInfo.SpawnArea spawnArea = new EffectInfo.SpawnArea(matrix, this.m_info.m_lodMeshData);
+				Singleton<EffectManager>.instance.DispatchEffect(levelupEffect, instance2, spawnArea, Vector3.zero, 0f, 1f, instance.m_audioGroup);
+			}
+			Vector3 position = buildingData.m_position;
+			position.y += this.m_info.m_size.y;
+			Singleton<NotificationManager>.instance.AddEvent(NotificationEvent.Type.LevelUp, position, 1f);
+			Singleton<SimulationManager>.instance.m_currentBuildIndex += 1u;
+
 		}
+
 
 		public override void SimulationStep (ushort buildingID, ref Building buildingData, ref Building.Frame frameData)
-
 		{
-			
-		
-			buildingData.UpdateBuilding ((ushort)buildingID);
-
-			BuildingData[] dataArray = BuildingDataManager.buildingData;		
-			Bdata = dataArray [(int)buildingID];
-
-			if (Bdata == null) {
-
-				Bdata = new BuildingData ();
-				dataArray [(int)buildingID] = Bdata;
-				Bdata.Name = buildingData.Info.name;
-				Bdata.level = 1;
-				Bdata.saveflag = false;
-			}
-
-			if (Bdata.saveflag == false) {
-				//buildingData.Info = PrefabCollection<BuildingInfo>.FindLoaded (Bdata.fieldA + "_Level1");
-				Bdata.saveflag = true;
-			}
-
-			//Singleton<NaturalResourceManager>.instance.TryDumpResource(NaturalResourceManager.Resource.Pollution, 500, 500, data.m_position, this.m_pollutionRadius);
-
-			//buildingData.m_problems = Notification.Problem.None;
-			//buildingData.m_flags = Building.Flags.None;
-			buildingData.m_flags |= Building.Flags.Created;
-			buildingData.m_flags |= Building.Flags.Completed;
-	
-
-			buildingData.m_garbageBuffer = 0;
+			buildingData.m_garbageBuffer = 30;
 			buildingData.m_fireHazard = 0;
 			buildingData.m_fireIntensity = 0;
 			buildingData.m_majorProblemTimer = 0;
 
+			//data.m_problems = Notification.Problem.None;
+			//data.m_flags = Building.Flags.None;
+			//data.m_flags |= Building.Flags.Active;
+			//data.m_flags |= Building.Flags.Created;
+			//data.m_flags |= Building.Flags.Completed;
+
 
 			/////////////////////////////COMMON BUILDING AI
-	 
+
 			if ((buildingData.m_flags & Building.Flags.Abandoned) != Building.Flags.None)
 			{
 				GuideController properties = Singleton<GuideManager>.instance.m_properties;
@@ -169,12 +171,12 @@ namespace PloppableRICO
 
 			if (Singleton<SimulationManager>.instance.m_randomizer.Int32(10u) == 0)
 			{
-				DistrictManager instance = Singleton<DistrictManager>.instance;
-				byte district = instance.GetDistrict(buildingData.m_position);
-				ushort style = instance.m_districts.m_buffer[(int)district].m_Style;
-				if (style > 0 && (int)(style - 1) < instance.m_Styles.Length)
+				DistrictManager instance8 = Singleton<DistrictManager>.instance;
+				byte district = instance8.GetDistrict(buildingData.m_position);
+				ushort style = instance8.m_districts.m_buffer[(int)district].m_Style;
+				if (style > 0 && (int)(style - 1) < instance8.m_Styles.Length)
 				{
-					DistrictStyle districtStyle = instance.m_Styles[(int)(style - 1)];
+					DistrictStyle districtStyle = instance8.m_Styles[(int)(style - 1)];
 					if (districtStyle != null && this.m_info.m_class != null && districtStyle.AffectsService(this.m_info.GetService(), this.m_info.GetSubService(), this.m_info.m_class.m_level) && !districtStyle.Contains(this.m_info) && Singleton<ZoneManager>.instance.m_lastBuildIndex == Singleton<SimulationManager>.instance.m_currentBuildIndex)
 					{
 						//buildingData.m_flags |= Building.Flags.Demolishing;
@@ -253,9 +255,10 @@ namespace PloppableRICO
 								num4 += 1.57079637f;
 								num3 = width;
 							}
-							ushort num5;
 
-							/*
+                            /*
+                            ushort num5;
+
 							if (Singleton<BuildingManager>.instance.CreateBuilding(out num5, ref Singleton<SimulationManager>.instance.m_randomizer, randomBuildingInfo, buildingData.m_position, buildingData.m_angle, num3, Singleton<SimulationManager>.instance.m_currentBuildIndex))
 							{
 								Singleton<SimulationManager>.instance.m_currentBuildIndex += 1u;
@@ -275,72 +278,69 @@ namespace PloppableRICO
 									break;
 								}
 							}  */
-							instance3.m_currentBuildIndex += 1u;
+                            instance3.m_currentBuildIndex += 1u;
 						}
 					}
 				}
 			}
 
-			////////////////////////////////////////////////////PRIVATEBUILDINGAI
+			//////////////////////////////COMMERCIAL AI
 
-
-
-
-			///////////////////////////////////////INDUSTRIALEXTRACTOR SIM STEP
+			SimulationManager instance9 = Singleton<SimulationManager>.instance;
+			//DistrictManager instance2 = Singleton<DistrictManager>.instance;
+			//byte district = instance2.GetDistrict(buildingData.m_position);
 			/*
-
-			SimulationManager instance5 = Singleton<SimulationManager>.instance;
-			DistrictManager instance4 = Singleton<DistrictManager>.instance;
-			byte district = instance4.GetDistrict(buildingData.m_position);
+			DistrictPolicies.CityPlanning cityPlanningPolicies = instance2.m_districts.m_buffer[(int)district].m_cityPlanningPolicies;
 			if ((buildingData.m_flags & (Building.Flags.Completed | Building.Flags.Upgrading)) != Building.Flags.None)
 			{
-				instance4.m_districts.m_buffer[(int)district].AddIndustrialData(buildingData.Width * buildingData.Length, (buildingData.m_flags & Building.Flags.Abandoned) != Building.Flags.None, (buildingData.m_flags & Building.Flags.BurnedDown) != Building.Flags.None, this.m_info.m_class.m_subService);
+				instance2.m_districts.m_buffer[(int)district].AddCommercialData(buildingData.Width * buildingData.Length, (buildingData.m_flags & Building.Flags.Abandoned) != Building.Flags.None, (buildingData.m_flags & Building.Flags.BurnedDown) != Building.Flags.None, this.m_info.m_class.m_subService);
 			}
-			if (instance5.m_randomizer.Int32(10u) == 0)
+			if (this.m_info.m_class.m_subService == ItemClass.SubService.CommercialHigh && (cityPlanningPolicies & DistrictPolicies.CityPlanning.HighriseBan) != DistrictPolicies.CityPlanning.None && this.m_info.m_class.m_level == ItemClass.Level.Level3 && instance.m_randomizer.Int32(10u) == 0 && Singleton<ZoneManager>.instance.m_lastBuildIndex == instance.m_currentBuildIndex)
 			{
-				DistrictPolicies.Specialization specializationPolicies = instance4.m_districts.m_buffer[(int)district].m_specializationPolicies;
+				District[] expr_10E_cp_0 = instance2.m_districts.m_buffer;
+				byte expr_10E_cp_1 = district;
+				expr_10E_cp_0[(int)expr_10E_cp_1].m_cityPlanningPoliciesEffect = (expr_10E_cp_0[(int)expr_10E_cp_1].m_cityPlanningPoliciesEffect | DistrictPolicies.CityPlanning.HighriseBan);
+				buildingData.m_flags |= Building.Flags.Demolishing;
+				instance.m_currentBuildIndex += 1u;
+			}
+			if (Singleton<SimulationManager>.instance.m_randomizer.Int32(10u) == 0)
+			{
+				DistrictPolicies.Specialization specializationPolicies = instance2.m_districts.m_buffer[(int)district].m_specializationPolicies;
 				DistrictPolicies.Specialization specialization = this.SpecialPolicyNeeded();
 				if (specialization != DistrictPolicies.Specialization.None)
 				{
 					if ((specializationPolicies & specialization) == DistrictPolicies.Specialization.None)
 					{
-						if (Singleton<ZoneManager>.instance.m_lastBuildIndex == instance5.m_currentBuildIndex)
+						if (Singleton<ZoneManager>.instance.m_lastBuildIndex == instance.m_currentBuildIndex)
 						{
 							buildingData.m_flags |= Building.Flags.Demolishing;
-							instance5.m_currentBuildIndex += 1u;
+							instance.m_currentBuildIndex += 1u;
 						}
 					}
 					else
 					{
-						District[] expr_116_cp_0 = instance4.m_districts.m_buffer;
-						byte expr_116_cp_1 = district;
-						expr_116_cp_0[(int)expr_116_cp_1].m_specializationPoliciesEffect = (expr_116_cp_0[(int)expr_116_cp_1].m_specializationPoliciesEffect | specialization);
+						District[] expr_1CE_cp_0 = instance2.m_districts.m_buffer;
+						byte expr_1CE_cp_1 = district;
+						expr_1CE_cp_0[(int)expr_1CE_cp_1].m_specializationPoliciesEffect = (expr_1CE_cp_0[(int)expr_1CE_cp_1].m_specializationPoliciesEffect | specialization);
 					}
 				}
-				else if ((specializationPolicies & (DistrictPolicies.Specialization.Forest | DistrictPolicies.Specialization.Farming | DistrictPolicies.Specialization.Oil | DistrictPolicies.Specialization.Ore)) != DistrictPolicies.Specialization.None && Singleton<ZoneManager>.instance.m_lastBuildIndex == instance.m_currentBuildIndex)
+				else if ((specializationPolicies & (DistrictPolicies.Specialization.Leisure | DistrictPolicies.Specialization.Tourist)) != DistrictPolicies.Specialization.None && Singleton<ZoneManager>.instance.m_lastBuildIndex == instance.m_currentBuildIndex)
 				{
 					buildingData.m_flags |= Building.Flags.Demolishing;
-					instance5.m_currentBuildIndex += 1u;
+					instance.m_currentBuildIndex += 1u;
 				}
 			}
-			uint num = (instance5.m_currentFrameIndex & 3840u) >> 8;
-			if (num == 15u)
+
+			*/
+			uint num9 = (instance9.m_currentFrameIndex & 3840u) >> 8;
+			if (num9 == 15u)
 			{
+				buildingData.m_finalImport = buildingData.m_tempImport;
 				buildingData.m_finalExport = buildingData.m_tempExport;
+				buildingData.m_tempImport = 0;
 				buildingData.m_tempExport = 0;
 			}
-*/
-			//////////////////////////////////////////INDUSTRIALEXTRACTOR SIM STEP
-
-
-
-			//base.SimulationStep(buildingID, ref data);
-
-			//buildingData.m_problems = Notification.Problem.None;
-			//buildingData.m_flags = Building.Flags.None;
-			buildingData.m_flags |= Building.Flags.Created;
-			buildingData.m_flags |= Building.Flags.Completed;
-
 		}
+
 	}
 }
