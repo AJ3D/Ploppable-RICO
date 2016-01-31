@@ -84,7 +84,11 @@ namespace PloppableRICO
 						continue;
 					}
 
-                    prefabToCategoryMap.Add (parentBuildingPrefab, buildingDef.UICategory);
+					if (buildingDef.UICategory != null) { //only add to RICO panel if UI category is set. 
+
+						prefabToCategoryMap.Add (parentBuildingPrefab, buildingDef.UICategory);
+
+					}
 
                     // INIT RICO SETTINGS FOR BUILDING
                     try {
@@ -128,7 +132,7 @@ namespace PloppableRICO
 
         public void InitRICO(string service, string subService, BuildingInfo prefab, int levelMax, int levelMin, int homeCount, int workplaceCount, int constructionCost)
         {
-            if (service == "Residential")
+            if (service == "residential")
             {
                 var ai = prefab.gameObject.AddComponent<PloppableResidential>();
                 prefab.m_buildingAI = ai;
@@ -136,12 +140,14 @@ namespace PloppableRICO
                 ai.m_homeCount = homeCount;
                 ai.m_constructionCost = constructionCost;
                 ai.m_constructionTime = 0;
+				prefab.m_buildingAI.m_info = prefab;
+				prefab.InitializePrefab();
 
-                if (subService == "Low")
+                if (subService == "low")
                 {
                     prefab.m_class = ItemClassCollection.FindClass("Low Residential - Level" + levelMin);
                 }
-                else if (subService == "High")
+                else if (subService == "high")
                 {
                     prefab.m_class = ItemClassCollection.FindClass("High Residential - Level" + levelMin);
                 }
@@ -151,7 +157,7 @@ namespace PloppableRICO
                 }
             }
 
-            else if (service == "Office")
+            else if (service == "office")
             {
                 var ai = prefab.gameObject.AddComponent<PloppableOffice>();
                 prefab.m_buildingAI = ai;
@@ -159,11 +165,13 @@ namespace PloppableRICO
                 ai.m_workplaceCount = workplaceCount;
                 ai.m_constructionCost = constructionCost;
                 ai.m_constructionTime = 0;
+				prefab.m_buildingAI.m_info = prefab;
+				prefab.InitializePrefab();
 
                 prefab.m_class = ItemClassCollection.FindClass("Office - Level" + levelMin);
             }
 
-            else if (service == "Industrial")
+            else if (service == "industrial")
             {
                 var ai = prefab.gameObject.AddComponent<PloppableIndustrial>();
                 prefab.m_buildingAI = ai;
@@ -171,24 +179,26 @@ namespace PloppableRICO
                 ai.m_workplaceCount = workplaceCount;
                 ai.m_constructionCost = constructionCost;
                 ai.m_constructionTime = 0;
+				prefab.m_buildingAI.m_info = prefab;
+				prefab.InitializePrefab();
 
-                if (subService == "Farming")
+                if (subService == "farming")
                 {
                     prefab.m_class = ItemClassCollection.FindClass("Farming - Processing");
                 }
-                else if (subService == "Forest")
+                else if (subService == "forest")
                 {
                     prefab.m_class = ItemClassCollection.FindClass("Forest - Processing");
                 }
-                else if (subService == "Oil")
+                else if (subService == "oil")
                 {
                     prefab.m_class = ItemClassCollection.FindClass("Oil - Processing");
                 }
-                else if (subService == "Ore")
+                else if (subService == "ore")
                 {
                     prefab.m_class = ItemClassCollection.FindClass("Ore - Processing");
                 }
-                else if (subService == "Generic")
+                else if (subService == "generic")
                 {
                     prefab.m_class = ItemClassCollection.FindClass("Industrial - Level" + levelMin);
                 }
@@ -198,7 +208,7 @@ namespace PloppableRICO
                 }
             }
 
-            else if (service == "Extractor")
+            else if (service == "extractor")
             {
                 var ai = prefab.gameObject.AddComponent<PloppableExtractor>();
                 prefab.m_buildingAI = ai;
@@ -206,20 +216,22 @@ namespace PloppableRICO
                 ai.m_workplaceCount = workplaceCount;
                 ai.m_constructionCost = constructionCost;
                 ai.m_constructionTime = 0;
+				prefab.m_buildingAI.m_info = prefab;
+				prefab.InitializePrefab();
 
-                if (subService == "Farming")
+                if (subService == "farming")
                 {
                     prefab.m_class = ItemClassCollection.FindClass("Farming - Extractor");
                 }
-                else if (subService == "Forest")
+                else if (subService == "forest")
                 {
                     prefab.m_class = ItemClassCollection.FindClass("Forest - Extractor");
                 }
-                else if (subService == "Oil")
+                else if (subService == "oil")
                 {
                     prefab.m_class = ItemClassCollection.FindClass("Oil - Extractor");
                 }
-                else if (subService == "Ore")
+                else if (subService == "ore")
                 {
                     prefab.m_class = ItemClassCollection.FindClass("Ore - Extractor");
                 }
@@ -229,7 +241,7 @@ namespace PloppableRICO
                 }
             }
 
-            else if (service == "Commercial")
+            else if (service == "commercial")
             {
                 var ai = prefab.gameObject.AddComponent<PloppableCommercial>();
                 prefab.m_buildingAI = ai;
@@ -237,12 +249,14 @@ namespace PloppableRICO
                 ai.m_workplaceCount = workplaceCount;
                 ai.m_constructionCost = constructionCost;
                 ai.m_constructionTime = 0;
+				prefab.m_buildingAI.m_info = prefab;
+				prefab.InitializePrefab();
 
-                if (subService == "Low")
+                if (subService == "low")
                 {
                     prefab.m_class = ItemClassCollection.FindClass("Low Commercial - Level" + levelMin);
                 }
-                else if (subService == "High")
+                else if (subService == "high")
                 {
                     prefab.m_class = ItemClassCollection.FindClass("High Commercial - Level" + levelMin);
                 }
@@ -251,14 +265,19 @@ namespace PloppableRICO
                     throw new Exception("Invalid SubService " + subService + "!");
                 }
             }
+				
 
-            else
-            {
-                throw new Exception("Invalid Service " + service + "!");
-            }
+			prefab.m_placementStyle = ItemClass.Placement.Procedural;
 
-            prefab.m_buildingAI.m_info = prefab;
-            prefab.InitializePrefab();
+
+		
+		//} else
+          //  {
+         //     //  throw new Exception("Invalid Service " + service + "!");
+          //  }
+         
+
+            
         }
     }
 
@@ -297,7 +316,7 @@ namespace PloppableRICO
 			[XmlAttribute ("level-max"), DefaultValue (1)]
 			public int LevelMax { get; set; }
 
-			[XmlAttribute ("ui-category"), DefaultValue ("reshigh")]
+			[XmlAttribute ("ui-category"), DefaultValue ("none")]
 			public string UICategory { get; set; }
 		}
 	}

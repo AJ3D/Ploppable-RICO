@@ -12,7 +12,6 @@ namespace PloppableRICO
 	public class PloppableExtractor : IndustrialExtractorAI
 
 	{
-		public int m_maintenanceCost = 100;
 		public int m_constructionCost = 1;
         public int m_workplaceCount = 1;
 
@@ -20,7 +19,7 @@ namespace PloppableRICO
 		{
 			base.GetWidthRange (out minWidth, out maxWidth);
 			minWidth = 1;
-			maxWidth = 32;
+			maxWidth = 16;
 		}
 
         public override string GenerateName(ushort buildingID, InstanceID caller)
@@ -60,10 +59,6 @@ namespace PloppableRICO
 		{
 			//Singleton<NaturalResourceManager>.instance.TryDumpResource(NaturalResourceManager.Resource.Pollution, 500, 500, data.m_position, this.m_pollutionRadius);
 
-			//buildingData.m_problems = Notification.Problem.None;
-			//buildingData.m_flags = Building.Flags.None;
-			buildingData.m_flags |= Building.Flags.Created;
-			buildingData.m_flags |= Building.Flags.Completed;
 	
 
 			buildingData.m_garbageBuffer = 0;
@@ -259,64 +254,6 @@ namespace PloppableRICO
 			}
 
 			////////////////////////////////////////////////////PRIVATEBUILDINGAI
-
-
-
-
-			///////////////////////////////////////INDUSTRIALEXTRACTOR SIM STEP
-			/*
-
-			SimulationManager instance5 = Singleton<SimulationManager>.instance;
-			DistrictManager instance4 = Singleton<DistrictManager>.instance;
-			byte district = instance4.GetDistrict(buildingData.m_position);
-			if ((buildingData.m_flags & (Building.Flags.Completed | Building.Flags.Upgrading)) != Building.Flags.None)
-			{
-				instance4.m_districts.m_buffer[(int)district].AddIndustrialData(buildingData.Width * buildingData.Length, (buildingData.m_flags & Building.Flags.Abandoned) != Building.Flags.None, (buildingData.m_flags & Building.Flags.BurnedDown) != Building.Flags.None, this.m_info.m_class.m_subService);
-			}
-			if (instance5.m_randomizer.Int32(10u) == 0)
-			{
-				DistrictPolicies.Specialization specializationPolicies = instance4.m_districts.m_buffer[(int)district].m_specializationPolicies;
-				DistrictPolicies.Specialization specialization = this.SpecialPolicyNeeded();
-				if (specialization != DistrictPolicies.Specialization.None)
-				{
-					if ((specializationPolicies & specialization) == DistrictPolicies.Specialization.None)
-					{
-						if (Singleton<ZoneManager>.instance.m_lastBuildIndex == instance5.m_currentBuildIndex)
-						{
-							buildingData.m_flags |= Building.Flags.Demolishing;
-							instance5.m_currentBuildIndex += 1u;
-						}
-					}
-					else
-					{
-						District[] expr_116_cp_0 = instance4.m_districts.m_buffer;
-						byte expr_116_cp_1 = district;
-						expr_116_cp_0[(int)expr_116_cp_1].m_specializationPoliciesEffect = (expr_116_cp_0[(int)expr_116_cp_1].m_specializationPoliciesEffect | specialization);
-					}
-				}
-				else if ((specializationPolicies & (DistrictPolicies.Specialization.Forest | DistrictPolicies.Specialization.Farming | DistrictPolicies.Specialization.Oil | DistrictPolicies.Specialization.Ore)) != DistrictPolicies.Specialization.None && Singleton<ZoneManager>.instance.m_lastBuildIndex == instance.m_currentBuildIndex)
-				{
-					buildingData.m_flags |= Building.Flags.Demolishing;
-					instance5.m_currentBuildIndex += 1u;
-				}
-			}
-			uint num = (instance5.m_currentFrameIndex & 3840u) >> 8;
-			if (num == 15u)
-			{
-				buildingData.m_finalExport = buildingData.m_tempExport;
-				buildingData.m_tempExport = 0;
-			}
-*/
-			//////////////////////////////////////////INDUSTRIALEXTRACTOR SIM STEP
-
-
-
-			//base.SimulationStep(buildingID, ref data);
-
-			//buildingData.m_problems = Notification.Problem.None;
-			//buildingData.m_flags = Building.Flags.None;
-			buildingData.m_flags |= Building.Flags.Created;
-			buildingData.m_flags |= Building.Flags.Completed;
 
 		}
 	}

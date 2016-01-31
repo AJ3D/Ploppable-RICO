@@ -74,5 +74,6 @@
   <ItemGroup />
   <ItemGroup>
     <None Include="AI\ResidentialNew.cs" />
+    <None Include="AI\AIMethods.cs" />
   </ItemGroup>
 </Project>
