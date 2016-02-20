@@ -1,0 +1,6 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<PloppableRICODefinition>
+  <Buildings>
+    <Building name="AssetName" service="residential" sub-service="high" level="3" workplaces="" homes="40" construction-cost="30000" ui-category="reshigh"></Building>
+  </Buildings>
+</PloppableRICODefinition>
