@@ -6,6 +6,7 @@ using System.Text;
 using UnityEngine;
 using ColossalFramework;
 using ColossalFramework.Math;
+using ColossalFramework.UI;
 
 namespace PloppableRICO.Detour
 {
@@ -25,7 +26,11 @@ namespace PloppableRICO.Detour
 
 		public static void Deploy ()
 		{
+
+
+
 			if (!deployed) {
+
 				_BuildingTool_CheckCollidingBuildings_original = typeof(BuildingTool).GetMethod (
 					"IsImportantBuilding",
 					BindingFlags.Static | BindingFlags.NonPublic,
@@ -43,7 +48,7 @@ namespace PloppableRICO.Detour
 				);
 					
 				_BuildingTool_CheckCollidingBuildings_state = RedirectionHelper.RedirectCalls (_BuildingTool_CheckCollidingBuildings_original, _BuildingTool_CheckCollidingBuildings_detour);
-		
+
 				deployed = true;
 
 				//Debug.Log("BuildingTool Methods detoured");
@@ -52,10 +57,12 @@ namespace PloppableRICO.Detour
 
 		public static void Revert ()
 		{
+			
 			if (deployed) {
 				RedirectionHelper.RevertRedirect (_BuildingTool_CheckCollidingBuildings_original, _BuildingTool_CheckCollidingBuildings_state);
 				_BuildingTool_CheckCollidingBuildings_original = null;
 				_BuildingTool_CheckCollidingBuildings_detour = null;
+
 
 				deployed = false;
 
@@ -79,13 +86,6 @@ namespace PloppableRICO.Detour
 				return (publicServiceIndex != -1 && !info.m_autoRemove) || (building.m_flags & Building.Flags.Untouchable) != Building.Flags.None || building.m_fireIntensity != 0;
 			}
 		}
-
-		private static bool IsImportantBuilding (BuildingInfo info, ushort id)
-		{
-			return IsImportantBuilding (info, ref Singleton<BuildingManager>.instance.m_buildings.m_buffer [(int)id]);
-		}
-
-
 
 
 	}

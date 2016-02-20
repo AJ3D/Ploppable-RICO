@@ -22,7 +22,7 @@ using System;
 using System.Reflection;
 using System.Runtime.InteropServices;
 
-namespace PloppableRICO
+namespace PloppableRICO.Detour
 
 {
 

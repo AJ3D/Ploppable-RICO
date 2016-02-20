@@ -21,18 +21,18 @@ namespace PloppableRICO
 	{
 		public Dictionary<BuildingInfo, string> Run ()
 		{
-            var prefabToCategoryMap = new Dictionary<BuildingInfo, string>();
+			var prefabToCategoryMap = new Dictionary<BuildingInfo, string> ();
 
-            var ricoDefParseErrors = new HashSet<string> ();
+			var ricoDefParseErrors = new HashSet<string> ();
 			var checkedPaths = new List<string> ();
 
-			for (uint i = 0; i < PrefabCollection<BuildingInfo>.LoadedCount (); i++)
-            {
+			for (uint i = 0; i < PrefabCollection<BuildingInfo>.LoadedCount (); i++) {
 				var prefab = PrefabCollection<BuildingInfo>.GetLoaded (i);
-				if (prefab == null) continue;
+				if (prefab == null)
+					continue;
 
-                // search for PloppableRICODefinition.xml
-                var asset = PackageManager.FindAssetByName (prefab.name);
+				// search for PloppableRICODefinition.xml
+				var asset = PackageManager.FindAssetByName (prefab.name);
 				if (asset == null || asset.package == null)
 					continue;
 
@@ -68,18 +68,15 @@ namespace PloppableRICO
 					continue;
 				}
 
-				foreach (var buildingDef in ricoDef.Buildings)
-                {
-					if (buildingDef == null || buildingDef.Name == null)
-                    {
+				foreach (var buildingDef in ricoDef.Buildings) {
+					if (buildingDef == null || buildingDef.Name == null) {
 						ricoDefParseErrors.Add (asset.package.packageName + " - Building name missing.");
 						continue;
 					}
 
 					var parentBuildingPrefab = FindPrefab (buildingDef.Name, asset.package.packageName);
 
-					if (parentBuildingPrefab == null)
-                    {
+					if (parentBuildingPrefab == null) {
 						ricoDefParseErrors.Add (asset.package.packageName + " - Building with name " + buildingDef.Name + " not loaded.");
 						continue;
 					}
@@ -90,15 +87,13 @@ namespace PloppableRICO
 
 					}
 
-                    // INIT RICO SETTINGS FOR BUILDING
-                    try {
-                        InitRICO(buildingDef.Service, buildingDef.SubService, parentBuildingPrefab, buildingDef.LevelMax,
-                            buildingDef.LevelMin, buildingDef.HomeCount, buildingDef.WorkplaceCount, buildingDef.ConstructionCost);
-                    }
-                    catch (Exception e)
-                    {
-                        ricoDefParseErrors.Add(asset.package.packageName + " - " + e.Message);
-                    }
+					// INIT RICO SETTINGS FOR BUILDING
+					try {
+						InitRICO (buildingDef.Service, buildingDef.SubService, parentBuildingPrefab, buildingDef.LevelMax,
+							buildingDef.LevelMin, buildingDef.HomeCount, buildingDef.WorkplaceCount, buildingDef.ConstructionCost);
+					} catch (Exception e) {
+						ricoDefParseErrors.Add (asset.package.packageName + " - " + e.Message);
+					}
 				}
 			}
 
@@ -130,157 +125,140 @@ namespace PloppableRICO
 			return prefab;
 		}
 
-        public void InitRICO(string service, string subService, BuildingInfo prefab, int levelMax, int levelMin, int homeCount, int workplaceCount, int constructionCost)
-        {
-            if (service == "residential")
-            {
-                var ai = prefab.gameObject.AddComponent<PloppableResidential>();
-                prefab.m_buildingAI = ai;
+		public void InitRICO (string service, string subService, BuildingInfo prefab, int levelMax, int levelMin, int homeCount, int workplaceCount, int constructionCost)
+		{
 
-                ai.m_homeCount = homeCount;
-                ai.m_constructionCost = constructionCost;
-                ai.m_constructionTime = 0;
+			prefab.m_alreadyUnlocked = true;
+
+			UIView uiView = UIView.GetAView ();
+			UIComponent refButton = uiView.FindUIComponent (prefab.name);
+
+			if (refButton != null) {
+				refButton.isVisible = false;
+				refButton.isEnabled = false;
+				refButton.Disable ();
+			}
+
+			if (service == "residential") {
+				var ai = prefab.gameObject.AddComponent<PloppableResidential> ();
+				prefab.m_buildingAI = ai;
+
+				ai.m_homeCount = homeCount;
+				ai.m_constructionCost = constructionCost;
+				ai.m_constructionTime = 0;
+				ai.m_levelmax = levelMax;
+				ai.m_levelmin = levelMin;
+
 				prefab.m_buildingAI.m_info = prefab;
-				prefab.InitializePrefab();
 
-                if (subService == "low")
-                {
-                    prefab.m_class = ItemClassCollection.FindClass("Low Residential - Level" + levelMin);
-                }
-                else if (subService == "high")
-                {
-                    prefab.m_class = ItemClassCollection.FindClass("High Residential - Level" + levelMin);
-                }
-                else
-                {
-                    throw new Exception("Invalid SubService " + subService + "!");
-                }
-            }
+				prefab.InitializePrefab ();
 
-            else if (service == "office")
-            {
-                var ai = prefab.gameObject.AddComponent<PloppableOffice>();
-                prefab.m_buildingAI = ai;
+				if (subService == "low") {
+					
+					prefab.m_class = ItemClassCollection.FindClass ("Low Residential - Level" + levelMax);
+					//PrefabCollection<BuildingInfo>.FindLoaded (prefab.name + "_Level2").m_class = ItemClassCollection.FindClass ("Low Residential - Level2");
 
-                ai.m_workplaceCount = workplaceCount;
-                ai.m_constructionCost = constructionCost;
-                ai.m_constructionTime = 0;
+				} else if (subService == "high") {
+					
+					prefab.m_class = ItemClassCollection.FindClass ("High Residential - Level" + levelMax);
+				//	PrefabCollection<BuildingInfo>.FindLoaded (prefab.name + "_Level2").m_class = ItemClassCollection.FindClass ("High Residential - Level2");
+
+
+				} else {
+					
+					throw new Exception ("Invalid SubService " + subService + "!");
+				}
+
+
+
+			} else if (service == "office") {
+				var ai = prefab.gameObject.AddComponent<PloppableOffice> ();
+				prefab.m_buildingAI = ai;
+
+				ai.m_workplaceCount = workplaceCount;
+				ai.m_constructionCost = constructionCost;
+				ai.m_constructionTime = 0;
 				prefab.m_buildingAI.m_info = prefab;
-				prefab.InitializePrefab();
+				prefab.InitializePrefab ();
 
-                prefab.m_class = ItemClassCollection.FindClass("Office - Level" + levelMin);
-            }
+				prefab.m_class = ItemClassCollection.FindClass ("Office - Level" + levelMin);
+			} else if (service == "industrial") {
+				var ai = prefab.gameObject.AddComponent<PloppableIndustrial> ();
+				prefab.m_buildingAI = ai;
 
-            else if (service == "industrial")
-            {
-                var ai = prefab.gameObject.AddComponent<PloppableIndustrial>();
-                prefab.m_buildingAI = ai;
-
-                ai.m_workplaceCount = workplaceCount;
-                ai.m_constructionCost = constructionCost;
-                ai.m_constructionTime = 0;
+				ai.m_workplaceCount = workplaceCount;
+				ai.m_constructionCost = constructionCost;
+				ai.m_constructionTime = 0;
 				prefab.m_buildingAI.m_info = prefab;
-				prefab.InitializePrefab();
+				prefab.InitializePrefab ();
 
-                if (subService == "farming")
-                {
-                    prefab.m_class = ItemClassCollection.FindClass("Farming - Processing");
-                }
-                else if (subService == "forest")
-                {
-                    prefab.m_class = ItemClassCollection.FindClass("Forest - Processing");
-                }
-                else if (subService == "oil")
-                {
-                    prefab.m_class = ItemClassCollection.FindClass("Oil - Processing");
-                }
-                else if (subService == "ore")
-                {
-                    prefab.m_class = ItemClassCollection.FindClass("Ore - Processing");
-                }
-                else if (subService == "generic")
-                {
-                    prefab.m_class = ItemClassCollection.FindClass("Industrial - Level" + levelMin);
-                }
-                else
-                {
-                    throw new Exception("Invalid SubService " + subService + "!");
-                }
-            }
+				if (subService == "farming") {
+					prefab.m_class = ItemClassCollection.FindClass ("Farming - Processing");
+				} else if (subService == "forest") {
+					prefab.m_class = ItemClassCollection.FindClass ("Forest - Processing");
+				} else if (subService == "oil") {
+					prefab.m_class = ItemClassCollection.FindClass ("Oil - Processing");
+				} else if (subService == "ore") {
+					prefab.m_class = ItemClassCollection.FindClass ("Ore - Processing");
+				} else if (subService == "generic") {
+					prefab.m_class = ItemClassCollection.FindClass ("Industrial - Level" + levelMin);
+				} else {
+					throw new Exception ("Invalid SubService " + subService + "!");
+				}
+			} else if (service == "extractor") {
+				var ai = prefab.gameObject.AddComponent<PloppableExtractor> ();
+				prefab.m_buildingAI = ai;
 
-            else if (service == "extractor")
-            {
-                var ai = prefab.gameObject.AddComponent<PloppableExtractor>();
-                prefab.m_buildingAI = ai;
-
-                ai.m_workplaceCount = workplaceCount;
-                ai.m_constructionCost = constructionCost;
-                ai.m_constructionTime = 0;
+				ai.m_workplaceCount = workplaceCount;
+				ai.m_constructionCost = constructionCost;
+				ai.m_constructionTime = 0;
 				prefab.m_buildingAI.m_info = prefab;
-				prefab.InitializePrefab();
+				prefab.InitializePrefab ();
 
-                if (subService == "farming")
-                {
-                    prefab.m_class = ItemClassCollection.FindClass("Farming - Extractor");
-                }
-                else if (subService == "forest")
-                {
-                    prefab.m_class = ItemClassCollection.FindClass("Forest - Extractor");
-                }
-                else if (subService == "oil")
-                {
-                    prefab.m_class = ItemClassCollection.FindClass("Oil - Extractor");
-                }
-                else if (subService == "ore")
-                {
-                    prefab.m_class = ItemClassCollection.FindClass("Ore - Extractor");
-                }
-                else
-                {
-                    throw new Exception("Invalid SubService " + subService + "!");
-                }
-            }
+				if (subService == "farming") {
+					prefab.m_class = ItemClassCollection.FindClass ("Farming - Extractor");
+				} else if (subService == "forest") {
+					prefab.m_class = ItemClassCollection.FindClass ("Forest - Extractor");
+				} else if (subService == "oil") {
+					prefab.m_class = ItemClassCollection.FindClass ("Oil - Extractor");
+				} else if (subService == "ore") {
+					prefab.m_class = ItemClassCollection.FindClass ("Ore - Extractor");
+				} else {
+					throw new Exception ("Invalid SubService " + subService + "!");
+				}
+			} else if (service == "commercial") {
+				var ai = prefab.gameObject.AddComponent<PloppableCommercial> ();
+				prefab.m_buildingAI = ai;
 
-            else if (service == "commercial")
-            {
-                var ai = prefab.gameObject.AddComponent<PloppableCommercial>();
-                prefab.m_buildingAI = ai;
-
-                ai.m_workplaceCount = workplaceCount;
-                ai.m_constructionCost = constructionCost;
-                ai.m_constructionTime = 0;
+				ai.m_workplaceCount = workplaceCount;
+				ai.m_constructionCost = constructionCost;
+				ai.m_constructionTime = 0;
 				prefab.m_buildingAI.m_info = prefab;
-				prefab.InitializePrefab();
+				prefab.InitializePrefab ();
 
-                if (subService == "low")
-                {
-                    prefab.m_class = ItemClassCollection.FindClass("Low Commercial - Level" + levelMin);
-                }
-                else if (subService == "high")
-                {
-                    prefab.m_class = ItemClassCollection.FindClass("High Commercial - Level" + levelMin);
-                }
-                else
-                {
-                    throw new Exception("Invalid SubService " + subService + "!");
-                }
-            }
+				if (subService == "low") {
+					prefab.m_class = ItemClassCollection.FindClass ("Low Commercial - Level" + levelMin);
+				} else if (subService == "high") {
+					prefab.m_class = ItemClassCollection.FindClass ("High Commercial - Level" + levelMin);
+				} else {
+					throw new Exception ("Invalid SubService " + subService + "!");
+				}
+			}
 				
 
 			prefab.m_placementStyle = ItemClass.Placement.Procedural;
 
 
 		
-		//} else
-          //  {
-         //     //  throw new Exception("Invalid Service " + service + "!");
-          //  }
-         
+			//} else
+			//  {
+			//     //  throw new Exception("Invalid Service " + service + "!");
+			//  }
 
             
-        }
-    }
+		}
 
+	}
 	public class PloppableRICODefinition
 	{
 		public List<Building> Buildings { get; set; }
@@ -304,13 +282,13 @@ namespace PloppableRICO
 			[XmlAttribute ("construction-cost"), DefaultValue (1)]
 			public int ConstructionCost { get; set; }
 
-            [XmlAttribute("homes"), DefaultValue(0)]
-            public int HomeCount { get; set; }
+			[XmlAttribute ("homes"), DefaultValue (0)]
+			public int HomeCount { get; set; }
 
-            [XmlAttribute("workplaces"), DefaultValue(0)]
-            public int WorkplaceCount { get; set; }
+			[XmlAttribute ("workplaces"), DefaultValue (0)]
+			public int WorkplaceCount { get; set; }
 
-            [XmlAttribute ("level-min"), DefaultValue (1)]
+			[XmlAttribute ("level-min"), DefaultValue (1)]
 			public int LevelMin { get; set; }
 
 			[XmlAttribute ("level-max"), DefaultValue (1)]

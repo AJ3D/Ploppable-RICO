@@ -40,7 +40,7 @@ namespace PloppableRICO
 			"Ore",
 		};
 
-		public void DrawPloppableTool (Dictionary<BuildingInfo, string> prefabToCategoryMap)
+		public void DrawPloppableTool ()
 		{
 
 			UIView uiView = UIView.GetAView ();
@@ -134,15 +134,19 @@ namespace PloppableRICO
 				TabButtons [9].eventClick += (sender, e) => TabClicked (sender, e, BuildingPanels [9], TabButtons[9],TabSprites[9]);
 
 				BuildingPanels [0].isVisible = true; //start with lowres panel visible. 
-
-				foreach (var entry in prefabToCategoryMap) { //this loops though BuildingNames, and draws a button for each one. 
-
-					DrawBuildingButton (entry.Key, entry.Value);
-				}
-					
+	
 			}
 	
 		}
+		public void PopulateAssets(Dictionary<BuildingInfo, string> prefabToCategoryMap){
+
+			foreach (var entry in prefabToCategoryMap) { //this loops though BuildingNames, and draws a button for each one. 
+
+				DrawBuildingButton (entry.Key, entry.Value);
+			}
+		}
+
+
 //End of InitGUI
 		public void DrawPanels (UIScrollablePanel panel, string name)
 		{
