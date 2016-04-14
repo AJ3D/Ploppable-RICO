@@ -1,12 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+
 using System.Reflection;
-using System.Text;
-using UnityEngine;
-using ColossalFramework;
-using ColossalFramework.Math;
-using ColossalFramework.UI;
+
 
 namespace PloppableRICO.Detour
 {
