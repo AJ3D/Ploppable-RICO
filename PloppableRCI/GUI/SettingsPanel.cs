@@ -188,7 +188,7 @@ namespace PloppableRICO
 
             List<BuildingData> list = new List<BuildingData>();
 
-            foreach (var bData in XMLManager.xmlData)
+            foreach (var bData in XMLManager.xmlData.Values)
             {
                 if (bData != null)
                 {

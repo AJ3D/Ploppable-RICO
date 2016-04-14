@@ -12,7 +12,7 @@ namespace PloppableRICO
         public void run()
         {
 
-            foreach (var buildingData in XMLManager.xmlData)
+            foreach (var buildingData in XMLManager.xmlData.Values)
             {
 
                 if (buildingData != null)

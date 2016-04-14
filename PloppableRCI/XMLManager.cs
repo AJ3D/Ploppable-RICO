@@ -7,7 +7,6 @@ using ColossalFramework.Globalization;
 using UnityEngine;
 using ColossalFramework.IO;
 using ColossalFramework.Packaging;
-using System.ComponentModel;
 using System.IO;
 using System.Xml.Serialization;
 using ColossalFramework.Plugins;
@@ -20,7 +19,7 @@ namespace PloppableRICO
     /// 
     public class XMLManager
     {
-        public static BuildingData[] xmlData;
+        public static Dictionary<BuildingInfo, BuildingData> xmlData;
         public static BuildingData Instance;
 
         public void Run()
@@ -28,7 +27,7 @@ namespace PloppableRICO
             //This is the data object that holds all of the RICO settings. Its read by the tool panel and the settings panel. 
             //It contains one entry for every ploppable building, and any RICO settings they may have applied.
 
-            xmlData = new BuildingData[PrefabCollection<BuildingInfo>.LoadedCount()];
+            xmlData = new Dictionary<BuildingInfo, BuildingData>();
 
             for (uint i = 0; i < PrefabCollection<BuildingInfo>.LoadedCount(); i++)
             {
@@ -37,16 +36,18 @@ namespace PloppableRICO
                 if (prefab.m_class.m_service == ItemClass.Service.Monument)
                 {
                     //BuildingData buildingData = xmlData?[(int)i];
-                    var buildingData = new BuildingData();
-                    buildingData.id = (uint)prefab.m_prefabDataIndex;
-                    buildingData.name = prefab.name;
+                    var buildingData = new BuildingData
+                    {
+                        prefab = prefab,
+                        name = prefab.name
+                    };
                     //buildingData.author = new PloppableRICODefinition.Building();
                     //buildingData.local = new PloppableRICODefinition.Building();
                     //buildingData.mod = new PloppableRICODefinition.Building();
                     //buildingData.author.ricoEnabled = false;
                     //buildingData.local.ricoEnabled = false;
                    // buildingData.mod.ricoEnabled = false;
-                    xmlData[(int)i] = buildingData;
+                    xmlData[prefab] = buildingData;
                     //Debug.Log(prefab.name);?
                     // Debug.Log(xmlData[(int)i].name + "In Array");
                 }
@@ -89,8 +90,8 @@ namespace PloppableRICO
                         local = buildingDef;
                         local.manualCountEnabled = true;
                         local.ricoEnabled = true;
-                        xmlData[buildingPrefab.m_prefabDataIndex].local = local;
-                        xmlData[buildingPrefab.m_prefabDataIndex].hasAuthor = true;
+                        xmlData[buildingPrefab].local = local;
+                        xmlData[buildingPrefab].hasAuthor = true;
                     }
                 }
             }
@@ -173,6 +174,7 @@ namespace PloppableRICO
                     // INIT RICO SETTINGS FOR BUILDING
                     try
                     {
+                        UnityEngine.Debug.Log($"data index: {buildingPrefab.m_prefabDataIndex}");
 
                         if (buildingPrefab != null)
                         {
@@ -180,13 +182,14 @@ namespace PloppableRICO
                             author = buildingDef;
                             author.manualCountEnabled = true;
                             author.ricoEnabled = true;
-                            xmlData[buildingPrefab.m_prefabDataIndex].author = author;
-                            xmlData[buildingPrefab.m_prefabDataIndex].hasAuthor = true;
+                            xmlData[buildingPrefab].author = author;
+                            xmlData[buildingPrefab].hasAuthor = true;
                             //Debug.Log(xmlData[buildingPrefab.m_prefabDataIndex].name + " AUTHOR");
                         }
                     }
                     catch (Exception e)
                     {
+                        Debug.LogException(e);
                         ricoDefParseErrors.Add(asset.package.packageName + " - " + e.Message);
                     }
                 }
@@ -279,7 +282,7 @@ namespace PloppableRICO
     public class BuildingData
     {
         private string m_displayName;
-        public uint id;
+        public BuildingInfo prefab;
         public string name;
 
         public PloppableRICODefinition.Building local;
@@ -319,77 +322,6 @@ namespace PloppableRICO
             return CultureInfo.CurrentCulture.TextInfo.ToTitleCase(name);
         }
     }
-
-	public class PloppableRICODefinition
-	{
-		public List<Building> Buildings { get; set; }
-
-		public PloppableRICODefinition ()
-		{
-			Buildings = new List<Building> ();
-		}
-
-		public class Building
-		{
-			[XmlAttribute ("name"), DefaultValue (null)]
-			public string name { get; set; }
-
-			[XmlAttribute ("service"), DefaultValue ("none")]
-			public string service { get; set; }
-
-			[XmlAttribute ("sub-service"), DefaultValue ("none")]
-			public string subService { get; set; }
-
-			[XmlAttribute ("construction-cost"), DefaultValue (1)]
-			public int constructionCost { get; set; }
-
-            [XmlAttribute("ui-category"), DefaultValue("none")]
-            public string UICategory { get; set; }
-
-            [XmlAttribute ("homes"), DefaultValue (0)]
-			public int homeCount { get; set; }
-
-            [XmlAttribute("level"), DefaultValue(1)]
-            public int level { get; set; }
-
-            //Pollution
-            [XmlAttribute("pollution-radius"), DefaultValue(0)]
-            public int pollutionRadius { get; set; }
-
-            //Workplace settings
-            [XmlAttribute("workplaces"), DefaultValue(0)]
-            public int workplaceCount { get; set; }
-
-            [XmlAttribute("uneducated"), DefaultValue(1)]
-            public int uneducated { get; set; }
-
-            [XmlAttribute("educated"), DefaultValue(1)]
-            public int educated { get; set; }
-       
-            [XmlAttribute("welleducated"), DefaultValue(1)]
-            public int wellEducated { get; set; }
-
-            //Toggles
-            [XmlAttribute("enable-popbalance"), DefaultValue(true)]
-            public bool popbalanceEnabled { get; set; }
-
-            [XmlAttribute("enable-rico"), DefaultValue(true)]
-            public bool ricoEnabled { get; set; }
-
-            [XmlAttribute("enable-educationratio"), DefaultValue(true)]
-            public bool educationRatioEnabled { get; set; }
-
-            [XmlAttribute("enable-pollution"), DefaultValue(true)]
-            public bool pollutionEnabled { get; set; }
-
-            [XmlAttribute("enable-manualcount"), DefaultValue(true)]
-            public bool manualCountEnabled { get; set; }
-
-            [XmlAttribute("enable-constructioncost"), DefaultValue(true)]
-            public bool constructionCostEnabled { get; set; }
-
-        }
-	}
 }
 
 

@@ -91,7 +91,7 @@ namespace PloppableRICO
 
             m_building = data as BuildingData;
 
-            m_building2 = XMLManager.xmlData[(int)m_building.id];
+            m_building2 = XMLManager.xmlData[m_building.prefab];
 
             m_name.text = m_building.displayName;
 
