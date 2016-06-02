@@ -7,26 +7,36 @@ using UnityEngine;
 
 namespace PloppableRICO
 {
+    /// <summary>
+    ///This class assigns the RICO settings to the prefabs. 
+    /// </summary>
     public class ConvertPrefabs
     {
         public void run()
         {
-
+            //Loop through the dictionary, and apply any RICO settings. 
             foreach (var buildingData in XMLManager.xmlData.Values)
             {
-
                 if (buildingData != null)
                 {
+                    //If asset has local settings, apply those. 
                     if (buildingData.hasLocal)
                     {
+                        //If local settings disable RICO, dont convert
+                        if (buildingData.local.ricoEnabled)
+                        {
                         ConvertPrefab(buildingData.local, buildingData.name);
-                        break;
+                        continue;
+                        }
                     }
 
-                    else if (buildingData.hasAuthor)
+                    if (buildingData.hasAuthor)
                     {
-                        ConvertPrefab(buildingData.author, buildingData.name);
-                        //Debug.Log(buildingData.author.name + " is " + buildingData.author.service);
+                        if (buildingData.author.ricoEnabled)
+                        {
+                            ConvertPrefab(buildingData.author, buildingData.name);
+                        }
+                        Debug.Log(buildingData.author.name + " is " + buildingData.author.service);
                     }
                 }
             }
@@ -123,8 +133,10 @@ namespace PloppableRICO
 
                     var ai = prefab.gameObject.AddComponent<PloppableCommercial>();
                     prefab.m_buildingAI = ai;
+
                     ai.m_workplaceCount = buildingData.workplaceCount;
                     ai.m_constructionCost = buildingData.constructionCost;
+
                     ai.m_constructionTime = 0;
                     prefab.m_buildingAI.m_info = prefab;
                     prefab.InitializePrefab();

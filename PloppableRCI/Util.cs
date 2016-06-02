@@ -8,7 +8,7 @@ namespace PloppableRICO
 {
     internal static class Util
     {
-
+        //This is run in the SimulationStep of all the ploppable AI's. 
         public static void buildingFlags(ref Building buildingData) {
 
             buildingData.m_garbageBuffer = 100;
@@ -17,9 +17,29 @@ namespace PloppableRICO
 			buildingData.m_flags &= ~Building.Flags.ZonesUpdated;
 			buildingData.m_flags &= ~Building.Flags.Abandoned;
 			buildingData.m_flags &= ~Building.Flags.Demolishing;
+            //This will solve the "Turned Off" error. 
             buildingData.m_problems &= ~Notification.Problem.TurnedOff;
-            //buildingData.m_flags &= ~Building.Flags.
         }
+
+        public static void AssignServiceClass() {
+
+            for (uint i = 0; i < PrefabCollection<BuildingInfo>.LoadedCount(); i++)
+            {
+
+                var prefab = PrefabCollection<BuildingInfo>.GetLoaded(i);
+
+                if (prefab.m_buildingAI is PloppableRICO.PloppableExtractor || prefab.m_buildingAI is PloppableResidential
+                    || prefab.m_buildingAI is PloppableOffice || prefab.m_buildingAI is PloppableCommercial ||
+                    prefab.m_buildingAI is PloppableIndustrial)
+                {
+
+                    // Just assign any RICO prefab a ploppable ItemClass so it will reload. It gets set back once the mod loads. 
+                    prefab.m_class = ItemClassCollection.FindClass("Beautification Item");
+                    prefab.InitializePrefab();
+                }
+            }
+        }
+
 
         public static bool IsModEnabled(UInt64 id)
         {

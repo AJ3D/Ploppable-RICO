@@ -9,6 +9,10 @@ using UnityEngine;
 
 namespace PloppableRICO
 {
+    /// <summary>
+    ///The base class of the RICO settings panel. Its based on SamsamTS's Building Themes panel. Many thanks to him for his work. 
+    /// </summary>
+
     public class RICOSettingsPanel : UIPanel
     {
 
@@ -20,22 +24,17 @@ namespace PloppableRICO
         private const float SPACING = 5;
         private const float TITLE_HEIGHT = 40;
         #endregion
+
         public BuildingData currentSelection;
-
-
         private UITitleBar m_title;
         private UIBuildingFilter m_filter;
         private UIBuildingOptions m_buildingOptions;
-
-        public EnableRICOPanel enableRICOpanel;
-
+        public UISavePanel m_savePanel;
         private UIBuildingPreview m_buildingPreview;
-
-        private static GameObject _gameObject;
-
-        private static RICOSettingsPanel _instance;
         private UIFastList m_buildingSelection;
 
+        private static GameObject _gameObject;
+        private static RICOSettingsPanel _instance;
         public static RICOSettingsPanel instance
         {
             get { return _instance; }
@@ -117,8 +116,21 @@ namespace PloppableRICO
             // Filter
             m_filter = AddUIComponent<UIBuildingFilter>();
             m_filter.width = width - SPACING * 2;
-            m_filter.height = 70;
+            m_filter.height = 40;
             m_filter.relativePosition = new Vector3(SPACING, TITLE_HEIGHT);
+
+            m_filter.eventFilteringChanged += (c, i) =>
+            {
+                if (i == -1) return;
+
+                int listCount = m_buildingSelection.rowsData.m_size;
+                float pos = m_buildingSelection.listPosition;
+
+                m_buildingSelection.selectedIndex = -1;
+
+                m_buildingSelection.rowsData = Filter();
+              
+            };
 
             UIPanel left = AddUIComponent<UIPanel>();
             left.width = LEFT_WIDTH;
@@ -141,18 +153,16 @@ namespace PloppableRICO
             m_buildingPreview.height = (middle.height - SPACING) / 2;
             m_buildingPreview.relativePosition = Vector3.zero;
 
-            enableRICOpanel = middle.AddUIComponent<EnableRICOPanel>();
-            enableRICOpanel.width = middle.width;
-            enableRICOpanel.height = ((middle.height - SPACING) / 2) - 40; 
-            enableRICOpanel.relativePosition = new Vector3(0, m_buildingPreview.height);
-
-            
+            m_savePanel = middle.AddUIComponent<UISavePanel>();
+            m_savePanel.width = middle.width;
+            m_savePanel.height = ((middle.height - SPACING) / 2) - 40; 
+            m_savePanel.relativePosition = new Vector3(0, m_buildingPreview.height + SPACING);
 
             m_buildingSelection = UIFastList.Create<UIBuildingItem>(left);
             m_buildingSelection.backgroundSprite = "UnlockingPanel";
             m_buildingSelection.width = left.width;
             m_buildingSelection.height = left.height - 40;
-            m_buildingSelection.canSelect = true;
+            m_buildingSelection.canSelect = true; 
             m_buildingSelection.rowHeight = 40;
             m_buildingSelection.autoHideScrollbar = true;
             m_buildingSelection.relativePosition = Vector3.zero;
@@ -164,11 +174,11 @@ namespace PloppableRICO
             m_buildingOptions = right.AddUIComponent<UIBuildingOptions>();
             m_buildingOptions.width = RIGHT_WIDTH;
             m_buildingOptions.height = right.height - 40;
-            m_buildingOptions.relativePosition = new Vector3(0, + SPACING);
+            m_buildingOptions.relativePosition = Vector3.zero;
 
             try
             {
-                GenerateFastList();
+                m_buildingSelection.rowsData = GenerateFastList();
             }
             catch { }
         
@@ -176,15 +186,64 @@ namespace PloppableRICO
 
         public void UpdateBuildingInfo(BuildingData building) {
 
-            Debug.Log(building.name);
-            currentSelection = building;
-            enableRICOpanel.currentSelection = building;
-            m_buildingOptions.SelectionChanged(building);
-            m_buildingPreview.Show(building);
+            //Debug.Log(building.name);
+
+            currentSelection = XMLManager.xmlData[building.prefab];
+            m_buildingOptions.SelectionChanged(currentSelection);
+            m_savePanel.SelectionChanged(currentSelection);
+            m_buildingPreview.Show(currentSelection);
         }
 
+        public void Save() {
+            m_buildingOptions.SaveRICO();
 
-        public void GenerateFastList() {
+        }
+
+        private FastList<object> Filter()
+        {
+            Debug.Log("Filtered Called");
+            List<BuildingData> list = new List<BuildingData>();
+            foreach (var bData in XMLManager.xmlData.Values)
+            {
+                if (bData != null)
+                {
+                    //var prefab = PrefabCollection<BuildingInfo>.GetLoaded(id.id);
+                    list.Add(bData);
+                    Debug.Log(bData.name);
+                }
+            }
+
+            List<BuildingData> filtered = new List<BuildingData>();
+            for (int i = 0; i < list.Count; i++)
+            {
+                BuildingData item = (BuildingData)list[i];
+
+               
+                // zone
+                if (!m_filter.IsAllZoneSelected())
+                {
+                    Category category = item.category;
+                    if (category == Category.None || !m_filter.IsZoneSelected(category)) continue;
+                }
+
+                // Name
+                // if (!m_filter.buildingName.IsNullOrWhiteSpace() && !item.name.ToLower().Contains(m_filter.buildingName.ToLower())) continue;
+
+                Debug.Log(item.category + " " + item.displayName);
+
+                filtered.Add(item);
+            }
+
+            list = filtered;
+
+            FastList<object> fastList = new FastList<object>();
+            fastList.m_buffer = list.ToArray();
+            fastList.m_size = list.Count;
+
+            return fastList;
+        }
+
+        private FastList<object> GenerateFastList() {
 
             List<BuildingData> list = new List<BuildingData>();
 
@@ -201,7 +260,7 @@ namespace PloppableRICO
             FastList<object> fastList = new FastList<object>();
             fastList.m_buffer = list.ToArray();
             fastList.m_size = list.Count;
-            m_buildingSelection.rowsData = fastList;
+            return fastList;
         }
     }
 }

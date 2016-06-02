@@ -5,7 +5,7 @@ namespace PloppableRICO
 {
     public class UIBuildingFilter : UIPanel
     {
-        private const int NumOfCategories = 2;
+        private const int NumOfCategories = 6;
         public UICheckBox[] zoningToggles;
         public UIButton allZones;
         public UIButton noZones;
@@ -19,7 +19,11 @@ namespace PloppableRICO
         public bool IsAllZoneSelected()
         {
             return zoningToggles[(int)Category.Monument].isChecked &&
-                zoningToggles[(int)Category.Beautification].isChecked;
+                zoningToggles[(int)Category.Beautification].isChecked &&
+                zoningToggles[(int)Category.Education].isChecked &&
+                zoningToggles[(int)Category.Power].isChecked &&
+                zoningToggles[(int)Category.Water].isChecked &&
+                zoningToggles[(int)Category.Health].isChecked;
         }
 
 

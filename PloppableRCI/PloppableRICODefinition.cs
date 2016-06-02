@@ -15,61 +15,87 @@ namespace PloppableRICO
 
         public class Building
         {
-            [XmlAttribute ("name"), DefaultValue (null)]
+            public Building()
+            {
+                name = "none";
+                service = "none";
+                subService = "none";
+                constructionCost = 0;
+                UICategory = "none";
+                homeCount = 1;
+                level = 1;
+                pollutionRadius = 0;
+                workplaceCount = 0;
+                uneducated = 0;
+                educated = 0;
+                wellEducated = 0;
+                popbalanceEnabled = true;
+                ricoEnabled = true;
+                educationRatioEnabled = false;
+                pollutionEnabled = true;
+                manualWorkerEnabled = true;
+                manualHomeEnabled = true;
+                constructionCostEnabled = true;
+            }
+
+            [XmlAttribute ("name")]
             public string name { get; set; }
 
-            [XmlAttribute ("service"), DefaultValue ("none")]
+            [XmlAttribute ("service")]
             public string service { get; set; }
 
-            [XmlAttribute ("sub-service"), DefaultValue ("none")]
+            [XmlAttribute ("sub-service")]
             public string subService { get; set; }
 
-            [XmlAttribute ("construction-cost"), DefaultValue (1)]
+            [XmlAttribute ("construction-cost")]
             public int constructionCost { get; set; }
 
-            [XmlAttribute("ui-category"), DefaultValue("none")]
+            [XmlAttribute("ui-category")]
             public string UICategory { get; set; }
 
-            [XmlAttribute ("homes"), DefaultValue (0)]
+            [XmlAttribute ("homes")]
             public int homeCount { get; set; }
 
-            [XmlAttribute("level"), DefaultValue(1)]
+            [XmlAttribute("level")]
             public int level { get; set; }
 
             //Pollution
-            [XmlAttribute("pollution-radius"), DefaultValue(0)]
+            [XmlAttribute("pollution-radius")]
             public int pollutionRadius { get; set; }
 
             //Workplace settings
-            [XmlAttribute("workplaces"), DefaultValue(0)]
+            [XmlAttribute("workplaces")]
             public int workplaceCount { get; set; }
 
-            [XmlAttribute("uneducated"), DefaultValue(1)]
+            [XmlAttribute("uneducated")]
             public int uneducated { get; set; }
 
-            [XmlAttribute("educated"), DefaultValue(1)]
+            [XmlAttribute("educated")]
             public int educated { get; set; }
        
-            [XmlAttribute("welleducated"), DefaultValue(1)]
+            [XmlAttribute("welleducated")]
             public int wellEducated { get; set; }
 
             //Toggles
-            [XmlAttribute("enable-popbalance"), DefaultValue(true)]
+            [XmlAttribute("enable-popbalance")]
             public bool popbalanceEnabled { get; set; }
 
-            [XmlAttribute("enable-rico"), DefaultValue(true)]
+            [XmlAttribute("enable-rico")]
             public bool ricoEnabled { get; set; }
 
-            [XmlAttribute("enable-educationratio"), DefaultValue(true)]
+            [XmlAttribute("enable-educationratio")]
             public bool educationRatioEnabled { get; set; }
 
-            [XmlAttribute("enable-pollution"), DefaultValue(true)]
+            [XmlAttribute("enable-pollution")]
             public bool pollutionEnabled { get; set; }
 
-            [XmlAttribute("enable-manualcount"), DefaultValue(true)]
-            public bool manualCountEnabled { get; set; }
+            [XmlAttribute("enable-workercount")]
+            public bool manualWorkerEnabled { get; set; }
 
-            [XmlAttribute("enable-constructioncost"), DefaultValue(true)]
+            [XmlAttribute("enable-homecount")]
+            public bool manualHomeEnabled { get; set; }
+
+            [XmlAttribute("enable-constructioncost")]
             public bool constructionCostEnabled { get; set; }
 
         }

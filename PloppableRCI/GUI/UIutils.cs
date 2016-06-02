@@ -201,15 +201,15 @@ namespace PloppableRICO
             container.relativePosition = new Vector3(0, offset, 0);
 
             UILabel serviceLabel = container.AddUIComponent<UILabel>();
-            serviceLabel.textScale = 0.9f;
+            serviceLabel.textScale = 0.8f;
             serviceLabel.text = label;
             serviceLabel.relativePosition = new Vector3(15, 6, 0);
 
 
             UIDropDown dropDown = container.AddUIComponent<UIDropDown>();
-            dropDown.size = new Vector2(120f, 30f);
+            dropDown.size = new Vector2(120f, 25f);
             dropDown.listBackground = "GenericPanelLight";
-            dropDown.itemHeight = 30;
+            dropDown.itemHeight = 25;
             dropDown.itemHover = "ListItemHover";
             dropDown.itemHighlight = "ListItemHighlight";
             dropDown.normalBgSprite = "ButtonMenu";
@@ -222,7 +222,7 @@ namespace PloppableRICO
             dropDown.popupColor = new Color32(45, 52, 61, 255);
             dropDown.popupTextColor = new Color32(170, 170, 170, 255);
             dropDown.zOrder = 1;
-            dropDown.textScale = 0.8f;
+            dropDown.textScale = 0.7f;
             dropDown.verticalAlignment = UIVerticalAlignment.Middle;
             dropDown.horizontalAlignment = UIHorizontalAlignment.Left;
            

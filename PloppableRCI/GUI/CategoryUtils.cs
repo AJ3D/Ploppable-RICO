@@ -8,17 +8,30 @@ namespace PloppableRICO
  
     public enum Category
     {
+        None = -1,
         Monument,
-        Beautification
+        Beautification,
+        Education,
+        Power,
+        Water,
+        Health
     }
 
     public class CategoryIcons
     {
 
-        public static readonly string[] atlases = {"Ingame", "Ingame" };
+        public static readonly string[] atlases = {"Ingame", "Ingame" , "Ingame", "Ingame", "Ingame", "Ingame" };
 
-        public static readonly string[] spriteNames = { "ToolbarIconMonuments", "ToolbarIconBeautification" };
+        public static readonly string[] spriteNames = {
 
-        public static readonly string[] tooltips = {"Monuments","Beautification" };
+            "ToolbarIconMonuments",
+            "ToolbarIconBeautification",
+            "ToolbarIconEducation",
+            "ToolbarIconElectricity",
+            "ToolbarIconWater",
+            "ToolbarIconHealthcare"
+        };
+
+        public static readonly string[] tooltips = {"Monuments","Beautification", "Education", "Power", "Water", "Health" };
     }
 }

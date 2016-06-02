@@ -7,18 +7,12 @@ namespace PloppableRICO
     public class UIBuildingItem : UIPanel, IUIFastListRow
     {
         private UILabel m_name;
-
         private UISprite m_author;
         private UISprite m_local;
-
-        private UILabel m_level;
-        private UILabel nameLabel;
         private UIPanel m_background;
-
         private BuildingData m_building;
-        private BuildingData m_building2;
-
         public UIPanel background
+
         {
             get
             {
@@ -44,23 +38,28 @@ namespace PloppableRICO
 
             background.width = width;
             m_name.relativePosition = new Vector3(10f, 5f);
-            m_author.relativePosition = new Vector3(200f, 10f);
-            m_local.relativePosition = new Vector3(240f, 10f);
+            m_author.relativePosition = new Vector3(300f, 10f);
+            m_local.relativePosition = new Vector3(340f, 10f);
         }
 
         protected override void OnMouseEnter(UIMouseEventParameter p)
         {
             base.OnMouseEnter(p);
-            if (enabled) RICOSettingsPanel.instance.UpdateBuildingInfo(m_building);
-
+            //This will update the panel when you hover over a fast list entry. 
+            //if (enabled) RICOSettingsPanel.instance.UpdateBuildingInfo(m_building);
         }
 
         protected override void OnMouseWheel(UIMouseEventParameter p)
         {
             base.OnMouseWheel(p);
-
         }
 
+        protected override void OnClick(UIMouseEventParameter p)
+        {
+            base.OnClick(p);
+            if (enabled) RICOSettingsPanel.instance.UpdateBuildingInfo(m_building);
+        }
+        
         private void SetupControls()
         {
             if (m_name != null) return;
@@ -74,6 +73,8 @@ namespace PloppableRICO
             m_name = AddUIComponent<UILabel>();
             m_name.width = 200;
             //nameLabel.textAlignment = UIHorizontalAlignment.Center;
+
+            //Check boxes that indicate what settings are present. 
             m_author = AddUIComponent<UISprite>();
             m_author.size = new Vector2(20, 20);
             m_author.spriteName = "AchievementCheckedFalse";
@@ -91,16 +92,15 @@ namespace PloppableRICO
 
             m_building = data as BuildingData;
 
-            m_building2 = XMLManager.xmlData[m_building.prefab];
-
             m_name.text = m_building.displayName;
-
-            //m_name.text = XMLManager.xmlData[m_building.id].displayName;
 
             float maxLabelWidth = width - 120;
 
             if (m_building.hasAuthor) m_author.spriteName = "AchievementCheckedTrue";
             else m_author.spriteName = "AchievementCheckedFalse";
+
+            if (m_building.hasLocal) m_local.spriteName = "AchievementCheckedTrue";
+            else m_local.spriteName = "AchievementCheckedFalse";
 
             if (isRowOdd)
             {
@@ -117,7 +117,7 @@ namespace PloppableRICO
         {
             background.backgroundSprite = "ListItemHighlight";
             background.color = new Color32(255, 255, 255, 255);
-            if (enabled) RICOSettingsPanel.instance.UpdateBuildingInfo(m_building);
+
         }
 
         public void Deselect(bool isRowOdd)

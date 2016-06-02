@@ -210,16 +210,17 @@ namespace PloppableRICO
                 {
                     var prefab = PrefabCollection<BuildingInfo>.FindLoaded(buildingData.name);
 
-                    //if (buildingData.hasLocal)
-                    // {
-                    // DrawBuildingButton(prefab, buildingData.local.UICategory);
-                    //  RemoveUIButton(prefab);
-                    //break;
-                    //}
+                    if (buildingData.hasLocal)
+                    {
+                        DrawBuildingButton(prefab, buildingData.local.UICategory);
+                        //RemoveUIButton(prefab);
+                        continue;
+                    }
+
                     if (buildingData.hasAuthor)
                     {
                         DrawBuildingButton(prefab, buildingData.author.UICategory);
-                        RemoveUIButton(prefab);
+                        //RemoveUIButton(prefab);
                     }
                     //}
                     //else if (buildingData.hasMod)
@@ -338,26 +339,21 @@ namespace PloppableRICO
 			BuildingButton.verticalAlignment = UIVerticalAlignment.Middle;
 			BuildingButton.pivot = UIPivotPoint.TopCenter;
 	
-
 			string localizedTooltip = BuildingPrefab.GetLocalizedTooltip ();
 			int hashCode = TooltipHelper.GetHashCode(localizedTooltip);
 			UIComponent tooltipBox = GeneratedPanel.GetTooltipBox(hashCode);
 
 			BuildingButton.tooltipAnchor = UITooltipAnchor.Anchored;
-	
 			BuildingButton.isEnabled = enabled;
 			BuildingButton.tooltip = localizedTooltip;
 			BuildingButton.tooltipBox = tooltipBox;
 			BuildingButton.eventClick += (sender, e) => BuildingBClicked (sender, e, BuildingPrefab);
 			BuildingButton.eventMouseHover += (sender, e) => BuildingBHovered (sender, e, BuildingPrefab);
 		
-
 		}
 
 		void BuildingBClicked (UIComponent component, UIMouseEventParameter eventParam, BuildingInfo Binf)
 		{
-			
-
 			var buildingTool = ToolsModifierControl.SetTool<BuildingTool> ();
 			{
 				buildingTool.m_prefab = Binf;
@@ -371,7 +367,6 @@ namespace PloppableRICO
 
 			var tooltipBoxa =  UIView.GetAView ().FindUIComponent<UIPanel> ("InfoAdvancedTooltip");
 			var tooltipBox =  UIView.GetAView ().FindUIComponent<UIPanel> ("InfoAdvancedTooltipDetail");
-
 			var spritea = tooltipBoxa.Find<UISprite> ("Sprite");
 			var sprite = tooltipBox.Find<UISprite> ("Sprite");
 
@@ -420,7 +415,6 @@ namespace PloppableRICO
 
 		protected override void OnEnable ()
 		{
-     
             UIView.GetAView ().FindUIComponent<UITabstrip> ("MainToolstrip").selectedIndex = -1;
 			base.OnEnable ();
         }
