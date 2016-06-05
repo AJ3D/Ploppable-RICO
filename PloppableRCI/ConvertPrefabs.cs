@@ -1,8 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using ColossalFramework.IO;
 using UnityEngine;
 
 namespace PloppableRICO
@@ -25,8 +21,8 @@ namespace PloppableRICO
                         //If local settings disable RICO, dont convert
                         if (buildingData.local.ricoEnabled)
                         {
-                        ConvertPrefab(buildingData.local, buildingData.name);
-                        continue;
+                            ConvertPrefab(buildingData.local, buildingData.name);
+                            continue;
                         }
                     }
 
@@ -45,125 +41,85 @@ namespace PloppableRICO
         public void ConvertPrefab(PloppableRICODefinition.Building buildingData, string name)
         {
             var prefab = PrefabCollection<BuildingInfo>.FindLoaded(name);
-
+            
             if (prefab != null)
             {
-
                 if (buildingData.service == "residential")
                 {
                     var ai = prefab.gameObject.AddComponent<PloppableResidential>();
-
-                    prefab.m_buildingAI = ai;
-                    ai.m_homeCount = buildingData.homeCount;
-
+                    ai.m_ricoData = buildingData;
                     ai.m_constructionCost = buildingData.constructionCost;
-                    ai.m_constructionTime = 0;
-                    prefab.m_buildingAI.m_info = prefab;
-                    prefab.InitializePrefab();
-
-                    if (buildingData.subService == "low") prefab.m_class = ItemClassCollection.FindClass("Low Residential - Level" + buildingData.level);
-                    else prefab.m_class = ItemClassCollection.FindClass("High Residential - Level" + buildingData.level);
-
+                    ai.m_homeCount = buildingData.homeCount;
+                    InitializePrefab(prefab, ai, Util.ucFirst(buildingData.subService) + " Residential - Level" + buildingData.level);
                 }
-
                 else if (buildingData.service == "office")
                 {
-
                     var ai = prefab.gameObject.AddComponent<PloppableOffice>();
-
-                    prefab.m_buildingAI = ai;
+                    ai.m_ricoData = buildingData;
                     ai.m_workplaceCount = buildingData.workplaceCount;
                     ai.m_constructionCost = buildingData.constructionCost;
-                    ai.m_constructionTime = 0;
-                    prefab.m_buildingAI.m_info = prefab;
-                    prefab.InitializePrefab();
-
-                    prefab.m_class = ItemClassCollection.FindClass("Office - Level" + buildingData.level);
-
-
+                    InitializePrefab(prefab, ai, "Office - Level" + buildingData.level);
                 }
                 else if (buildingData.service == "industrial")
                 {
-
                     var ai = prefab.gameObject.AddComponent<PloppableIndustrial>();
-                    prefab.m_buildingAI = ai;
-
+                    ai.m_ricoData = buildingData;
                     ai.m_workplaceCount = buildingData.workplaceCount;
                     ai.m_constructionCost = buildingData.constructionCost;
-                    ai.m_constructionTime = 0;
                     ai.m_pollutionEnabled = buildingData.pollutionEnabled;
-                    prefab.m_buildingAI.m_info = prefab;
-                    prefab.InitializePrefab();
 
-                    if (buildingData.subService == "farming") prefab.m_class = ItemClassCollection.FindClass("Farming - Processing");
-
-                    else if (buildingData.subService == "forest") prefab.m_class = ItemClassCollection.FindClass("Forest - Processing");
-
-                    else if (buildingData.subService == "oil") prefab.m_class = ItemClassCollection.FindClass("Oil - Processing");
-
-                    else if (buildingData.subService == "ore") prefab.m_class = ItemClassCollection.FindClass("Ore - Processing");
-
-                    else prefab.m_class = ItemClassCollection.FindClass("Industrial - Level" + buildingData.level);
-
+                    if (Util.industryServices.Contains(buildingData.subService))
+                        InitializePrefab(prefab, ai, Util.ucFirst(buildingData.subService) + " - Processing");
+                    else
+                        InitializePrefab(prefab, ai, "Industrial - Level" + buildingData.level);
                 }
                 else if (buildingData.service == "extractor")
                 {
 
                     var ai = prefab.gameObject.AddComponent<PloppableExtractor>();
-
-                    prefab.m_buildingAI = ai;
+                    ai.m_ricoData = buildingData;
                     ai.m_workplaceCount = buildingData.workplaceCount;
                     ai.m_constructionCost = buildingData.constructionCost;
-                    ai.m_constructionTime = 0;
                     ai.m_pollutionEnabled = buildingData.pollutionEnabled;
-                    prefab.m_buildingAI.m_info = prefab;
-                    prefab.InitializePrefab();
 
-                    if (buildingData.subService == "farming") prefab.m_class = ItemClassCollection.FindClass("Farming - Extractor");
-
-                    else if (buildingData.subService == "forest") prefab.m_class = ItemClassCollection.FindClass("Forest - Extractor");
-
-                    else if (buildingData.subService == "oil") prefab.m_class = ItemClassCollection.FindClass("Oil - Extractor");
-
-                    else prefab.m_class = ItemClassCollection.FindClass("Ore - Extractor");
+                    if (Util.industryServices.Contains(buildingData.subService))
+                        InitializePrefab(prefab, ai, Util.ucFirst(buildingData.subService) + " - Extractor");
                 }
 
                 else if (buildingData.service == "commercial")
                 {
-
+                    string itemClass = "";
                     var ai = prefab.gameObject.AddComponent<PloppableCommercial>();
-                    prefab.m_buildingAI = ai;
-
+                    ai.m_ricoData = buildingData;
                     ai.m_workplaceCount = buildingData.workplaceCount;
                     ai.m_constructionCost = buildingData.constructionCost;
-
-                    ai.m_constructionTime = 0;
-                    prefab.m_buildingAI.m_info = prefab;
-                    prefab.InitializePrefab();
-
-                    if (buildingData.subService == "low") prefab.m_class = ItemClassCollection.FindClass("Low Commercial - Level" + buildingData.level);
-
-                    else if (buildingData.subService == "high") prefab.m_class = ItemClassCollection.FindClass("High Commercial - Level" + buildingData.level);
-
-                    else if (buildingData.subService == "tourist")
-                    {
+                    
+                    // high and low
+                    if ( Util.vanillaCommercialServices.Contains(buildingData.subService) )
+                        itemClass = Util.ucFirst(buildingData.subService) + " Commercial - Level" + buildingData.level;
+                    else
                         if (Util.isADinstalled())
-                        {
-                            prefab.m_class = ItemClassCollection.FindClass("Tourist Commercial - Land");
-                        }
-                        else {
-                            prefab.m_class = ItemClassCollection.FindClass("High Commercial - Level" + buildingData.level);
-                        }
-                    }
-                    else if (buildingData.subService == "leisure")
-                    {
-                        if (Util.isADinstalled()) prefab.m_class = ItemClassCollection.FindClass("Leisure Commercial");
+                            if (buildingData.subService == "tourist")
+                                itemClass = "Tourist Commercial - Land";
+                            else if (buildingData.subService == "leisure")
+                                itemClass = "Leisure Commercial";
+                            else
+                                itemClass = "High Commercial - Level" + buildingData.level;
+                        else
+                            itemClass = "High Commercial - Level" + buildingData.level;
 
-                        else prefab.m_class = ItemClassCollection.FindClass("High Commercial - Level" + buildingData.level);
-
-                    }
+                    InitializePrefab(prefab, ai, itemClass);
                 }
             }
+        }
+
+        private void InitializePrefab(BuildingInfo prefab, PrivateBuildingAI ai, String aiClass)
+        {
+            prefab.m_buildingAI = ai;
+            ai.m_constructionTime = 0;
+            prefab.m_buildingAI.m_info = prefab;
+            prefab.InitializePrefab();
+            prefab.m_class = ItemClassCollection.FindClass(aiClass);
         }
     }
 }
