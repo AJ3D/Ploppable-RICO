@@ -57,15 +57,17 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AI\WorkplaceAI.cs" />
     <Compile Include="ConvertPrefabs.cs" />
     <Compile Include="GUI\BuilidngPreview.cs" />
-    <Compile Include="GUI\UISavePanel.cs" />
-    <Compile Include="GUI\UIBuildingFilter.cs" />
-    <Compile Include="GUI\UIBuildingList.cs" />
     <Compile Include="GUI\CategoryUtils.cs" />
     <Compile Include="GUI\FastList.cs" />
-    <Compile Include="GUI\UIOptionsPanel.cs" />
+    <Compile Include="GUI\SettingsPanel.cs" />
+    <Compile Include="GUI\UIBuildingFilter.cs" />
+    <Compile Include="GUI\UIBuildingList.cs" />
     <Compile Include="GUI\UIBuildingPreview.cs" />
+    <Compile Include="GUI\UIOptionsPanel.cs" />
+    <Compile Include="GUI\UISavePanel.cs" />
     <Compile Include="GUI\UITitlebar.cs" />
     <Compile Include="GUI\UIutils.cs" />
     <Compile Include="PloppableRICODefinition.cs" />
@@ -81,7 +83,6 @@
     <Compile Include="XMLManager.cs" />
     <Compile Include="Loading.cs" />
     <Compile Include="Detour\ToolDetour.cs" />
-    <Compile Include="GUI\SettingsPanel.cs" />
     <Compile Include="Util.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />

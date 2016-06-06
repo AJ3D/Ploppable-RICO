@@ -33,12 +33,7 @@ namespace PloppableRICO
             for (uint i = 0; i < PrefabCollection<BuildingInfo>.LoadedCount(); i++)
             {
                 var prefab = PrefabCollection<BuildingInfo>.GetLoaded(i);
-
-                //Add one entry for every ploppable building
-                if (prefab.m_class.m_service == ItemClass.Service.Beautification ||
-                   prefab.m_class.m_service == ItemClass.Service.Monument ||
-                   prefab.m_class.m_service == ItemClass.Service.Electricity ||
-                   prefab.m_class.m_service == ItemClass.Service.Education)
+                if (prefab != null)
                 {
                     var buildingData = new BuildingData
                     {
@@ -53,22 +48,24 @@ namespace PloppableRICO
 
             //RICO settings can come from 3 sources. Local settings are applied first, followed by asset author settings,
             //and then finaly settings from settings mods. 
-
-            //If local settings are present, load them. 
-            if (File.Exists("LocalRICOSettings.xml"))
-            {
-                LocalSettings();
-            }
-
-            //Import settings from asset folders. 
             AssetSettings();
 
-            //If settings mod is active, load its settings. (disabled for now)
-            if (Util.IsModEnabled(629850626uL))
-            {
-                //ModSettings();
-            }
+            //If local settings are present, load them. 
+            
+            if (File.Exists("LocalRICOSettings.xml"))
 
+              {
+                  LocalSettings();
+              }
+         
+            //Import settings from asset folders. 
+            //If settings mod is active, load its settings. (disabled for now)
+
+            if (Util.IsModEnabled(629850626uL))
+
+                {
+                    //ModSettings();
+                }
         }
 
         //Load local RICO settings. 
@@ -276,7 +273,6 @@ namespace PloppableRICO
             {
                 return Category.Health;
             }
-
             else return Category.Beautification;
 
         }

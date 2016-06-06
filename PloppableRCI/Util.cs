@@ -2,12 +2,22 @@
 using System.Linq;
 using ColossalFramework.Plugins;
 using ColossalFramework.Steamworks;
-
+using System.Collections.Generic;
 
 namespace PloppableRICO
 {
     internal static class Util
     {
+        public static List<String> industryServices = new List<String>() { "farming", "forest", "oil", "ore" };
+        public static List<String> vanillaCommercialServices = new List<String>() { "low", "high" };
+        public static List<String> afterDarkCommercialServices = new List<String>() { "low", "high", "tourist", "leisure" };
+
+        // returns s but with first character upper cased
+        public static string ucFirst(String s)
+        {
+            return s.Substring(0, 1).ToUpper() + s.Substring(1);
+        }
+
         //This is run in the SimulationStep of all the ploppable AI's. 
         public static void buildingFlags(ref Building buildingData) {
 

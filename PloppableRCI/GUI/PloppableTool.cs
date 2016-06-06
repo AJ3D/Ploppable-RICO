@@ -119,7 +119,7 @@ namespace PloppableRICO
 						BuildingPanels [i].scrollWheelAmount = 109;
 						BuildingPanels [i].horizontalScrollbar.stepSize = 1f;
 						BuildingPanels [i].horizontalScrollbar.incrementAmount = 109f;
-
+                    /*
                     LeftButtons[i] = new UIButton();
                     RightButtons[i] = new UIButton();
 
@@ -139,7 +139,7 @@ namespace PloppableRICO
                     RightButtons[i].pressedBgSprite = "ArrowRightPressed";
                     RightButtons[i].hoveredBgSprite = "ArrowRightHovered";
                     RightButtons[i].disabledBgSprite = "ArrowRightDisabled";
-
+                    */
 
 
                     TabButtons [i] = new UIButton ();  //draw RICO tabstrip. 
@@ -213,14 +213,14 @@ namespace PloppableRICO
                     if (buildingData.hasLocal)
                     {
                         DrawBuildingButton(prefab, buildingData.local.UICategory);
-                        //RemoveUIButton(prefab);
+                        RemoveUIButton(prefab);
                         continue;
                     }
 
                     if (buildingData.hasAuthor)
                     {
                         DrawBuildingButton(prefab, buildingData.author.UICategory);
-                        //RemoveUIButton(prefab);
+                        RemoveUIButton(prefab);
                     }
                     //}
                     //else if (buildingData.hasMod)
@@ -241,18 +241,17 @@ namespace PloppableRICO
 
             if (refButton != null)
             {
-                refButton.isVisible = false;
-                refButton.isEnabled = false;
+                //refButton.isVisible = false;
+                //refButton.isEnabled = false;
                 refButton.Disable();
             }
 
             //refresh panels after buttons are removed
-            var monumentsPanels = GameObject.FindObjectsOfType<MonumentsPanel>();
-            foreach (MonumentsPanel panel in monumentsPanels) {
-                panel.RefreshPanel();
-            }
-        }
-
+            //var monumentsPanels = GameObject.FindObjectsOfType<MonumentsPanel>();
+            //foreach (MonumentsPanel panel in monumentsPanels) {
+               // panel.RefreshPanel();
+         }
+      
         public void DrawPanels (UIScrollablePanel panel, string name)
 		{
 			
