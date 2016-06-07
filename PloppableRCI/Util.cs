@@ -1,4 +1,3 @@
-
 ﻿using System;
 using System.Linq;
 using ColossalFramework.Plugins;
@@ -19,22 +18,35 @@ namespace PloppableRICO
             return s.Substring(0, 1).ToUpper() + s.Substring(1);
         }
 
-        //This is run in the SimulationStep of all the ploppable AI's. 
-        public static void buildingFlags(ref Building buildingData)
+        public static BuildingInfo FindPrefab(string prefabName, string packageName)
         {
+            var prefab = PrefabCollection<BuildingInfo>.FindLoaded(prefabName);
+            if (prefab == null)
+                prefab = PrefabCollection<BuildingInfo>.FindLoaded(prefabName + "_Data");
+            if (prefab == null)
+                prefab = PrefabCollection<BuildingInfo>.FindLoaded(ColossalFramework.IO.PathEscaper.Escape(prefabName) + "_Data");
+            if (prefab == null)
+                prefab = PrefabCollection<BuildingInfo>.FindLoaded(packageName + "." + prefabName + "_Data");
+            if (prefab == null)
+                prefab = PrefabCollection<BuildingInfo>.FindLoaded(packageName + "." + ColossalFramework.IO.PathEscaper.Escape(prefabName) + "_Data");
+
+            return prefab;
+        }
+
+        //This is run in the SimulationStep of all the ploppable AI's. 
+        public static void buildingFlags(ref Building buildingData) {
 
             buildingData.m_garbageBuffer = 100;
             buildingData.m_majorProblemTimer = 0;
             buildingData.m_levelUpProgress = 0;
-            buildingData.m_flags &= ~Building.Flags.ZonesUpdated;
-            buildingData.m_flags &= ~Building.Flags.Abandoned;
-            buildingData.m_flags &= ~Building.Flags.Demolishing;
+			buildingData.m_flags &= ~Building.Flags.ZonesUpdated;
+			buildingData.m_flags &= ~Building.Flags.Abandoned;
+			buildingData.m_flags &= ~Building.Flags.Demolishing;
             //This will solve the "Turned Off" error. 
             buildingData.m_problems &= ~Notification.Problem.TurnedOff;
         }
 
-        public static void AssignServiceClass()
-        {
+        public static void AssignServiceClass() {
 
             for (uint i = 0; i < PrefabCollection<BuildingInfo>.LoadedCount(); i++)
             {
@@ -74,8 +86,7 @@ namespace PloppableRICO
             return modPath;
         }
 
-        public static bool isADinstalled()
-        {
+        public static bool isADinstalled() {
 
             return Steam.IsDlcInstalled(369150u);
         }
@@ -85,6 +96,7 @@ namespace PloppableRICO
             return Steam.IsDlcInstalled(420610u);
         }
 
-
+      
     }
+
 }

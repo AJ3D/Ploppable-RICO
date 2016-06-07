@@ -1,4 +1,3 @@
-
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Xml.Serialization;
@@ -11,15 +10,16 @@ namespace PloppableRICO
     {
         public List<Building> Buildings { get; set; }
 
-        public PloppableRICODefinition()
+        public PloppableRICODefinition ()
         {
-            Buildings = new List<Building>();
+            Buildings = new List<Building> ();
         }
 
         public class Building
         {
             public Building()
             {
+                prefabName = "";
                 name = "none";
                 service = "none";
                 subService = "none";
@@ -32,7 +32,7 @@ namespace PloppableRICO
                 uneducated = 0;
                 educated = 0;
                 wellEducated = 0;
-                highEducated = 0;
+                highEducated = 0; 
                 popbalanceEnabled = true;
                 ricoEnabled = true;
                 educationRatioEnabled = false;
@@ -44,22 +44,22 @@ namespace PloppableRICO
                 workplaceDistributionString = "";
             }
 
-            [XmlAttribute("name")]
+            [XmlAttribute ("name")]
             public string name { get; set; }
 
-            [XmlAttribute("service")]
+            [XmlAttribute ("service")]
             public string service { get; set; }
 
-            [XmlAttribute("sub-service")]
+            [XmlAttribute ("sub-service")]
             public string subService { get; set; }
 
-            [XmlAttribute("construction-cost")]
+            [XmlAttribute ("construction-cost")]
             public int constructionCost { get; set; }
 
             [XmlAttribute("ui-category")]
             public string UICategory { get; set; }
 
-            [XmlAttribute("homes")]
+            [XmlAttribute ("homes")]
             public int homeCount { get; set; }
 
             [XmlAttribute("level")]
@@ -78,13 +78,13 @@ namespace PloppableRICO
 
             [XmlAttribute("educated")]
             public int educated { get; set; }
-
+       
             [XmlAttribute("welleducated")]
             public int wellEducated { get; set; }
-
+            
             [XmlAttribute("higheducated")]
             public int highEducated { get; set; }
-
+            
             //Toggles
             [XmlAttribute("enable-popbalance")]
             public bool popbalanceEnabled { get; set; }
@@ -140,7 +140,7 @@ namespace PloppableRICO
             // This should probably be "true" by default
             [XmlAttribute("ignore-reality")]
             public bool RealityIgnored { get; set; }
-
+            
             [XmlIgnoreAttribute]
             public bool useReality
             {
@@ -157,6 +157,13 @@ namespace PloppableRICO
                 }
             }
 
+            [XmlIgnoreAttribute]
+            public String prefabName { get; set; }
+
+            [XmlIgnoreAttribute]
+            public BuildingInfo prefab {
+                get { return prefabName == "" ? null : Util.FindPrefab(name, prefabName); }
+            }
         }
     }
 }

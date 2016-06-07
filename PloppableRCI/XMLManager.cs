@@ -1,6 +1,7 @@
 ﻿using ColossalFramework.UI;
 using System;
 using System.Collections.Generic;
+using System.Text;
 using System.Text.RegularExpressions;
 using System.Globalization;
 using ColossalFramework.Globalization;
@@ -33,7 +34,12 @@ namespace PloppableRICO
             for (uint i = 0; i < PrefabCollection<BuildingInfo>.LoadedCount(); i++)
             {
                 var prefab = PrefabCollection<BuildingInfo>.GetLoaded(i);
-                if (prefab != null)
+
+                //Add one entry for every ploppable building
+                if (prefab.m_class.m_service == ItemClass.Service.Beautification ||
+                   prefab.m_class.m_service == ItemClass.Service.Monument ||
+                   prefab.m_class.m_service == ItemClass.Service.Electricity ||
+                   prefab.m_class.m_service == ItemClass.Service.Education)
                 {
                     var buildingData = new BuildingData
                     {
@@ -48,24 +54,22 @@ namespace PloppableRICO
 
             //RICO settings can come from 3 sources. Local settings are applied first, followed by asset author settings,
             //and then finaly settings from settings mods. 
-            AssetSettings();
 
             //If local settings are present, load them. 
-            
             if (File.Exists("LocalRICOSettings.xml"))
+            {
+                LocalSettings();
+            }
 
-              {
-                  LocalSettings();
-              }
-         
             //Import settings from asset folders. 
+            AssetSettings();
+
             //If settings mod is active, load its settings. (disabled for now)
-
             if (Util.IsModEnabled(629850626uL))
+            {
+                //ModSettings();
+            }
 
-                {
-                    //ModSettings();
-                }
         }
 
         //Load local RICO settings. 
@@ -108,7 +112,7 @@ namespace PloppableRICO
         public void AssetSettings()
         {
 
-            var ricoDefParseErrors = new HashSet<string>();
+            var ricoDefParseErrors = new List<string>();
             var checkedPaths = new List<string>();
 
             for (uint i = 0; i < PrefabCollection<BuildingInfo>.LoadedCount(); i++)
@@ -127,6 +131,7 @@ namespace PloppableRICO
                     continue;
 
                 var ricoDefPath = Path.Combine(Path.GetDirectoryName(crpPath), "PloppableRICODefinition.xml");
+                var pn = asset.package.packageName;
 
                 // skip files which were already parsed
                 if (checkedPaths.Contains(ricoDefPath))
@@ -136,75 +141,30 @@ namespace PloppableRICO
                 if (!File.Exists(ricoDefPath))
                     continue;
 
-                PloppableRICODefinition ricoDef = null;
-
-                var xmlSerializer = new XmlSerializer(typeof(PloppableRICODefinition));
-                try
-                {
-                    using (StreamReader streamReader = new System.IO.StreamReader(ricoDefPath))
-                    {
-                        ricoDef = xmlSerializer.Deserialize(streamReader) as PloppableRICODefinition;
-                    }
-                }
-                catch (Exception e)
-                {
-                    Debug.LogException(e);
-                    ricoDefParseErrors.Add(asset.package.packageName + " - " + e.Message);
-                    continue;
-                }
-
-                if (ricoDef == null || ricoDef.Buildings == null || ricoDef.Buildings.Count == 0)
-                {
-                    ricoDefParseErrors.Add(asset.package.packageName + " - ricoDef is null or empty.");
-                    continue;
-                }
+                PloppableRICODefinition ricoDef = RICOReader.ParseRICODefinition(pn, ricoDefPath, ricoDefParseErrors);
 
                 foreach (var buildingDef in ricoDef.Buildings)
                 {
-                    if (buildingDef == null || buildingDef.name == null)
+                    if (buildingDef.prefab == null)
                     {
-                        ricoDefParseErrors.Add(asset.package.packageName + " - Building name missing.");
-                        continue;
+                        ricoDefParseErrors.Add(String.Format("Error while processing RICO - file {0} at building #{1}. ({2})", pn, i, "Building has not been loaded. Either it is broken, deactivated or not subscribed to." + buildingDef.name + " not loaded."));
                     }
-
-                    var buildingPrefab = FindPrefab(buildingDef.name, asset.package.packageName);
-
-                    if (buildingPrefab == null)
+                    else
                     {
-                        ricoDefParseErrors.Add(asset.package.packageName + " - Building with name " + buildingDef.name + " not loaded.");
-                        continue;
-                    }
-
-                    try
-                    {
-                        UnityEngine.Debug.Log($"data index: {buildingPrefab.m_prefabDataIndex}");
-
-                        if (buildingPrefab != null)
-                        {
-                            //Add asset author settings to dictionary. 
-                            var author = new PloppableRICODefinition.Building();
-                            author = buildingDef;
-                            xmlData[buildingPrefab].author = author;
-                            xmlData[buildingPrefab].hasAuthor = true;
-
-                        }
-                    }
-                    catch (Exception e)
-                    {
-                        Debug.LogException(e);
-                        ricoDefParseErrors.Add(asset.package.packageName + " - " + e.Message);
+                        //Add asset author settings to dictionary. 
+                        xmlData[buildingDef.prefab].author = buildingDef;
+                        xmlData[buildingDef.prefab].hasAuthor = true;
                     }
                 }
             }
 
             if (ricoDefParseErrors.Count > 0)
             {
-                var errorMessage = "Error while parsing Ploppable RICO definition file(s). Contact the author of the assets. \n"
-                                   + "List of errors:\n";
+                var errorMessage = new StringBuilder();
                 foreach (var error in ricoDefParseErrors)
-                    errorMessage += error + '\n';
+                    errorMessage.Append(error).Append('\n');
 
-                UIView.library.ShowModal<ExceptionPanel>("ExceptionPanel").SetMessage("Ploppable RICO", errorMessage, true);
+                UIView.library.ShowModal<ExceptionPanel>("ExceptionPanel").SetMessage("Ploppable RICO", errorMessage.ToString(), true);
             }
         }
 
@@ -229,21 +189,6 @@ namespace PloppableRICO
 
                 }
             }
-        }
-
-        private BuildingInfo FindPrefab(string prefabName, string packageName)
-        {
-            var prefab = PrefabCollection<BuildingInfo>.FindLoaded(prefabName);
-            if (prefab == null)
-                prefab = PrefabCollection<BuildingInfo>.FindLoaded(prefabName + "_Data");
-            if (prefab == null)
-                prefab = PrefabCollection<BuildingInfo>.FindLoaded(PathEscaper.Escape(prefabName) + "_Data");
-            if (prefab == null)
-                prefab = PrefabCollection<BuildingInfo>.FindLoaded(packageName + "." + prefabName + "_Data");
-            if (prefab == null)
-                prefab = PrefabCollection<BuildingInfo>.FindLoaded(packageName + "." + PathEscaper.Escape(prefabName) + "_Data");
-
-            return prefab;
         }
 
         private Category AssignCategory(BuildingInfo prefab)
@@ -273,6 +218,7 @@ namespace PloppableRICO
             {
                 return Category.Health;
             }
+
             else return Category.Beautification;
 
         }
