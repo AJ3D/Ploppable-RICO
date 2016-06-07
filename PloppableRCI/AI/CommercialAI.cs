@@ -1,4 +1,3 @@
-
 ﻿using System;
 using ColossalFramework.Math;
 
@@ -45,28 +44,23 @@ namespace PloppableRICO
                 workplaceDistribution = m_ricoData.workplaceDistribution;
             else
                 switch (subService) {
+                    case ItemClass.SubService.CommercialTourist: workplaceDistribution = new int[] { 100, 20, 20, 30, 30 }; break;
+                    case ItemClass.SubService.CommercialLeisure: workplaceDistribution = new int[] { 100, 30, 30, 20, 20 }; break;
                     case ItemClass.SubService.CommercialLow:
-                        if (itemClass.m_level == ItemClass.Level.Level1)
-                            workplaceDistribution = new int[] { 100, 100, 0, 0, 0 };
-                        else if (itemClass.m_level == ItemClass.Level.Level2)
-                            workplaceDistribution = new int[] { 100, 20, 60, 20, 0 };
-                        else
-                            workplaceDistribution = new int[] { 100, 5, 15, 30, 50 };
-                        break;
+                        switch (itemClass.m_level)
+                        {
+                            case ItemClass.Level.Level1: workplaceDistribution = new int[] { 100, 100, 0, 0, 0 }; break;
+                            case ItemClass.Level.Level2: workplaceDistribution = new int[] { 100, 20, 60, 20, 0 }; break;
+                            default: workplaceDistribution = new int[] { 100, 5, 15, 30, 50 }; break;
+                        } break;                        
                     case ItemClass.SubService.CommercialHigh:
-                        if (itemClass.m_level == ItemClass.Level.Level1)
-                            workplaceDistribution = new int[] { 100, 0, 40, 50, 10 };
-                        else if (itemClass.m_level == ItemClass.Level.Level2)
-                            workplaceDistribution = new int[] { 100, 0, 20, 50, 30 };
-                        else
-                            workplaceDistribution = new int[] { 100, 0, 0, 40, 60 };
-                        break;
-                    case ItemClass.SubService.CommercialTourist:
-                        workplaceDistribution = new int[] { 100, 20, 20, 30, 30 };
-                        break;
-                    case ItemClass.SubService.CommercialLeisure:
-                        workplaceDistribution = new int[] { 100, 30, 30, 20, 20 };
-                        break; }
+                        switch (itemClass.m_level)
+                        {
+                            case ItemClass.Level.Level1: workplaceDistribution = new int[] { 100, 0, 40, 50, 10 }; break;
+                            case ItemClass.Level.Level2: workplaceDistribution = new int[] { 100, 0, 20, 50, 30 }; break;
+                            default: workplaceDistribution = new int[] { 100, 0, 0, 40, 60 }; break;
+                        } break;
+                }
 
             WorkplaceAIHelper.distributeWorkplaceLevels(r, workplaceDistribution, m_workplaceCount, out level0, out level1, out level2, out level3);
         }

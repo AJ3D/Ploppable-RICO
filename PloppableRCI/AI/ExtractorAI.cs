@@ -1,4 +1,3 @@
-
 ﻿using System;
 using ColossalFramework;
 using ColossalFramework.Math;
@@ -7,7 +6,7 @@ using UnityEngine;
 namespace PloppableRICO
 {
     public class PloppableExtractor : IndustrialExtractorAI, IWorkplaceLevelCalculator
-    {
+	{
         public bool m_pollutionEnabled = true;
         public int m_constructionCost = 1;
         public int m_workplaceCount = 1;
@@ -21,7 +20,7 @@ namespace PloppableRICO
         }
 
         public override void CalculateWorkplaceCount(ColossalFramework.Math.Randomizer r, int width, int length, out int level0, out int level1, out int level2, out int level3)
-        {
+		{
             // See IndustrialAI.cs
             if (workplaceCount != null)
                 WorkplaceAIHelper.SetWorkplaceLevels(out level0, out level1, out level2, out level3, workplaceCount);
@@ -46,22 +45,21 @@ namespace PloppableRICO
             if (m_ricoData.workplaceDistribution != null)
                 workplaceDistribution = m_ricoData.workplaceDistribution;
             else
-                if (itemClass.m_subService == ItemClass.SubService.IndustrialGeneric)
-                if (itemClass.m_level == ItemClass.Level.Level1)
-                    workplaceDistribution = new int[] { 100, 100, 0, 0, 0 };
-                else if (itemClass.m_level == ItemClass.Level.Level2)
-                    workplaceDistribution = new int[] { 100, 20, 60, 20, 0 };
-                else
-                    workplaceDistribution = new int[] { 100, 5, 15, 30, 50 };
-            else if (itemClass.m_subService == ItemClass.SubService.IndustrialFarming)
-                workplaceDistribution = new int[] { 100, 100, 0, 0, 0 };
-            else if (itemClass.m_subService == ItemClass.SubService.IndustrialForestry)
-                workplaceDistribution = new int[] { 100, 100, 0, 0, 0 };
-            else if (itemClass.m_subService == ItemClass.SubService.IndustrialOre)
-                workplaceDistribution = new int[] { 100, 20, 60, 20, 0 };
-            else if (itemClass.m_subService == ItemClass.SubService.IndustrialOil)
-                workplaceDistribution = new int[] { 100, 20, 60, 20, 0 };
-
+                switch (itemClass.m_subService)
+                {
+                    case ItemClass.SubService.IndustrialFarming: workplaceDistribution = new int[] { 100, 100, 0, 0, 0 }; break;
+                    case ItemClass.SubService.IndustrialForestry: workplaceDistribution = new int[] { 100, 100, 0, 0, 0 }; break;
+                    case ItemClass.SubService.IndustrialOre: workplaceDistribution = new int[] { 100, 20, 60, 20, 0 }; break;
+                    case ItemClass.SubService.IndustrialOil: workplaceDistribution = new int[] { 100, 20, 60, 20, 0 }; break;
+                    case ItemClass.SubService.IndustrialGeneric:
+                        switch (itemClass.m_level)
+                        {
+                            case ItemClass.Level.Level1: workplaceDistribution = new int[] { 100, 100, 0, 0, 0 }; break;
+                            case ItemClass.Level.Level2: workplaceDistribution = new int[] { 100, 20, 60, 20, 0 }; break;
+                            default: workplaceDistribution = new int[] { 100, 5, 15, 30, 50 }; break;
+                        }
+                        break;
+                }
             WorkplaceAIHelper.distributeWorkplaceLevels(r, workplaceDistribution, m_workplaceCount, out level0, out level1, out level2, out level3);
         }
 
@@ -128,7 +126,7 @@ namespace PloppableRICO
 
             Util.buildingFlags(ref buildingData);
 
-            base.SimulationStepActive(buildingID, ref buildingData, ref frameData);
+            base.SimulationStepActive(buildingID, ref  buildingData, ref frameData);
 
             Util.buildingFlags(ref buildingData);
 
@@ -152,7 +150,7 @@ namespace PloppableRICO
             minLength = 1;
             maxLength = 16;
         }
-
+       
         public override string GenerateName(ushort buildingID, InstanceID caller)
         {
             return base.m_info.GetUncheckedLocalizedTitle();
