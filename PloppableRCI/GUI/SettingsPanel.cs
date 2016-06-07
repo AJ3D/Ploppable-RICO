@@ -102,7 +102,8 @@ namespace PloppableRICO
             }
             catch (Exception e)
             {
-                    Destroy();
+                Debug.LogException(e); // I know it's your piece of cake but i got annoyed by the warning. Tail.
+                Destroy();
             }
         }
 
