@@ -37,9 +37,6 @@ namespace PloppableRICO
                 ricoEnabled = true;
                 educationRatioEnabled = false;
                 pollutionEnabled = true;
-                manualWorkerEnabled = true;
-                manualHomeEnabled = true;
-                constructionCostEnabled = true;
                 RealityIgnored = false;
                 workplaceDistributionString = "";
             }
@@ -98,14 +95,6 @@ namespace PloppableRICO
             [XmlAttribute("enable-pollution")]
             public bool pollutionEnabled { get; set; }
 
-            [XmlAttribute("enable-workercount")]
-            public bool manualWorkerEnabled { get; set; }
-
-            [XmlAttribute("enable-homecount")]
-            public bool manualHomeEnabled { get; set; }
-
-            [XmlAttribute("enable-constructioncost")]
-            public bool constructionCostEnabled { get; set; }
 
             //Workplace job distribution settings
             [XmlAttribute("workplace-distribution")]

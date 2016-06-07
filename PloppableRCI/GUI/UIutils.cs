@@ -8,6 +8,26 @@ namespace PloppableRICO
         // Figuring all this was a pain (no documentation whatsoever)
         // So if your are using it for your mod consider thanking me (SamsamTS)
         // Extended Public Transport UI's code helped me a lot so thanks a lot AcidFire
+        public static UITextField CreateTextField(UIComponent parent)
+        {
+            UITextField textField = parent.AddUIComponent<UITextField>();
+
+            textField.size = new Vector2(90f, 20f);
+            textField.padding = new RectOffset(6, 6, 3, 3);
+            textField.builtinKeyNavigation = true;
+            textField.isInteractive = true;
+            textField.readOnly = false;
+            textField.horizontalAlignment = UIHorizontalAlignment.Center;
+            textField.selectionSprite = "EmptySprite";
+            textField.selectionBackgroundColor = new Color32(0, 172, 234, 255);
+            textField.normalBgSprite = "TextFieldPanelHovered";
+            textField.disabledBgSprite = "TextFieldPanel";
+            textField.textColor = new Color32(0, 0, 0, 255);
+            textField.disabledTextColor = new Color32(0, 0, 0, 128);
+            textField.color = new Color32(255, 255, 255, 255);
+
+            return textField;
+        }
 
         public static UIButton CreateButton(UIComponent parent)
         {
@@ -83,6 +103,7 @@ namespace PloppableRICO
             basePanel.height = 25;
             basePanel.backgroundSprite = "ScrollbarTrack";
             basePanel.width = 245;
+            basePanel.relativePosition = new Vector3(3, 0);
 
             UICheckBox checkBox = basePanel.AddUIComponent<UICheckBox>();
             checkBox.width = basePanel.width;

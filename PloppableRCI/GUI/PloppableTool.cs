@@ -210,14 +210,14 @@ namespace PloppableRICO
                 {
                     var prefab = PrefabCollection<BuildingInfo>.FindLoaded(buildingData.name);
 
-                    if (buildingData.hasLocal)
+                    if (buildingData.hasLocal & buildingData.local.ricoEnabled)
                     {
                         DrawBuildingButton(prefab, buildingData.local.UICategory);
                         RemoveUIButton(prefab);
                         continue;
                     }
 
-                    if (buildingData.hasAuthor)
+                    if (buildingData.hasAuthor & buildingData.author.ricoEnabled)
                     {
                         DrawBuildingButton(prefab, buildingData.author.UICategory);
                         RemoveUIButton(prefab);

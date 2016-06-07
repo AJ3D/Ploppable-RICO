@@ -5,7 +5,7 @@ namespace PloppableRICO
 {
     public class UIBuildingFilter : UIPanel
     {
-        private const int NumOfCategories = 6;
+        private const int NumOfCategories = 10;
         public UICheckBox[] zoningToggles;
         public UIButton allZones;
         public UIButton noZones;
@@ -23,7 +23,11 @@ namespace PloppableRICO
                 zoningToggles[(int)Category.Education].isChecked &&
                 zoningToggles[(int)Category.Power].isChecked &&
                 zoningToggles[(int)Category.Water].isChecked &&
-                zoningToggles[(int)Category.Health].isChecked;
+                zoningToggles[(int)Category.Health].isChecked&&
+                zoningToggles[(int)Category.Residential].isChecked &&
+                zoningToggles[(int)Category.Commercial].isChecked &&
+                zoningToggles[(int)Category.Office].isChecked &&
+                zoningToggles[(int)Category.Industrial].isChecked;
         }
 
 
@@ -70,7 +74,7 @@ namespace PloppableRICO
             allZones = UIUtils.CreateButton(this);
             allZones.width = 55;
             allZones.text = "All";
-            allZones.relativePosition = new Vector3(240, 5);
+            allZones.relativePosition = new Vector3(405, 5);
 
             allZones.eventClick += (c, p) =>
             {
@@ -84,7 +88,7 @@ namespace PloppableRICO
             noZones = UIUtils.CreateButton(this);
             noZones.width = 55;
             noZones.text = "None";
-            noZones.relativePosition = new Vector3(300, 5);
+            noZones.relativePosition = new Vector3(465, 5);
 
             noZones.eventClick += (c, p) =>
             {
@@ -102,7 +106,7 @@ namespace PloppableRICO
             nameLabel.padding = new RectOffset(0, 0, 8, 0);
             nameLabel.relativePosition = new Vector3(width - 250, 0);
             nameLabel.text = "Name: ";
-            /*
+
             nameFilter = UIUtils.CreateTextField(this);
             nameFilter.width = 200;
             nameFilter.height = 30;
@@ -111,7 +115,6 @@ namespace PloppableRICO
 
             nameFilter.eventTextChanged += (c, s) => eventFilteringChanged(this, 5);
             nameFilter.eventTextSubmitted += (c, s) => eventFilteringChanged(this, 5);
-            */
         }
     }
 }

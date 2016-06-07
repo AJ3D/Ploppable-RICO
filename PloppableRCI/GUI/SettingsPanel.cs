@@ -187,7 +187,6 @@ namespace PloppableRICO
         public void UpdateBuildingInfo(BuildingData building) {
 
             //Debug.Log(building.name);
-
             currentSelection = XMLManager.xmlData[building.prefab];
             m_buildingOptions.SelectionChanged(currentSelection);
             m_savePanel.SelectionChanged(currentSelection);
@@ -195,6 +194,7 @@ namespace PloppableRICO
         }
 
         public void Save() {
+
             m_buildingOptions.SaveRICO();
 
         }
@@ -226,8 +226,8 @@ namespace PloppableRICO
                     if (category == Category.None || !m_filter.IsZoneSelected(category)) continue;
                 }
 
-                // Name
-                // if (!m_filter.buildingName.IsNullOrWhiteSpace() && !item.name.ToLower().Contains(m_filter.buildingName.ToLower())) continue;
+                 //Name
+                 if (!m_filter.buildingName.IsNullOrWhiteSpace() && !item.name.ToLower().Contains(m_filter.buildingName.ToLower())) continue;
 
                 Debug.Log(item.category + " " + item.displayName);
 

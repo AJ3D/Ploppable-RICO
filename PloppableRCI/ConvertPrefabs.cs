@@ -23,17 +23,16 @@ namespace PloppableRICO
                         if (buildingData.local.ricoEnabled)
                         {
                             ConvertPrefab(buildingData.local, buildingData.name);
-                            continue;
                         }
                     }
 
-                    if (buildingData.hasAuthor)
+                    else if (buildingData.hasAuthor)
                     {
                         if (buildingData.author.ricoEnabled)
                         {
                             ConvertPrefab(buildingData.author, buildingData.name);
                         }
-                        Debug.Log(buildingData.author.name + " is " + buildingData.author.service);
+                        //Debug.Log(buildingData.author.name + " is " + buildingData.author.service);
                     }
                 }
             }

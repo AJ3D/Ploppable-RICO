@@ -39,7 +39,7 @@ namespace PloppableRICO
                     {
                         prefab = prefab,
                         name = prefab.name,
-                        category = AssignCategory(prefab)
+                        category = AssignCategory(prefab),
                     };
 
                     xmlData[prefab] = buildingData;
