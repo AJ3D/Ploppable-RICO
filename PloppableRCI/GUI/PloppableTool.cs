@@ -1,9 +1,10 @@
-﻿using System.Reflection;
-using System.Collections.Generic;
+﻿using ColossalFramework;
 using UnityEngine;
 using System.Linq;
 using ColossalFramework.UI;
 using ColossalFramework.DataBinding;
+
+using System;
 
 namespace PloppableRICO
 {
@@ -165,7 +166,6 @@ namespace PloppableRICO
 						} else {
 							SetSprites (TabSprites [i], "IconPolicy" + Names [i]);
 						}
-					
 				}
 
 				//Couldnt get this to work in the loop.
@@ -193,12 +193,11 @@ namespace PloppableRICO
                 }
 
                 UIButton showThemeManager = UIUtils.CreateButton(Tabs);
-                showThemeManager.width = 100f;
-                showThemeManager.text = "RICO";
+                showThemeManager.size = new Vector2(80, 25);
+                showThemeManager.normalBgSprite = "SubBarButtonBase";
+                showThemeManager.text = "Settings";
                 showThemeManager.eventClick += (c, p) => RICOSettingsPanel.instance.Toggle();
-
             }
-	
 		}
 
         public void PopulateAssets()
@@ -210,46 +209,46 @@ namespace PloppableRICO
                 {
                     var prefab = PrefabCollection<BuildingInfo>.FindLoaded(buildingData.name);
 
-                    if (buildingData.hasLocal & buildingData.local.ricoEnabled)
+                    if (buildingData.hasLocal && buildingData.local.ricoEnabled)
                     {
                         DrawBuildingButton(prefab, buildingData.local.UICategory);
                         RemoveUIButton(prefab);
                         continue;
                     }
 
-                    if (buildingData.hasAuthor & buildingData.author.ricoEnabled)
+                    else if (buildingData.hasAuthor && buildingData.author.ricoEnabled)
                     {
-                        DrawBuildingButton(prefab, buildingData.author.UICategory);
-                        RemoveUIButton(prefab);
-                    }
-                    //}
-                    //else if (buildingData.hasMod)
-                    //{
-                     ////   DrawBuildingButton(prefab, buildingData.mod.UICategory);
-                       // RemoveUIButton(prefab);
-                       // break;
-                    //}
+                        if (!buildingData.hasLocal)
+                        {
+                            DrawBuildingButton(prefab, buildingData.author.UICategory);
+                            RemoveUIButton(prefab);
+                            continue;
+                        }
+                     }
+                    
+                    else if (buildingData.hasMod)
+                    {
+                        if (!buildingData.hasLocal && !buildingData.hasAuthor)
+                        {
+                            DrawBuildingButton(prefab, buildingData.mod.UICategory);
+                            RemoveUIButton(prefab);
+                        }
+                   }
                 }
             }
         }
 
         public void RemoveUIButton(BuildingInfo prefab)
         {
-
-            UIView uiView = UIView.GetAView();
-            UIComponent refButton = uiView.FindUIComponent(prefab.name);
+            Debug.Log(prefab.name + " About to try");
+            var uiView = UIView.GetAView();
+            var refButton = uiView.FindUIComponent(prefab.name);
 
             if (refButton != null)
             {
-                //refButton.isVisible = false;
-                //refButton.isEnabled = false;
-                refButton.Disable();
-            }
-
-            //refresh panels after buttons are removed
-            //var monumentsPanels = GameObject.FindObjectsOfType<MonumentsPanel>();
-            //foreach (MonumentsPanel panel in monumentsPanels) {
-               // panel.RefreshPanel();
+                Debug.Log(prefab.name + " Button Destroyed");
+                GameObject.Destroy(refButton.gameObject);
+            }  
          }
       
         public void DrawPanels (UIScrollablePanel panel, string name)
@@ -272,84 +271,95 @@ namespace PloppableRICO
 
 		void DrawBuildingButton (BuildingInfo BuildingPrefab, string type)
 		{
+            try {
 
-			BuildingButton = new UIButton (); //draw button on appropriate panel. 
-			if (type == "reslow") {
-				BuildingButton = BuildingPanels [0].AddUIComponent<UIButton> ();
-			}
-			if (type == "reshigh") {
-				BuildingButton = BuildingPanels [1].AddUIComponent<UIButton> ();
-			}
-			if (type == "comlow") {
-				BuildingButton = BuildingPanels [2].AddUIComponent<UIButton> ();
-			}
-			if (type == "comhigh") {
-				BuildingButton = BuildingPanels [3].AddUIComponent<UIButton> ();
-			}
-			if (type == "office") {
-				BuildingButton = BuildingPanels [4].AddUIComponent<UIButton> ();
-			}
-			if (type == "industrial") {
-				BuildingButton = BuildingPanels [5].AddUIComponent<UIButton> ();
-			}
-			if (type == "farming") {
-				BuildingButton = BuildingPanels [6].AddUIComponent<UIButton> ();
-			}
-			if (type == "oil") {
-				BuildingButton = BuildingPanels [8].AddUIComponent<UIButton> ();
-			}
-			if (type == "forest") {
-				BuildingButton = BuildingPanels [7].AddUIComponent<UIButton> ();
-			}
-			if (type == "ore") {
-				BuildingButton = BuildingPanels [9].AddUIComponent<UIButton> ();
-			}
-            if (type == "leisure")
-            {
-                if (Util.isADinstalled())
-                {
-                    BuildingButton = BuildingPanels[10].AddUIComponent<UIButton>();
+                BuildingButton = new UIButton(); //draw button on appropriate panel. 
+                if (type == "reslow") {
+                    BuildingButton = BuildingPanels[0].AddUIComponent<UIButton>();
                 }
-                else {
+                if (type == "reshigh") {
+                    BuildingButton = BuildingPanels[1].AddUIComponent<UIButton>();
+                }
+                if (type == "comlow") {
+                    BuildingButton = BuildingPanels[2].AddUIComponent<UIButton>();
+                }
+                if (type == "comhigh") {
                     BuildingButton = BuildingPanels[3].AddUIComponent<UIButton>();
                 }
-            }
-            if (type == "tourist")
-            {
-                if (Util.isADinstalled())
+                if (type == "office") {
+                    BuildingButton = BuildingPanels[4].AddUIComponent<UIButton>();
+                }
+                if (type == "industrial") {
+                    BuildingButton = BuildingPanels[5].AddUIComponent<UIButton>();
+                }
+                if (type == "farming") {
+                    BuildingButton = BuildingPanels[6].AddUIComponent<UIButton>();
+                }
+                if (type == "oil") {
+                    BuildingButton = BuildingPanels[8].AddUIComponent<UIButton>();
+                }
+                if (type == "forest") {
+                    BuildingButton = BuildingPanels[7].AddUIComponent<UIButton>();
+                }
+                if (type == "ore") {
+                    BuildingButton = BuildingPanels[9].AddUIComponent<UIButton>();
+                }
+                if (type == "leisure")
                 {
-                    BuildingButton = BuildingPanels[11].AddUIComponent<UIButton>();
+                    if (Util.isADinstalled())
+                    {
+                        BuildingButton = BuildingPanels[10].AddUIComponent<UIButton>();
+                    }
+                    else {
+                        BuildingButton = BuildingPanels[3].AddUIComponent<UIButton>();
+                    }
                 }
-                else {
-                    BuildingButton = BuildingPanels[3].AddUIComponent<UIButton>();
+                if (type == "tourist")
+                {
+                    if (Util.isADinstalled())
+                    {
+                        BuildingButton = BuildingPanels[11].AddUIComponent<UIButton>();
+                    }
+                    else {
+                        BuildingButton = BuildingPanels[3].AddUIComponent<UIButton>();
+                    }
                 }
+
+                BuildingButton.size = new Vector2(109, 100); //apply settings to building buttons. 
+                BuildingButton.atlas = BuildingPrefab.m_Atlas;
+
+                BuildingButton.normalFgSprite = BuildingPrefab.m_Thumbnail;
+                BuildingButton.focusedFgSprite = BuildingPrefab.m_Thumbnail + "Focused";
+                BuildingButton.hoveredFgSprite = BuildingPrefab.m_Thumbnail + "Hovered";
+                BuildingButton.pressedFgSprite = BuildingPrefab.m_Thumbnail + "Pressed";
+                BuildingButton.disabledFgSprite = BuildingPrefab.m_Thumbnail + "Disabled";
+
+                if (BuildingPrefab.m_Thumbnail == null || BuildingPrefab.m_Thumbnail == "") {
+
+                    BuildingButton.normalFgSprite = "ToolbarIconProps";
+                }
+
+                BuildingButton.objectUserData = BuildingPrefab;
+                BuildingButton.horizontalAlignment = UIHorizontalAlignment.Center;
+                BuildingButton.verticalAlignment = UIVerticalAlignment.Middle;
+                BuildingButton.pivot = UIPivotPoint.TopCenter;
+
+                string localizedTooltip = BuildingPrefab.GetLocalizedTooltip();
+                int hashCode = TooltipHelper.GetHashCode(localizedTooltip);
+                UIComponent tooltipBox = GeneratedPanel.GetTooltipBox(hashCode);
+
+                BuildingButton.tooltipAnchor = UITooltipAnchor.Anchored;
+                BuildingButton.isEnabled = enabled;
+                BuildingButton.tooltip = localizedTooltip;
+                BuildingButton.tooltipBox = tooltipBox;
+                BuildingButton.eventClick += (sender, e) => BuildingBClicked(sender, e, BuildingPrefab);
+                BuildingButton.eventMouseHover += (sender, e) => BuildingBHovered(sender, e, BuildingPrefab);
             }
-
-            BuildingButton.size = new Vector2 (109, 100); //apply settings to building buttons. 
-			BuildingButton.atlas = BuildingPrefab.m_Atlas;
-
-			BuildingButton.normalFgSprite = BuildingPrefab.m_Thumbnail;
-			BuildingButton.focusedFgSprite = BuildingPrefab.m_Thumbnail + "Focused";
-			BuildingButton.hoveredFgSprite = BuildingPrefab.m_Thumbnail + "Hovered";
-			BuildingButton.pressedFgSprite = BuildingPrefab.m_Thumbnail + "Pressed";
-			BuildingButton.disabledFgSprite = BuildingPrefab.m_Thumbnail + "Disabled";
-			BuildingButton.objectUserData = BuildingPrefab;
-			BuildingButton.horizontalAlignment = UIHorizontalAlignment.Center;
-			BuildingButton.verticalAlignment = UIVerticalAlignment.Middle;
-			BuildingButton.pivot = UIPivotPoint.TopCenter;
-	
-			string localizedTooltip = BuildingPrefab.GetLocalizedTooltip ();
-			int hashCode = TooltipHelper.GetHashCode(localizedTooltip);
-			UIComponent tooltipBox = GeneratedPanel.GetTooltipBox(hashCode);
-
-			BuildingButton.tooltipAnchor = UITooltipAnchor.Anchored;
-			BuildingButton.isEnabled = enabled;
-			BuildingButton.tooltip = localizedTooltip;
-			BuildingButton.tooltipBox = tooltipBox;
-			BuildingButton.eventClick += (sender, e) => BuildingBClicked (sender, e, BuildingPrefab);
-			BuildingButton.eventMouseHover += (sender, e) => BuildingBHovered (sender, e, BuildingPrefab);
-		
-		}
+            catch (Exception e)
+            {
+                Debug.LogException(e);
+            }
+        }
 
 		void BuildingBClicked (UIComponent component, UIMouseEventParameter eventParam, BuildingInfo Binf)
 		{

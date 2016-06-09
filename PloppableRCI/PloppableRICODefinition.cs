@@ -7,8 +7,10 @@ using System;
 
 namespace PloppableRICO
 {
-    public class PloppableRICODefinition
+    public class PloppableRICODefinition 
     {
+        
+
         public List<Building> Buildings { get; set; }
 
         public PloppableRICODefinition()
@@ -16,8 +18,12 @@ namespace PloppableRICO
             Buildings = new List<Building>();
         }
 
-        public class Building
+        public class Building : ICloneable
         {
+            public object Clone()
+            {
+                return this.MemberwiseClone();
+            }
             public Building()
             {
                 name = "none";

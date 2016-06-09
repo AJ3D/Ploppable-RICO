@@ -2,6 +2,7 @@
 using ColossalFramework.UI;
 using System.IO;
 using System.Xml.Serialization;
+using System.Xml;
 
 namespace PloppableRICO
 {
@@ -38,6 +39,8 @@ namespace PloppableRICO
             autoLayout = true;
             autoLayoutDirection = LayoutDirection.Vertical;
             autoLayoutPadding.top = 5;
+            autoLayoutPadding.left = 5;
+            autoLayoutPadding.right = 5;
             builtinKeyNavigation = true;
             clipChildren = true;
             freeScroll = false;
@@ -65,12 +68,13 @@ namespace PloppableRICO
 
             addLocal.eventClick += (c, p) =>
             {
-                if (currentSelection.hasLocal == false) {
+                if (currentSelection.hasLocal == false)
+                {
 
                     var newlocal = new PloppableRICODefinition.Building();
 
                     currentSelection.hasLocal = true;
-                    
+
                     //Set some basic settings for assets with no settings
                     newlocal.ricoEnabled = false;
                     newlocal.service = "residential";
@@ -80,16 +84,19 @@ namespace PloppableRICO
 
 
                     //If selected asset has author settings, copy those to local
-                    if (currentSelection.hasAuthor) {
-
+                    if (currentSelection.hasAuthor)
+                    {
                         newlocal = currentSelection.author;
                     }
+                    else if (currentSelection.hasMod)
+                    {
+                        newlocal = currentSelection.mod;
+                    }
 
-                    newlocal.name = currentSelection.name;
-                    currentSelection.local = newlocal;
+                    currentSelection.local = (PloppableRICODefinition.Building)newlocal.Clone();
 
                     RICOSettingsPanel.instance.UpdateBuildingInfo(currentSelection);
-
+                    Save();
                 }
             };
 
@@ -99,50 +106,69 @@ namespace PloppableRICO
                 currentSelection.local = null;
                 currentSelection.hasLocal = false;
                 RICOSettingsPanel.instance.UpdateBuildingInfo(currentSelection);
+                Save();
+
             };
             removeLocal.text = "Remove Local";
             removeLocal.width = 140;
 
             save.eventClick += (c, p) =>
             {
-                //Serialize the new RICO settings. 
-                //XMLManager.SaveLocal(currentSelection.local);
-                RICOSettingsPanel.instance.Save();
-
-                if (File.Exists("LocalRICOSettings.xml") /*&& currentSelection.local != null*/ )
-                { 
-                    PloppableRICODefinition localSettings;
-                    var newlocalSettings = new PloppableRICODefinition();
-
-                    var xmlSerializer = new XmlSerializer(typeof(PloppableRICODefinition));
-
-                    using (StreamReader streamReader = new System.IO.StreamReader("LocalRICOSettings.xml"))
-                    {
-                        localSettings = xmlSerializer.Deserialize(streamReader) as PloppableRICODefinition;
-                    }
-                    
-                    //Loop though all buildings in the file. If they arent the current selection, write them back to file. 
-                    foreach (var buildingDef in localSettings.Buildings)
-                    {
-                        if (buildingDef.name != currentSelection.name)
-                        {
-                            newlocalSettings.Buildings.Add(buildingDef);
-                        }
-                    }
-
-                    //If current selection has local settings, add them to file. 
-                    if (currentSelection.hasLocal)
-                    {
-                        newlocalSettings.Buildings.Add(currentSelection.local);
-                    }
-
-                    using (TextWriter writer = new StreamWriter("LocalRICOSettings.xml"))
-                    {
-                        xmlSerializer.Serialize(writer, newlocalSettings);
-                    }
-                    
-                }
+                Save();
             };
+        }
+
+        public void Save()
+        {
+
+            RICOSettingsPanel.instance.Save();
+
+            if (!File.Exists("LocalRICOSettings.xml"))
+            {
+
+                var newlocalSettings = new PloppableRICODefinition();
+                var xmlSerializer = new XmlSerializer(typeof(PloppableRICODefinition));
+
+                using (XmlWriter writer = XmlWriter.Create("LocalRICOSettings.xml"))
+                {
+                    xmlSerializer.Serialize(writer, newlocalSettings);
+                }
+            }
+
+            if (File.Exists("LocalRICOSettings.xml"))
+            {
+                PloppableRICODefinition localSettings;
+                var newlocalSettings = new PloppableRICODefinition();
+
+                var xmlSerializer = new XmlSerializer(typeof(PloppableRICODefinition));
+
+                using (StreamReader streamReader = new System.IO.StreamReader("LocalRICOSettings.xml"))
+                {
+                    localSettings = xmlSerializer.Deserialize(streamReader) as PloppableRICODefinition;
+                }
+
+                //Loop though all buildings in the file. If they arent the current selection, write them back to file. 
+                foreach (var buildingDef in localSettings.Buildings)
+                {
+                    if (buildingDef.name != currentSelection.name)
+                    {
+                        newlocalSettings.Buildings.Add(buildingDef);
+                    }
+                }
+
+                //If current selection has local settings, add them to file. 
+                if (currentSelection.hasLocal)
+                {
+                    newlocalSettings.Buildings.Add(currentSelection.local);
+                }
+
+                using (TextWriter writer = new StreamWriter("LocalRICOSettings.xml"))
+                {
+                    xmlSerializer.Serialize(writer, newlocalSettings);
+                }
+
+            }
+
         }
     }
 }

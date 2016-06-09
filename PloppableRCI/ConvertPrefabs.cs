@@ -25,14 +25,21 @@ namespace PloppableRICO
                             ConvertPrefab(buildingData.local, buildingData.name);
                         }
                     }
-
+                    //assign author settings. 
                     else if (buildingData.hasAuthor)
                     {
                         if (buildingData.author.ricoEnabled)
                         {
                             ConvertPrefab(buildingData.author, buildingData.name);
                         }
+                        //assign Mod settings
+
                         //Debug.Log(buildingData.author.name + " is " + buildingData.author.service);
+                    }
+                    else if (buildingData.hasMod)
+                    {
+
+                        ConvertPrefab(buildingData.mod, buildingData.name);
                     }
                 }
             }
@@ -41,9 +48,13 @@ namespace PloppableRICO
         public void ConvertPrefab(PloppableRICODefinition.Building buildingData, string name)
         {
             var prefab = PrefabCollection<BuildingInfo>.FindLoaded(name);
-            
+
+
             if (prefab != null)
             {
+                prefab.m_UIPriority = -1;
+                
+
                 if (buildingData.service == "residential")
                 {
                     var ai = prefab.gameObject.AddComponent<PloppableResidential>();
@@ -54,6 +65,7 @@ namespace PloppableRICO
                 }
                 else if (buildingData.service == "office")
                 {
+                    
                     var ai = prefab.gameObject.AddComponent<PloppableOffice>();
                     ai.m_ricoData = buildingData;
                     ai.m_workplaceCount = buildingData.workplaceCount;
@@ -120,6 +132,7 @@ namespace PloppableRICO
             prefab.m_buildingAI.m_info = prefab;
             prefab.InitializePrefab();
             prefab.m_class = ItemClassCollection.FindClass(aiClass);
+            prefab.m_placementStyle = ItemClass.Placement.Manual;
         }
     }
 }

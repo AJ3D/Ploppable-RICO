@@ -48,24 +48,22 @@ namespace PloppableRICO
 
             //RICO settings can come from 3 sources. Local settings are applied first, followed by asset author settings,
             //and then finaly settings from settings mods. 
+
+            //Import settings from asset folders. 
             AssetSettings();
 
             //If local settings are present, load them. 
-            
             if (File.Exists("LocalRICOSettings.xml"))
-
               {
                   LocalSettings();
               }
-         
-            //Import settings from asset folders. 
+
             //If settings mod is active, load its settings. (disabled for now)
-
             if (Util.IsModEnabled(629850626uL))
+            {
+                    ModSettings();
+            }
 
-                {
-                    //ModSettings();
-                }
         }
 
         //Load local RICO settings. 
@@ -225,7 +223,11 @@ namespace PloppableRICO
                 if (PrefabCollection<BuildingInfo>.FindLoaded(buildingDef.name) != null)
                 {
                     var buildingPrefab = PrefabCollection<BuildingInfo>.FindLoaded(buildingDef.name);
-                    //Add settings mod settings here
+
+                    var mod = new PloppableRICODefinition.Building();
+                    mod = buildingDef;
+                    xmlData[buildingPrefab].mod = mod;
+                    xmlData[buildingPrefab].hasMod = true;
 
                 }
             }
@@ -248,7 +250,7 @@ namespace PloppableRICO
 
         private Category AssignCategory(BuildingInfo prefab)
         {
-
+            //These are used by the filter on the RICO Settings panel.
             if (prefab.m_buildingAI is MonumentAI)
             {
                 return Category.Monument;
@@ -273,44 +275,28 @@ namespace PloppableRICO
             {
                 return Category.Health;
             }
+            else if (prefab.m_buildingAI is IndustrialExtractorAI)
+            {
+                return Category.Industrial;
+            }
+            else if (prefab.m_buildingAI is IndustrialBuildingAI)
+            {
+                return Category.Industrial;
+            }
+            else if (prefab.m_buildingAI is OfficeBuildingAI)
+            {
+                return Category.Office;
+            }
+            else if (prefab.m_buildingAI is ResidentialBuildingAI)
+            {
+                return Category.Residential;
+            }
+            else if (prefab.m_buildingAI is CommercialBuildingAI)
+            {
+                return Category.Commercial;
+            }
             else return Category.Beautification;
 
-        }
-
-        //This is called by the settings panel. It will serialize any new local settings the player sets in game. 
-        public static void SaveLocal(PloppableRICODefinition.Building newBuildingData)
-        {
-            Debug.Log("SaveLocal");
-            
-            if (File.Exists("LocalRICOSettings.xml") && newBuildingData != null)
-            {
-
-                PloppableRICODefinition localSettings = null;
-                var newlocalSettings = new PloppableRICODefinition();
-
-                var xmlSerializer = new XmlSerializer(typeof(PloppableRICODefinition));
-
-                using (StreamReader streamReader = new System.IO.StreamReader("LocalRICOSettings.xml"))
-                {
-                    localSettings = xmlSerializer.Deserialize(streamReader) as PloppableRICODefinition;
-                }
-
-                foreach (var buildingDef in localSettings.Buildings)
-                {
-                    if (buildingDef.name != newBuildingData.name)
-                    {
-                        newlocalSettings.Buildings.Add(buildingDef);
-                    }
-                }
-
-                //newBuildingData.name = newBuildingData.name;
-                newlocalSettings.Buildings.Add(newBuildingData);
-
-                using (TextWriter writer = new StreamWriter("LocalRICOSettings.xml"))
-                {
-                    xmlSerializer.Serialize(writer, newlocalSettings);
-                }
-            } 
         }
     }
 

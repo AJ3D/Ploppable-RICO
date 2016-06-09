@@ -201,7 +201,7 @@ namespace PloppableRICO
 
         private FastList<object> Filter()
         {
-            Debug.Log("Filtered Called");
+            //Debug.Log("Filtered Called");
             List<BuildingData> list = new List<BuildingData>();
             foreach (var bData in XMLManager.xmlData.Values)
             {
@@ -209,7 +209,7 @@ namespace PloppableRICO
                 {
                     //var prefab = PrefabCollection<BuildingInfo>.GetLoaded(id.id);
                     list.Add(bData);
-                    Debug.Log(bData.name);
+                    //Debug.Log(bData.name);
                 }
             }
 
@@ -229,7 +229,7 @@ namespace PloppableRICO
                  //Name
                  if (!m_filter.buildingName.IsNullOrWhiteSpace() && !item.name.ToLower().Contains(m_filter.buildingName.ToLower())) continue;
 
-                Debug.Log(item.category + " " + item.displayName);
+                //Debug.Log(item.category + " " + item.displayName);
 
                 filtered.Add(item);
             }
@@ -253,7 +253,7 @@ namespace PloppableRICO
                 {
                     //var prefab = PrefabCollection<BuildingInfo>.GetLoaded(id.id);
                     list.Add(bData);
-                    Debug.Log(bData.name);
+                    //Debug.Log(bData.name);
                 }
             }
 

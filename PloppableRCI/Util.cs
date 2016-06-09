@@ -36,19 +36,30 @@ namespace PloppableRICO
         public static void AssignServiceClass()
         {
 
-            for (uint i = 0; i < PrefabCollection<BuildingInfo>.LoadedCount(); i++)
+            foreach (var buildingData in XMLManager.xmlData.Values)
             {
 
-                var prefab = PrefabCollection<BuildingInfo>.GetLoaded(i);
-
-                if (prefab.m_buildingAI is PloppableRICO.PloppableExtractor || prefab.m_buildingAI is PloppableResidential
-                    || prefab.m_buildingAI is PloppableOffice || prefab.m_buildingAI is PloppableCommercial ||
-                    prefab.m_buildingAI is PloppableIndustrial)
+                var prefab = PrefabCollection<BuildingInfo>.FindLoaded(buildingData.name);
+                if (prefab != null)
                 {
-
-                    // Just assign any RICO prefab a ploppable ItemClass so it will reload. It gets set back once the mod loads. 
-                    prefab.m_class = ItemClassCollection.FindClass("Beautification Item");
-                    prefab.InitializePrefab();
+                    //Ploppables have an atlas. 
+                    if (prefab.m_Atlas != null)
+                    {
+                        if (prefab.m_buildingAI is PloppableRICO.PloppableExtractor || prefab.m_buildingAI is PloppableResidential
+                            || prefab.m_buildingAI is PloppableOffice || prefab.m_buildingAI is PloppableCommercial ||
+                            prefab.m_buildingAI is PloppableIndustrial)
+                        {
+                            // Just assign any ploppable RICO prefab a ploppable ItemClass so it will reload. It gets set back once the mod loads. 
+                            prefab.m_class = ItemClassCollection.FindClass("Beautification Item");
+                            prefab.InitializePrefab();
+                        }
+                    }
+                    //Growables Dont have an atlas. 
+                    else if (prefab.m_Atlas == null)
+                    {
+                        if (buildingData.category == Category.Residential) prefab.m_class = ItemClassCollection.FindClass("High Residential - Level1");
+                        prefab.InitializePrefab();
+                    }
                 }
             }
         }
