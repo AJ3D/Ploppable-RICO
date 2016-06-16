@@ -126,12 +126,12 @@ namespace PloppableRICO
                 if (asset == null || asset.package == null)
                     continue;
 
-                var crpPath = asset.package.packagePath;
+                var crpPath = asset.pathOnDisk;
                 if (crpPath == null)
                     continue;
 
                 var ricoDefPath = Path.Combine(Path.GetDirectoryName(crpPath), "PloppableRICODefinition.xml");
-                var pn = asset.package.packageName;
+                var pn = asset.name;
 
                 // skip files which were already parsed
                 if (checkedPaths.Contains(ricoDefPath))
