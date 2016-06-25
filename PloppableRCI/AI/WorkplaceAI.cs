@@ -2,14 +2,16 @@
 ﻿using UnityEngine;
 using ColossalFramework;
 using ColossalFramework.Math;
+using System.Linq;
+using System.Collections.Generic;
 
 namespace PloppableRICO
 {
     public interface IWorkplaceLevelCalculator
     {
-        void CalculateWorkplaceCount(Randomizer r, int width, int length, out int level0, out int level1, out int level2, out int level3);
-        void CalculateLevels(Randomizer r, int width, int length, out int level0, out int level1, out int level2, out int level3);
-        void CalculateBaseLevels(Randomizer r, int width, int length, out int level0, out int level1, out int level2, out int level3);
+        //void CalculateWorkplaceCount(Randomizer r, int width, int length, out int level0, out int level1, out int level2, out int level3);
+        //void CalculateLevels(int width, int length, out int level0, out int level1, out int level2, out int level3);
+        void CalculateBaseWorkplaceCount(Randomizer r, int width, int length, out int level0, out int level1, out int level2, out int level3);
     }
 
     public static class WorkplaceAIHelper
@@ -26,23 +28,14 @@ namespace PloppableRICO
             SetWorkplaceLevels(out level0, out level1, out level2, out level3, 0, 0, 0, 0);
             PloppableRICODefinition.Building rc = ricoData;
 
-            if (rc == null)
-                WorkplaceAIHelper.SetWorkplaceLevels(out level0, out level1, out level2, out level3, 10, 20, 30, 40);
-            else
+            if ( rc != null )
+            {
                 // reality mod is running and the xml file says ignore-reality="false"
-                if (rc.useReality)
-                    ai.CalculateBaseLevels(r, width, length, out level0, out level1, out level2, out level3);
+                if ( rc.useReality )
+                    ai.CalculateBaseWorkplaceCount( r, width, length, out level0, out level1, out level2, out level3 );
                 else
-                {
-                    if (rc.workplaceCount > 0)
-                        ai.CalculateLevels(r, width, length, out level0, out level1, out level2, out level3);
-                    if (rc.workplaceDetailsEnabled)
-                        // this adds to the results of the usual workplaces calculation
-                        WorkplaceAIHelper.SetWorkplaceLevels(out level0, out level1, out level2, out level3, rc.uneducated + level0, rc.educated + level1, rc.wellEducated + level2, rc.highEducated + level3);
-                    // Comment that out and uncomment the following to ignore "workplaces" 
-                    // and just use the details setting
-                    // WorkplaceAIHelper.SetWorkplaceLevels(out level0, out level1, out level2, out level3, m_ricoData);
-                }
+                    CalculateLevels(ricoData, out level0, out level1, out level2, out level3 );
+            }
         }
 
         public static void SetWorkplaceLevels(out int level0, out int level1, out int level2, out int level3, PloppableRICODefinition.Building ricoData)
@@ -62,36 +55,49 @@ namespace PloppableRICO
             level2 = values[2];
             level3 = values[3];
         }
-        
-        public static void distributeWorkplaceLevels(Randomizer r, int[] workplaceDistribution, int widths, out int level0, out int level1, out int level2, out int level3)
+
+
+    
+        public static void distributeWorkplaceLevels( PloppableRICODefinition.Building ricoData, out int level0, out int level1, out int level2, out int level3 )
+        {
+            distributeWorkplaceLevels( ricoData.workplaceCount, Util.WorkplaceDistributionOf(ricoData.service, ricoData.subService, "Level" + ricoData.level.ToString() ), ricoData.workplaceDeviation, out level0, out level1, out level2, out level3 );
+        }
+
+
+        public static void distributeWorkplaceLevels( int workplaces, int[] workplaceDistribution, int[] workplaceDeviation, out int level0, out int level1, out int level2, out int level3 )
+        {
+            var jobs = distributeWorkplaceLevels( workplaces, workplaceDistribution, workplaceDeviation);
+            SetWorkplaceLevels( out level0, out level1, out level2, out level3, jobs );
+
+        }
+
+        public static int[] distributeWorkplaceLevels( int workplaces, int[] workplaceDistribution, int[] workplaceDeviation)
         {
             int[] wd = workplaceDistribution;
+            int[] wv = workplaceDeviation;
+           
+            float @base = (float)wd[0];
 
-            level0 = 0; level1 = 0; level2 = 0; level3 = 0;
-            int num = Mathf.Max(200, widths * workplaceDistribution[0] + r.Int32(100u)) / 100;
-            int num2 = wd[1] + wd[2] + wd[3] + wd[4];
+            // distribute 
+            int[] jobs = wd.Select(
+                    share => (int)((float)workplaces * ((float)share / @base))
+                  ).ToArray();
 
-            if (num <= 0)
-                return;
+            // deviate
+            if (wv != null)
+                jobs = jobs.Skip(1).Select(
+                    (jobc, i) => (int)new System.Random().Next( jobc - wv[i], jobc  +wv[i] )
+                ).ToArray();
 
-            if (num2 != 0)
-            {
-                level0 = (num * wd[1] + r.Int32((uint)num2)) / num2;
-                num -= level0;
-            }
-            num2 = wd[2] + wd[3] + wd[4];
-            if (num2 != 0)
-            {
-                level1 = (num * wd[2] + r.Int32((uint)num2)) / num2;
-                num -= level1;
-            }
-            num2 = wd[3] + wd[4];
-            if (num2 != 0)
-            {
-                level2 = (num * wd[3] + r.Int32((uint)num2)) / num2;
-                num -= level2;
-            }
-            level3 = num;
+            return jobs;
+        }
+
+        public static void CalculateLevels( PloppableRICODefinition.Building ricoData, out int level0, out int level1, out int level2, out int level3 )
+        {
+            if ( ricoData.workplaces[1] < 0 )
+                WorkplaceAIHelper.distributeWorkplaceLevels( ricoData, out level0, out level1, out level2, out level3 );
+            else
+                SetWorkplaceLevels( out level0, out level1, out level2, out level3, ricoData.workplaces );
         }
     }
 }

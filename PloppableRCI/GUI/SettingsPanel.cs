@@ -189,7 +189,7 @@ namespace PloppableRICO
 
             //Debug.Log(building.name);
 
-            currentSelection = XMLManager.xmlData[building.prefab];
+            currentSelection = XMLManager.prefabHash[building.prefab];
             m_buildingOptions.SelectionChanged(currentSelection);
             m_savePanel.SelectionChanged(currentSelection);
             m_buildingPreview.Show(currentSelection);
@@ -204,7 +204,7 @@ namespace PloppableRICO
         {
             Debug.Log("Filtered Called");
             List<BuildingData> list = new List<BuildingData>();
-            foreach (var bData in XMLManager.xmlData.Values)
+            foreach (var bData in XMLManager.prefabHash.Values)
             {
                 if (bData != null)
                 {
@@ -248,7 +248,7 @@ namespace PloppableRICO
 
             List<BuildingData> list = new List<BuildingData>();
 
-            foreach (var bData in XMLManager.xmlData.Values)
+            foreach (var bData in XMLManager.prefabHash.Values)
             {
                 if (bData != null)
                 {

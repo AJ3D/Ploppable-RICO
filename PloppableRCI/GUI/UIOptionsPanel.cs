@@ -253,7 +253,7 @@ namespace PloppableRICO
             else if (service.selectedIndex == 5) currentSelection.service = "extractor";
 
             currentSelection.constructionCost = int.Parse(construction.text);
-            currentSelection.workplaceCount = int.Parse(manual.text);
+            currentSelection.workplaces = new int[] { int.Parse( manual.text ), -1, -1, -1 };
             currentSelection.homeCount = int.Parse(homes.text);
 
 

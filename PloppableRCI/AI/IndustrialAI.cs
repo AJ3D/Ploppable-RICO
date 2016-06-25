@@ -1,5 +1,8 @@
 ﻿using System;
 using ColossalFramework.Math;
+using ColossalFramework.Plugins;
+using ColossalFramework.UI;
+using UnityEngine;
 
 namespace PloppableRICO
 {
@@ -19,6 +22,7 @@ namespace PloppableRICO
 
         public override void CalculateWorkplaceCount(Randomizer r, int width, int length, out int level0, out int level1, out int level2, out int level3)
         {
+
             // For some reason CalculateWorkplaceCount gets called every two seconds or so for every rico building currently plopped.
             // It's the bottleneck of the mod.
             // So we cache the calculation results, which might save a few cpu cycles.
@@ -31,36 +35,10 @@ namespace PloppableRICO
             }
         }
 
-        public void CalculateBaseLevels(Randomizer r, int width, int length, out int level0, out int level1, out int level2, out int level3)
+        public void CalculateBaseWorkplaceCount(Randomizer r, int width, int length, out int level0, out int level1, out int level2, out int level3)
         {
             base.CalculateWorkplaceCount(r, width, length, out level0, out level1, out level2, out level3); ;
         }
-
-        public void CalculateLevels(Randomizer r, int width, int length, out int level0, out int level1, out int level2, out int level3)
-        {
-            ItemClass itemClass = this.m_info.m_class;
-            ItemClass.SubService subService = itemClass.m_subService;
-            int[] workplaceDistribution = { 0, 0, 0, 0, 0 };
-
-            if (m_ricoData.workplaceDistribution != null)
-                workplaceDistribution = m_ricoData.workplaceDistribution;
-            else
-                switch (itemClass.m_subService) {
-                    case ItemClass.SubService.IndustrialFarming: workplaceDistribution = new int[] { 100, 100, 0, 0, 0 }; break;
-                    case ItemClass.SubService.IndustrialForestry: workplaceDistribution = new int[] { 100, 100, 0, 0, 0 }; break;
-                    case ItemClass.SubService.IndustrialOre: workplaceDistribution = new int[] { 100, 20, 60, 20, 0 }; break;
-                    case ItemClass.SubService.IndustrialOil: workplaceDistribution = new int[] { 100, 20, 60, 20, 0 }; break;
-                    case ItemClass.SubService.IndustrialGeneric:
-                        switch (itemClass.m_level)
-                        {
-                            case ItemClass.Level.Level1: workplaceDistribution = new int[] { 100, 100, 0, 0, 0 }; break;
-                            case ItemClass.Level.Level2: workplaceDistribution = new int[] { 100, 20, 60, 20, 0 }; break;
-                            default: workplaceDistribution = new int[] { 100, 5, 15, 30, 50 }; break;
-                        }
-                        break;
-                }
-            WorkplaceAIHelper.distributeWorkplaceLevels(r, workplaceDistribution, m_workplaceCount, out level0, out level1, out level2, out level3);
-		}
 
         public override void GetPollutionRates(int productionRate, DistrictPolicies.CityPlanning cityPlanningPolicies, out int groundPollution, out int noisePollution)
         {
@@ -72,6 +50,16 @@ namespace PloppableRICO
 
             base.GetPollutionRates(productionRate, cityPlanningPolicies, out groundPollution, out noisePollution);
         }
+
+        //// PlayerBuildingAI
+        //public override bool GetFireParameters( ushort buildingID, ref Building buildingData, out int fireHazard, out int fireSize, out int fireTolerance )
+        //{
+        //    Util.TRACE( " **** FIRE ****" );
+        //    fireHazard = m_ricoData.fireHazard;
+        //    fireSize = m_ricoData.fireSize;
+        //    fireTolerance = m_ricoData.fireTolerance;
+        //    return m_ricoData.fireHazard != 0;
+        //}
 
         // I'd really love to refactor this boilerplate out, but meh, no multiple inheritance nor mixins
         public override void SimulationStep(ushort buildingID, ref Building buildingData, ref Building.Frame frameData)

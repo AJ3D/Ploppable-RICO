@@ -12,28 +12,27 @@ namespace PloppableRICO
         public void run()
         {
             //Loop through the dictionary, and apply any RICO settings. 
-            foreach (var buildingData in XMLManager.xmlData.Values)
+            foreach (var buildingData in XMLManager.prefabHash.Values)
             {
-                if (buildingData != null)
+                if ( buildingData != null)
                 {
                     //If asset has local settings, apply those. 
-                    if (buildingData.hasLocal)
+                    if ( buildingData.hasLocal)
                     {
                         //If local settings disable RICO, dont convert
-                        if (buildingData.local.ricoEnabled)
+                        if ( buildingData.local.ricoEnabled)
                         {
-                            ConvertPrefab(buildingData.local, buildingData.name);
+                            ConvertPrefab( buildingData.local, buildingData.name);
                             continue;
                         }
                     }
 
                     if (buildingData.hasAuthor)
                     {
-                        if (buildingData.author.ricoEnabled)
+                        if ( buildingData.author.ricoEnabled)
                         {
-                            ConvertPrefab(buildingData.author, buildingData.name);
+                            ConvertPrefab( buildingData.author, buildingData.name);
                         }
-                        Debug.Log(buildingData.author.name + " is " + buildingData.author.service);
                     }
                 }
             }
@@ -42,8 +41,8 @@ namespace PloppableRICO
         public void ConvertPrefab(PloppableRICODefinition.Building buildingData, string name)
         {
             var prefab = PrefabCollection<BuildingInfo>.FindLoaded(name);
-            
-            if (prefab != null)
+
+            if ( prefab != null)
             {
                 if (buildingData.service == "residential")
                 {
@@ -76,8 +75,7 @@ namespace PloppableRICO
                 }
                 else if (buildingData.service == "extractor")
                 {
-
-                    var ai = prefab.gameObject.AddComponent<PloppableExtractor>();
+                     var ai = prefab.gameObject.AddComponent<PloppableExtractor>();
                     ai.m_ricoData = buildingData;
                     ai.m_workplaceCount = buildingData.workplaceCount;
                     ai.m_constructionCost = buildingData.constructionCost;

@@ -204,7 +204,7 @@ namespace PloppableRICO
         public void PopulateAssets()
         {
 
-            foreach (var buildingData in XMLManager.xmlData.Values)
+            foreach (var buildingData in XMLManager.prefabHash.Values)
             {
                 if (buildingData != null)
                 {

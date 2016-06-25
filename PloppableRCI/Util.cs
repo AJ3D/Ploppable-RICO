@@ -6,8 +6,81 @@ using System.Collections.Generic;
 
 namespace PloppableRICO
 {
-    internal static class Util
+    public static class Util
     {
+        public static int[] WorkplaceDistributionOf(string service, string subservice, string level)
+        {
+            Dictionary<String, int[]>distributions = new Dictionary<String, int[]>()
+            {
+                { "IndustrialIndustrialFarming", new int[] { 100, 100, 0, 0, 0 } },
+                { "IndustrialIndustrialForestry", new int[] { 100, 100, 0, 0, 0 } },
+                { "IndustrialIndustrialOre", new int[] { 100, 20, 60, 20, 0 } },
+                { "IndustrialIndustrialOil", new int[] { 100, 20, 60, 20, 0 } },
+                { "IndustrialIndustrialGenericLevel1", new int[] { 100, 100, 0, 0, 0 } },
+                { "IndustrialIndustrialGenericLevel2", new int[] { 100, 20, 50, 20, 0 } },
+                { "IndustrialIndustrialGenericLevel3", new int[] { 100, 15, 55, 25, 5 } },
+                { "OfficeNoneLevel1", new int[] { 100, 0, 40, 50, 10 } },
+                { "OfficeNoneLevel2", new int[] { 100, 0, 20, 50, 30 } },
+                { "OfficeNoneLevel3", new int[] { 100, 0, 0, 40, 60 } },
+                { "ExtractorIndustrialFarming", new int[] { 100, 100, 0, 0, 0 } },
+                { "ExtractorIndustrialForestry", new int[] { 100, 100, 0, 0, 0 } },
+                { "ExtractorIndustrialOre", new int[] { 100, 20, 60, 20, 0 } },
+                { "ExtractorIndustrialOil", new int[] { 100, 20, 60, 20, 0 } },
+                { "CommercialCommercialTourist", new int[] { 100, 20, 20, 30, 30 } },
+                { "CommercialCommercialLeisure", new int[] { 100, 30, 30, 20, 20 } },
+                { "CommercialCommercialLowLevel1", new int[] { 100, 100, 0, 0, 0 } },
+                { "CommercialCommercialLowLevel2", new int[] { 100, 20, 60, 20, 0 } },
+                { "CommercialCommercialLowLevel3", new int[] { 100, 5, 15, 30, 50 } },
+                { "CommercialCommercialHighLevel1", new int[] { 100, 0, 40, 50, 10 } },
+                { "CommercialCommercialHighLevel2", new int[] { 100, 0, 20, 50, 30 } },
+                { "CommercialCommercialHighLevel3", new int[] { 100, 0, 0, 40, 60 } },
+            };
+            int[] workplaceDistribution = null;
+
+            if ( distributions.ContainsKey( service + subservice ) )
+                workplaceDistribution = distributions[service + subservice];
+
+            if ( distributions.ContainsKey( service + subservice + level ) )
+                workplaceDistribution = distributions[service + subservice + level];
+
+            return workplaceDistribution;
+
+        }
+
+        public static void TRACE( string line )
+        {
+            try
+            {
+                var fw = new System.IO.StreamWriter(@"d:\log.txt", true);
+                fw.WriteLine( line );
+                fw.Close();
+            }
+            catch { }
+        }
+
+        public static int MaxLevelOf( string service, string subservice )
+        {
+            return service == "residential" ? 5 :
+                   service == "office" ? 3 :
+                   service == "commercial" ? 3 :
+                   service == "industrial" && subservice == "generic" ? 3 :
+                   1;
+        }
+        
+        public static string UICategoryOf(string service, string subservice)
+        {
+            var category = "";
+            switch (service)
+            {
+                case "residential": category = subservice == "high" ? "reshigh" : "reslow"; break;
+                case "commercial": category = subservice == "high" ? "comhigh" : "comlow"; break;
+                case "office": category = "office"; break;
+                case "industrial": category = subservice == "generic" ? "industrial" : subservice; break;
+                case "extractor": category = subservice; break;
+            }
+            return category;
+        }
+
         public static List<String> industryServices = new List<String>() { "farming", "forest", "oil", "ore" };
         public static List<String> vanillaCommercialServices = new List<String>() { "low", "high" };
         public static List<String> afterDarkCommercialServices = new List<String>() { "low", "high", "tourist", "leisure" };
@@ -20,6 +93,8 @@ namespace PloppableRICO
 
         public static BuildingInfo FindPrefab(string prefabName, string packageName)
         {
+            Util.TRACE( String.Format( "Find prefab: prefabName = {0}, packageName {1}", prefabName, packageName ) );
+
             var prefab = PrefabCollection<BuildingInfo>.FindLoaded(prefabName);
             if (prefab == null)
                 prefab = PrefabCollection<BuildingInfo>.FindLoaded(prefabName + "_Data");
@@ -30,8 +105,10 @@ namespace PloppableRICO
             if (prefab == null)
                 prefab = PrefabCollection<BuildingInfo>.FindLoaded(packageName + "." + ColossalFramework.IO.PathEscaper.Escape(prefabName) + "_Data");
 
+            Util.TRACE( String.Format( "Find Asset: found = {0}", (prefab != null).ToString() ) );
             return prefab;
         }
+
 
         //This is run in the SimulationStep of all the ploppable AI's. 
         public static void buildingFlags(ref Building buildingData) {

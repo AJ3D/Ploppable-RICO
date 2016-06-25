@@ -15,24 +15,79 @@ namespace PloppableRICO
             Buildings = new List<Building> ();
         }
 
+        public Building AddBuilding( Building buildingDef = null )
+        {
+            if ( buildingDef == null )
+            {
+                buildingDef = new Building();
+                buildingDef.name = "* unnamed";
+            }
+
+            Buildings.Add( buildingDef );
+
+            return buildingDef;
+        }
+
+        public Building RemoveBuilding( int index )
+        {
+            if ( index < 0 && index >= this.Buildings.Count )
+                return null;
+
+            return RemoveBuilding( Buildings[index] );
+        }
+
+        public Building RemoveBuilding( Building buildingDef )
+        {
+            Buildings.Remove( buildingDef );
+            return buildingDef;
+        }
+
+        //    if ( listboxBuildings.SelectedIndex >= 0 )
+        //    {
+        //        ricoDef.Buildings.RemoveAt( listboxBuildings.SelectedIndex );
+        //        listboxBuildings.Items.RemoveAt( listboxBuildings.SelectedIndex );
+
+        //        // If the current building is not not in the building list anymore,
+        //        if ( !ricoDef.Buildings.Contains( buildingDef ) )
+        //        {
+        //            if ( ricoDef.Buildings.Count > 0 )
+        //            {
+        //                // (because it got deleted) we must show another building.
+        //                buildingDef = ricoDef.Buildings[0];
+        //                listboxBuildings.SelectedIndex = 0;
+        //            }
+        //            else
+        //            {
+        //                // if the building list is empty, add an empty one
+        //                AddBuilding_Click( sender, e );
+        //            }
+        //        }
+        //    }
+        //}
         public class Building
         {
             public Building()
             {
-                prefabName = "";
-                name = "none";
-                service = "none";
-                subService = "none";
+
+                workplaceDeviationString = "";
+                workplaceDeviation = new int[] { 0, 0, 0, 0 };
+                name = "";
+                steamId = "";
+                service = "";
+                subService = "";
                 constructionCost = 0;
-                UICategory = "none";
-                homeCount = 1;
-                level = 1;
+                UICategory = "";
+                homeCount = 0;
+                level = 0;
                 pollutionRadius = 0;
-                workplaceCount = 0;
+                workplaces = new int[] {0, 0, 0, 0};
                 uneducated = 0;
                 educated = 0;
                 wellEducated = 0;
-                highEducated = 0; 
+                highEducated = 0;
+                fireHazard = 0;
+                fireTolerance = 0;
+                fireSize = 255;
                 popbalanceEnabled = true;
                 ricoEnabled = true;
                 educationRatioEnabled = false;
@@ -41,13 +96,18 @@ namespace PloppableRICO
                 manualHomeEnabled = true;
                 constructionCostEnabled = true;
                 RealityIgnored = false;
-                workplaceDistributionString = "";
+             }
+
+            public int maxLevel
+            {
+                get { return Util.MaxLevelOf( service, subService ); }
             }
 
             [XmlAttribute ("name")]
             public string name { get; set; }
 
-            [XmlAttribute ("service")]
+            //[XmlAttribute ("service")]
+            [XmlAttribute("service")]
             public string service { get; set; }
 
             [XmlAttribute ("sub-service")]
@@ -56,11 +116,20 @@ namespace PloppableRICO
             [XmlAttribute ("construction-cost")]
             public int constructionCost { get; set; }
 
-            [XmlAttribute("ui-category")]
-            public string UICategory { get; set; }
+            private string _UICategory;
 
-            [XmlAttribute ("homes")]
+            [XmlAttribute("ui-category")]
+            public string UICategory
+            {
+                get { return _UICategory != "" ? _UICategory : Util.UICategoryOf(service, subService); }
+                set { _UICategory = value; }
+            }
+
+            [XmlAttribute( "homes" )]
             public int homeCount { get; set; }
+
+            [XmlAttribute( "steam-id" )]
+            public string steamId { get; set; }
 
             [XmlAttribute("level")]
             public int level { get; set; }
@@ -68,10 +137,6 @@ namespace PloppableRICO
             //Pollution
             [XmlAttribute("pollution-radius")]
             public int pollutionRadius { get; set; }
-
-            //Workplace settings
-            [XmlAttribute("workplaces")]
-            public int workplaceCount { get; set; }
 
             [XmlAttribute("uneducated")]
             public int uneducated { get; set; }
@@ -81,10 +146,19 @@ namespace PloppableRICO
        
             [XmlAttribute("welleducated")]
             public int wellEducated { get; set; }
-            
-            [XmlAttribute("higheducated")]
+
+            [XmlAttribute( "higheducated" )]
             public int highEducated { get; set; }
-            
+
+            [XmlAttribute( "fire-hazard" )]
+            public int fireHazard { get; set; }
+
+            [XmlAttribute( "fire-size" )]
+            public int fireSize { get; set; }
+
+            [XmlAttribute( "fire-tolerance" )]
+            public int fireTolerance { get; set; }
+
             //Toggles
             [XmlAttribute("enable-popbalance")]
             public bool popbalanceEnabled { get; set; }
@@ -107,33 +181,65 @@ namespace PloppableRICO
             [XmlAttribute("enable-constructioncost")]
             public bool constructionCostEnabled { get; set; }
 
-            //Workplace job distribution settings
-            [XmlAttribute("workplace-distribution")]
-            public string workplaceDistributionString { get; set; }
+            [XmlIgnore]
+            public int[] workplaces { get; set; }
 
-            // User-defined distribution of workplaces to the knowledge levels
-            // value must be a comma separated string of integers
-            // first value is the base, the next 4 represent the share relative to the base 
-            // so 200, 100, 50, 40, 10 means 50 uneducated, 25 educated, 20 well educated and 5 high educated jobs
-            [XmlIgnoreAttribute]
-            public int[] workplaceDistribution
+            [XmlAttribute( "workplaces" )]
+            public string workplacesString
             {
                 get
                 {
-                    string wds = workplaceDistributionString;
-                    var re = new System.Text.RegularExpressions.Regex("^ *(\\d+) *, *(\\d+) *, *(\\d+) *, *(\\d+) *, *(\\d+) *");
-
-                    // Not set
-                    if (wds == "")
-                        return null;
+                    return String.Join( ",", workplaces.Select( n => n.ToString() ).ToArray() );
+                }
+                set
+                {
+                    var re1 = new System.Text.RegularExpressions.Regex("^ *(\\d+) *$");
+                    var re4 = new System.Text.RegularExpressions.Regex("^ *(\\d+) *, *(\\d+) *, *(\\d+) *, *(\\d+) *");
 
                     // Split values and convert to int[] if the string is well formed
-                    if (re.IsMatch(wds))
-                        return wds.Replace(" ", "").Split(',').Select(n => Convert.ToInt32(n)).ToArray();
-
-                    // Set but faulty
-                    return new int[] { 100, 25, 25, 25, 25 };
+                    if ( re1.IsMatch( value ) )
+                    {
+                        workplaces = new int[] { Convert.ToInt32(value), -1, -1, -1 };
+                    }
+                    else if ( re4.IsMatch( value ) )
+                    {
+                        workplaces = value.Replace(" ", "").Split(',').Select(n => Convert.ToInt32(n)).ToArray();
+                    }
                 }
+            }
+
+            //Workplace settings
+            [XmlIgnore]
+            public int workplaceCount
+            {
+                get
+                {
+                    return workplaces[1] < 0 ? workplaces[0] : workplaces.Sum();
+                }
+            }
+
+
+            [XmlIgnoreAttribute]
+            public int[] workplaceDeviation { get; set; }
+
+            private string _workplaceDeviationString;
+            //Workplace job distribution settings
+            [XmlAttribute( "deviations" )]
+            public string workplaceDeviationString {
+                get {
+                    return String.Join( ",", workplaceDeviation.Select( i => i.ToString() ).ToArray() );
+                }
+                set
+                {
+                    var re = new System.Text.RegularExpressions.Regex("^ *(\\d+) *, *(\\d+) *, *(\\d+) *, *(\\d+) *");
+                    _workplaceDeviationString = value;
+
+                    // Split values and convert to int[] if the string is well formed
+                    if ( re.IsMatch( value ) )
+                        this.workplaceDeviation = value.Replace( " ", "" ).Split( ',' ).Select( n => Convert.ToInt32( n ) ).ToArray();
+                    else
+                        this.workplaceDeviation = new int[] { 0, 0, 0, 0 };
+                 }
             }
 
             // Flag wether to ignore the realistic population mod is running 
@@ -145,24 +251,6 @@ namespace PloppableRICO
             public bool useReality
             {
                 get { return Util.IsModEnabled(426163185ul) && !RealityIgnored; }
-            }
-
-            // Flag to indicate wether any values for uneducated, educated, welleducated or higheducated are present in the xml
-            [XmlIgnoreAttribute]
-            public bool workplaceDetailsEnabled
-            {
-                get
-                {
-                    return uneducated > 0 || educated > 0 || wellEducated > 0 || highEducated > 0;
-                }
-            }
-
-            [XmlIgnoreAttribute]
-            public String prefabName { get; set; }
-
-            [XmlIgnoreAttribute]
-            public BuildingInfo prefab {
-                get { return prefabName == "" ? null : Util.FindPrefab(name, prefabName); }
             }
         }
     }
