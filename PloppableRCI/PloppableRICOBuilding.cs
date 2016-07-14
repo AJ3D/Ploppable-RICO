@@ -358,7 +358,7 @@ namespace PloppableRICO
                 HandleSetterEvents( !old.SequenceEqual( _workplaces ) );
             }
         }
-        private int[] _firstSetWorkplaces;
+
         private int[] _lastSetWorkplaces;
         private int[] _workplaces;
 
