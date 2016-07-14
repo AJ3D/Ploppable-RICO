@@ -86,7 +86,7 @@ namespace PloppableRICO
         };
 
         public bool disableEvents;
-        public PloppableRICODefinition.Building currentSelection;
+        public RICOBuilding currentSelection;
         //Enable RICO
         public UICheckBox ricoEnabled;
         public UIPanel enableRICOPanel;
@@ -257,18 +257,18 @@ namespace PloppableRICO
             currentSelection.homeCount = int.Parse(homes.text);
 
 
-            if (uiCategory.selectedIndex == 0)  currentSelection.UICategory = "reslow";
-            else if (uiCategory.selectedIndex == 1) currentSelection.UICategory = "reshigh"; 
-            else if (uiCategory.selectedIndex == 2) currentSelection.UICategory = "comlow"; 
-            else if (uiCategory.selectedIndex == 3) currentSelection.UICategory = "comhigh";
-            else if (uiCategory.selectedIndex == 4) currentSelection.UICategory = "office";
-            else if (uiCategory.selectedIndex == 5) currentSelection.UICategory = "industrial";
-            else if (uiCategory.selectedIndex == 6) currentSelection.UICategory = "farming";
-            else if (uiCategory.selectedIndex == 7) currentSelection.UICategory = "oil";
-            else if (uiCategory.selectedIndex == 8) currentSelection.UICategory = "forest";
-            else if (uiCategory.selectedIndex == 9) currentSelection.UICategory = "ore";
-            else if (uiCategory.selectedIndex == 10) currentSelection.UICategory = "leisure";
-            else if (uiCategory.selectedIndex == 11) currentSelection.UICategory = "tourist";
+            if (uiCategory.selectedIndex == 0)  currentSelection.uiCategory = "reslow";
+            else if (uiCategory.selectedIndex == 1) currentSelection.uiCategory = "reshigh"; 
+            else if (uiCategory.selectedIndex == 2) currentSelection.uiCategory = "comlow"; 
+            else if (uiCategory.selectedIndex == 3) currentSelection.uiCategory = "comhigh";
+            else if (uiCategory.selectedIndex == 4) currentSelection.uiCategory = "office";
+            else if (uiCategory.selectedIndex == 5) currentSelection.uiCategory = "industrial";
+            else if (uiCategory.selectedIndex == 6) currentSelection.uiCategory = "farming";
+            else if (uiCategory.selectedIndex == 7) currentSelection.uiCategory = "oil";
+            else if (uiCategory.selectedIndex == 8) currentSelection.uiCategory = "forest";
+            else if (uiCategory.selectedIndex == 9) currentSelection.uiCategory = "ore";
+            else if (uiCategory.selectedIndex == 10) currentSelection.uiCategory = "leisure";
+            else if (uiCategory.selectedIndex == 11) currentSelection.uiCategory = "tourist";
 
             currentSelection.constructionCostEnabled = constructionCostEnabled.isChecked;
             currentSelection.manualHomeEnabled = manualHomesEnabled.isChecked;
@@ -341,7 +341,7 @@ namespace PloppableRICO
             manualHomesEnabled.parent.isVisible = false;
         }
 
-        public void UpdateValues(PloppableRICODefinition.Building buildingData)
+        public void UpdateValues(RICOBuilding buildingData)
         {
             //Updates the values in the RICO options panel to match the selected building. 
           
@@ -382,18 +382,18 @@ namespace PloppableRICO
                     subService.items = ExtractorSub;
                 }
 
-                if (buildingData.UICategory == "reslow") uiCategory.selectedIndex = 0;
-                else if (buildingData.UICategory == "reshigh") uiCategory.selectedIndex = 1;
-                else if (buildingData.UICategory == "comlow") uiCategory.selectedIndex = 2;
-                else if (buildingData.UICategory == "comhigh") uiCategory.selectedIndex = 3;
-                else if (buildingData.UICategory == "office") uiCategory.selectedIndex = 4;
-                else if (buildingData.UICategory == "industrial") uiCategory.selectedIndex = 5;
-                else if (buildingData.UICategory == "farming") uiCategory.selectedIndex = 6;
-                else if (buildingData.UICategory == "oil") uiCategory.selectedIndex = 7;
-                else if (buildingData.UICategory == "forest") uiCategory.selectedIndex = 8;
-                else if (buildingData.UICategory == "ore") uiCategory.selectedIndex = 9;
-                else if (buildingData.UICategory == "leisure") uiCategory.selectedIndex = 10;
-                else if (buildingData.UICategory == "tourist") uiCategory.selectedIndex = 11;
+                if (buildingData.uiCategory == "reslow") uiCategory.selectedIndex = 0;
+                else if (buildingData.uiCategory == "reshigh") uiCategory.selectedIndex = 1;
+                else if (buildingData.uiCategory == "comlow") uiCategory.selectedIndex = 2;
+                else if (buildingData.uiCategory == "comhigh") uiCategory.selectedIndex = 3;
+                else if (buildingData.uiCategory == "office") uiCategory.selectedIndex = 4;
+                else if (buildingData.uiCategory == "industrial") uiCategory.selectedIndex = 5;
+                else if (buildingData.uiCategory == "farming") uiCategory.selectedIndex = 6;
+                else if (buildingData.uiCategory == "oil") uiCategory.selectedIndex = 7;
+                else if (buildingData.uiCategory == "forest") uiCategory.selectedIndex = 8;
+                else if (buildingData.uiCategory == "ore") uiCategory.selectedIndex = 9;
+                else if (buildingData.uiCategory == "leisure") uiCategory.selectedIndex = 10;
+                else if (buildingData.uiCategory == "tourist") uiCategory.selectedIndex = 11;
 
                 level.selectedIndex = (buildingData.level - 1);
                 manual.text = buildingData.workplaceCount.ToString();

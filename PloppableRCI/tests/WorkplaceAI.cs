@@ -39,5 +39,13 @@ using NUnit.Framework;
                 (level2 > 26 && level2 < 34) &&
                 (level3 > 35 && level3 < 45));
         }
+
+        [Test]
+        public void Dirtiness1()
+        {
+            var b = new PloppableRICO.RICOBuilding();
+            b.workplaces[1] = 22;
+            Assert.True( b.isDirty );
+        }
     }
 }

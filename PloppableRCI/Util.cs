@@ -3,11 +3,38 @@ using System.Linq;
 using ColossalFramework.Plugins;
 using ColossalFramework.Steamworks;
 using System.Collections.Generic;
+using System.IO;
 
 namespace PloppableRICO
 {
     public static class Util
     {
+        public static FileInfo crpFileIn( DirectoryInfo d )
+        {
+            try
+            {
+                var f = d.GetFiles("*.crp");
+                if ( f != null && f.Count() == 1 )
+                    return f[0];
+            }
+            catch
+            {
+            }
+            return null;
+        }
+
+        public static FileInfo ricoFileIn( DirectoryInfo d, FileInfo crpFile )
+        {
+            var p = Path.Combine(d.FullName, "PloppableRICODefinition.xml");
+            if ( File.Exists( p ) )
+                return new FileInfo( p );
+
+            var n = Path.Combine(d.FullName, Path.GetFileNameWithoutExtension(crpFile.Name) + ".rico");
+            if ( File.Exists( n ) ) return new FileInfo( n );
+
+            return null;
+        }
+
         public static int[] WorkplaceDistributionOf(string service, string subservice, string level)
         {
             Dictionary<String, int[]>distributions = new Dictionary<String, int[]>()
@@ -35,6 +62,31 @@ namespace PloppableRICO
                 { "CommercialCommercialHighLevel2", new int[] { 100, 0, 20, 50, 30 } },
                 { "CommercialCommercialHighLevel3", new int[] { 100, 0, 0, 40, 60 } },
             };
+
+
+            distributions.Add( "industrialfarming", distributions["IndustrialIndustrialFarming"] );
+            distributions.Add( "industrialforestry", distributions["IndustrialIndustrialForestry"] );
+            distributions.Add( "industrialore", distributions["IndustrialIndustrialOre"] );
+            distributions.Add( "industrialoil", distributions["IndustrialIndustrialOil"] );
+            distributions.Add( "industrialgenericLevel1", distributions[ "IndustrialIndustrialGenericLevel1"] );
+            distributions.Add( "industrialgenericLevel2", distributions[ "IndustrialIndustrialGenericLevel2"] );
+            distributions.Add( "industrialgenericLevel3", distributions[ "IndustrialIndustrialGenericLevel3"] );
+            distributions.Add( "officenoneLevel1", distributions[ "OfficeNoneLevel1"] );
+            distributions.Add( "officenoneLevel2", distributions[ "OfficeNoneLevel2"] );
+            distributions.Add( "officenoneLevel3", distributions[ "OfficeNoneLevel3"] );
+            distributions.Add( "extractorfarming", distributions["ExtractorIndustrialFarming"] );
+            distributions.Add( "extractorforestry", distributions["ExtractorIndustrialForestry"] );
+            distributions.Add( "extractorore", distributions["ExtractorIndustrialOre"] );
+            distributions.Add("extractoroil", distributions["ExtractorIndustrialOil"] );
+            distributions.Add("commercialtourist", distributions["CommercialCommercialTourist"] );
+            distributions.Add( "commercialleisure", distributions["CommercialCommercialLeisure"] );
+            distributions.Add( "commerciallowLevel1", distributions[ "CommercialCommercialLowLevel1"] );
+            distributions.Add( "commerciallowLevel2", distributions[ "CommercialCommercialLowLevel2"] );
+            distributions.Add( "commerciallowLevel3", distributions[ "CommercialCommercialLowLevel3"] );
+            distributions.Add( "commercialhighLevel1", distributions[ "CommercialCommercialHighLevel1"] );
+            distributions.Add( "commercialhighLevel2", distributions[ "CommercialCommercialHighLevel2"] );
+            distributions.Add( "commercialhighLevel3", distributions[ "CommercialCommercialHighLevel3"] );
+
             int[] workplaceDistribution = null;
 
             if ( distributions.ContainsKey( service + subservice ) )
@@ -43,7 +95,10 @@ namespace PloppableRICO
             if ( distributions.ContainsKey( service + subservice + level ) )
                 workplaceDistribution = distributions[service + subservice + level];
 
-            return workplaceDistribution;
+            if ( workplaceDistribution != null )
+                return workplaceDistribution;
+            else
+                return new int[] { 100, 25, 25, 25, 25 };
 
         }
 
@@ -70,6 +125,9 @@ namespace PloppableRICO
         public static string UICategoryOf(string service, string subservice)
         {
             var category = "";
+            if ( service == "" || subservice == "" )
+                return "";
+
             switch (service)
             {
                 case "residential": category = subservice == "high" ? "reshigh" : "reslow"; break;

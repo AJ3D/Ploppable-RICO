@@ -98,7 +98,7 @@ namespace PloppableRICO
                         if (buildingPrefab != null)
                         {
                             //Add local RICO settings to dictionary
-                            var local = new PloppableRICODefinition.Building();
+                            var local = new RICOBuilding();
                             local = buildingDef;
                             prefabHash[buildingPrefab].local = local;
                             prefabHash[buildingPrefab].hasLocal = true;
@@ -115,8 +115,8 @@ namespace PloppableRICO
         //Load RICO Settings from asset folders
         public void AssetSettings()
         {
-            var ricoDefParseErrors = new List<string>();
             var checkedPaths = new List<string>();
+            var allParseErrors = new List<string>();
 
             for (uint i = 0; i < PrefabCollection<BuildingInfo>.LoadedCount(); i++)
             {
@@ -154,7 +154,7 @@ namespace PloppableRICO
                     continue;
 
                 PloppableRICODefinition ricoDef = null;
-                ricoDef = RICOReader.ParseRICODefinition( asset.name, ricoDefPath, ricoDefParseErrors );
+                ricoDef = RICOReader.ParseRICODefinition( asset.name, ricoDefPath );
 
                 if ( ricoDef != null )
                 {
@@ -179,7 +179,7 @@ namespace PloppableRICO
                         
                         if ( pf == null )
                         {
-                            ricoDefParseErrors.Add( String.Format( "Error while processing RICO - file {0} at building #{1}. ({2})", asset.name, j, "Building has not been loaded. Either it is broken, deactivated or not subscribed to." + buildingDef.name + " not loaded. (" + asset.package.packageName + ")" ) );
+                            ricoDef.errors.Add( String.Format( "Error while processing RICO - file {0} at building #{1}. ({2})", asset.name, j, "Building has not been loaded. Either it is broken, deactivated or not subscribed to." + buildingDef.name + " not loaded. (" + asset.package.packageName + ")" ) );
                             continue;
                         }
 
@@ -189,14 +189,20 @@ namespace PloppableRICO
                             prefabHash[pf].author = buildingDef;
                             prefabHash[pf].hasAuthor = true;
                         }
+
+                        allParseErrors.AddRange( ricoDef.errors );
                     }
+                }
+                else
+                {
+                    allParseErrors.AddRange( RICOReader.LastErrors );
                 }
             }
 
-            if (ricoDefParseErrors.Count > 0)
+            if (allParseErrors.Count > 0)
             {
                 var errorMessage = new StringBuilder();
-                foreach (var error in ricoDefParseErrors)
+                foreach (var error in allParseErrors)
                     errorMessage.Append(error).Append('\n');
 
                 UIView.library.ShowModal<ExceptionPanel>("ExceptionPanel").SetMessage("Ploppable RICO", errorMessage.ToString(), true);
@@ -259,7 +265,7 @@ namespace PloppableRICO
         }
 
         //This is called by the settings panel. It will serialize any new local settings the player sets in game. 
-        public static void SaveLocal(PloppableRICODefinition.Building newBuildingData)
+        public static void SaveLocal(RICOBuilding newBuildingData)
         {
             Debug.Log( "SaveLocal");
             
@@ -306,9 +312,9 @@ namespace PloppableRICO
         public Category category;
 
         //RICO settings. 
-        public PloppableRICODefinition.Building local;
-        public PloppableRICODefinition.Building author;
-        public PloppableRICODefinition.Building mod;
+        public RICOBuilding local;
+        public RICOBuilding author;
+        public RICOBuilding mod;
 
         //These are used by the settings panel and tool to determine which settings to use. It will first use local, then asset, and finaly mod. 
         public bool hasAuthor;

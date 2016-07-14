@@ -8,7 +8,7 @@ namespace PloppableRICO
         public int m_workplaceCount = 1;
         public int m_constructionCost = 1;
         public string m_subtype = "low";
-        public PloppableRICODefinition.Building m_ricoData;
+        public RICOBuilding m_ricoData;
         public int[] workplaceCount;
 
         // Good morning Vietnam!

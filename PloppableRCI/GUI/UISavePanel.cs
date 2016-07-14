@@ -65,7 +65,7 @@ namespace PloppableRICO
             {
                 if (currentSelection.hasLocal == false) {
 
-                    var newlocal = new PloppableRICODefinition.Building();
+                    var newlocal = new RICOBuilding();
                     currentSelection.hasLocal = true;
                     currentSelection.local = newlocal;
                     currentSelection.local.name = currentSelection.name;

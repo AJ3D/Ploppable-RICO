@@ -23,32 +23,36 @@ namespace PloppableRICOTests
             var tst_path = Path.Combine(new FileInfo(dll_path).Directory.FullName, "..", "..", "Testfiles");
             testDirectoryTmpl = Path.Combine(tst_path, "{0}.xml");
         }
-        
-        [TestCase("ok")]
-        [TestCase("ok_rnd")]
-        public void testOK(string tst)
+
+        [TestCase( "ok" )]
+        [TestCase( "ok_rnd" )]
+        [TestCase( "ok old" )]
+        public void testOK( string tst )
         {
-            List<String> ricoErr = new List<string>();
             PloppableRICO.PloppableRICODefinition ricoDef = null;
 
             try
             {
-                ricoErr = new List<String>();
-                ricoDef = PloppableRICO.RICOReader.ParseRICODefinition(tst, String.Format(testDirectoryTmpl, tst), ricoErr);
+                ricoDef = PloppableRICO.RICOReader.ParseRICODefinition( tst, String.Format( testDirectoryTmpl, tst ) );
 
-                if (ricoDef != null)
-                    Console.WriteLine(ricoDef.Buildings.Count);
+                if ( ricoDef != null )
+                    Console.WriteLine( ricoDef.Buildings.Count );
             }
-            catch (Exception ex)
+            catch ( Exception ex )
             {
-                Console.WriteLine("!! Unexpected Exception1: " + ex.Message + " !!");
-                Assert.True(false);
+                Console.WriteLine( "!! Unexpected Exception1: " + ex.Message + " !!" );
+                Assert.True( false );
             }
 
-            foreach (var s in ricoErr)
-                Console.WriteLine("!" + s);
+            if ( ricoDef == null )
+                Assert.True( false );
+            else
+            {
+                foreach ( var s in ricoDef.errors )
+                    Console.WriteLine( "!" + s );
 
-            Assert.True(ricoErr.Count == 0);
+                Assert.True( ricoDef.errors.Count == 0 );
+            }
         }
 
         [TestCase("invalid_xml")]
@@ -59,19 +63,15 @@ namespace PloppableRICOTests
         [TestCase("single_empty_building")]
         [TestCase("req_str_attr_empty")]
         [TestCase("req_int_attr_empty")]
-        [TestCase("zero_jobs")]
+        [TestCase( "zero_jobs" )]
+        [TestCase( "broken_wp" )]
         public void testFatalities(string tst)
         {
-            List<String> ricoErr = new List<string>();
             PloppableRICO.PloppableRICODefinition ricoDef = null;
 
             try
             {
-                ricoErr = new List<String>();
-                ricoDef = PloppableRICO.RICOReader.ParseRICODefinition(tst, String.Format(testDirectoryTmpl, tst), ricoErr);
-
-                if (ricoDef != null) 
-                    Console.WriteLine(ricoDef.Buildings.Count);
+                ricoDef = PloppableRICO.RICOReader.ParseRICODefinition(tst, String.Format(testDirectoryTmpl, tst),true);
             }
             catch (Exception ex)
             {
@@ -79,11 +79,43 @@ namespace PloppableRICOTests
                 Assert.True(false);
             }
 
-            foreach (var s in ricoErr)
-                Console.WriteLine("!" + s);
-
-            Assert.True(ricoErr.Count > 0);
+            Assert.True( PloppableRICO.RICOReader.LastErrors.Count > 0 || ricoDef.errors.Count > 0);
         }
 
+        [Test]
+        public void testDirtiness1()
+        {
+            PloppableRICO.PloppableRICODefinition ricoDef = null;
+
+            try
+            {
+                ricoDef = PloppableRICO.RICOReader.ParseRICODefinition( "ok", String.Format( testDirectoryTmpl, "ok" ), true );
+            }
+            catch ( Exception ex )
+            {
+                Console.WriteLine( "!! Unexpected Exception2: " + ex.Message + " !!" );
+                Assert.True( false );
+            }
+
+            Assert.True( !ricoDef.isDirty );
+        }
+
+        [Test]
+        public void testDirtiness2()
+        {
+            PloppableRICO.PloppableRICODefinition ricoDef = null;
+
+            try
+            {
+                ricoDef = PloppableRICO.RICOReader.ParseRICODefinition( "ok", String.Format( testDirectoryTmpl, "ok" ), true );
+            }
+            catch ( Exception ex )
+            {
+                Console.WriteLine( "!! Unexpected Exception2: " + ex.Message + " !!" );
+                Assert.True( false );
+            }
+            ricoDef.Buildings[0].workplaceDeviation[1] = 42;
+            Assert.True( ricoDef.isDirty );
+        }
     }
 }

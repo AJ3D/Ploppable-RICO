@@ -212,14 +212,14 @@ namespace PloppableRICO
 
                     if (buildingData.hasLocal)
                     {
-                        DrawBuildingButton(prefab, buildingData.local.UICategory);
+                        DrawBuildingButton(prefab, buildingData.local.uiCategory);
                         RemoveUIButton(prefab);
                         continue;
                     }
 
                     if (buildingData.hasAuthor)
                     {
-                        DrawBuildingButton(prefab, buildingData.author.UICategory);
+                        DrawBuildingButton(prefab, buildingData.author.uiCategory);
                         RemoveUIButton(prefab);
                     }
                     //}

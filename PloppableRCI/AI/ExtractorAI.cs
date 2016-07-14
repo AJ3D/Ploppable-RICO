@@ -10,7 +10,7 @@ namespace PloppableRICO
         public bool m_pollutionEnabled = true;
         public int m_constructionCost = 1;
         public int m_workplaceCount = 1;
-        public PloppableRICODefinition.Building m_ricoData;
+        public RICOBuilding m_ricoData;
         public int[] workplaceCount;
 
         // In this house, jobs get done
