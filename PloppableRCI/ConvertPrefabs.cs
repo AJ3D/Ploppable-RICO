@@ -54,7 +54,6 @@ namespace PloppableRICO
             {
                 prefab.m_UIPriority = -1;
                 
-
                 if (buildingData.service == "residential")
                 {
                     var ai = prefab.gameObject.AddComponent<PloppableResidential>();
@@ -132,7 +131,7 @@ namespace PloppableRICO
             prefab.m_buildingAI.m_info = prefab;
             prefab.InitializePrefab();
             prefab.m_class = ItemClassCollection.FindClass(aiClass);
-            prefab.m_placementStyle = ItemClass.Placement.Manual;
+            //prefab.m_placementStyle = ItemClass.Placement.Manual;
         }
     }
 }

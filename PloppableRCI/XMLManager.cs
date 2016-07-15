@@ -26,44 +26,44 @@ namespace PloppableRICO
         {
             //This is the data object that holds all of the RICO settings. Its read by the tool panel and the settings panel. 
             //It contains one entry for every ploppable building, and any RICO settings they may have.
+         
+                xmlData = new Dictionary<BuildingInfo, BuildingData>();
 
-            xmlData = new Dictionary<BuildingInfo, BuildingData>();
-
-            //Loop though all prefabs
-            for (uint i = 0; i < PrefabCollection<BuildingInfo>.LoadedCount(); i++)
-            {
-                var prefab = PrefabCollection<BuildingInfo>.GetLoaded(i);
-                if (prefab != null)
+                //Loop though all prefabs
+                for (uint i = 0; i < PrefabCollection<BuildingInfo>.LoadedCount(); i++)
                 {
-                    var buildingData = new BuildingData
+                    var prefab = PrefabCollection<BuildingInfo>.GetLoaded(i);
+                    if (prefab != null)
                     {
-                        prefab = prefab,
-                        name = prefab.name,
-                        category = AssignCategory(prefab),
-                    };
+                        var buildingData = new BuildingData
+                        {
+                            prefab = prefab,
+                            name = prefab.name,
+                            category = AssignCategory(prefab),
+                        };
 
-                    xmlData[prefab] = buildingData;
+                        xmlData[prefab] = buildingData;
+                    }
                 }
-            }
+            
 
-            //RICO settings can come from 3 sources. Local settings are applied first, followed by asset author settings,
-            //and then finaly settings from settings mods. 
+                //RICO settings can come from 3 sources. Local settings are applied first, followed by asset author settings,
+                //and then finaly settings from settings mods. 
 
-            //Import settings from asset folders. 
-            AssetSettings();
+                //Import settings from asset folders. 
+                AssetSettings();
 
-            //If local settings are present, load them. 
-            if (File.Exists("LocalRICOSettings.xml"))
-              {
-                  LocalSettings();
-              }
+                //If local settings are present, load them. 
+                if (File.Exists("LocalRICOSettings.xml"))
+                {
+                    LocalSettings();
+                }
 
-            //If settings mod is active, load its settings. (disabled for now)
-            if (Util.IsModEnabled(629850626uL))
-            {
+                //If settings mod is active, load its settings. (disabled for now)
+                if (Util.IsModEnabled(629850626uL))
+                {
                     ModSettings();
-            }
-
+                }
         }
 
         //Load local RICO settings. 

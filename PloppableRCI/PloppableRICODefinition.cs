@@ -42,7 +42,7 @@ namespace PloppableRICO
                 popbalanceEnabled = true;
                 ricoEnabled = true;
                 educationRatioEnabled = false;
-                pollutionEnabled = true;
+                pollutionEnabled = false;
                 RealityIgnored = false;
                 workplaceDistributionString = "";
             }

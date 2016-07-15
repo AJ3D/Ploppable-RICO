@@ -68,34 +68,39 @@ namespace PloppableRICO
 
             addLocal.eventClick += (c, p) =>
             {
-                if (currentSelection.hasLocal == false)
+                if (!currentSelection.hasLocal)
                 {
 
-                    var newlocal = new PloppableRICODefinition.Building();
+                    currentSelection.local = new PloppableRICODefinition.Building();
 
                     currentSelection.hasLocal = true;
 
                     //Set some basic settings for assets with no settings
-                    newlocal.ricoEnabled = false;
-                    newlocal.service = "residential";
-                    newlocal.subService = "low";
-                    newlocal.level = 1;
-                    newlocal.UICategory = "reslow";
+                    currentSelection.local.name = currentSelection.name;
+                    currentSelection.local.ricoEnabled = true;
+                    currentSelection.local.service = "residential";
+                    currentSelection.local.subService = "low";
+                    currentSelection.local.level = 1;
+                    currentSelection.local.UICategory = "reslow";
+                    currentSelection.local.constructionCost = 10;
+                    currentSelection.local.workplaceCount = 10;
 
 
                     //If selected asset has author settings, copy those to local
                     if (currentSelection.hasAuthor)
                     {
-                        newlocal = currentSelection.author;
+                        currentSelection.local = (PloppableRICODefinition.Building)currentSelection.author.Clone();
                     }
                     else if (currentSelection.hasMod)
                     {
-                        newlocal = currentSelection.mod;
+                        currentSelection.local = (PloppableRICODefinition.Building)currentSelection.mod.Clone();
                     }
 
-                    currentSelection.local = (PloppableRICODefinition.Building)newlocal.Clone();
+                    currentSelection.local.name = currentSelection.name;
+                    //currentSelection.local = (PloppableRICODefinition.Building)newlocal.Clone();
 
-                    RICOSettingsPanel.instance.UpdateBuildingInfo(currentSelection);
+                    if (enabled) RICOSettingsPanel.instance.UpdateBuildingInfo(currentSelection);
+                    if (enabled) RICOSettingsPanel.instance.UpdateSelection();
                     Save();
                 }
             };
@@ -106,6 +111,8 @@ namespace PloppableRICO
                 currentSelection.local = null;
                 currentSelection.hasLocal = false;
                 RICOSettingsPanel.instance.UpdateBuildingInfo(currentSelection);
+
+                if (enabled) RICOSettingsPanel.instance.UpdateSelection();
                 Save();
 
             };

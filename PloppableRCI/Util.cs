@@ -1,9 +1,11 @@
 
-﻿using System;
-using System.Linq;
-using ColossalFramework.Plugins;
 using ColossalFramework.Steamworks;
+
+using System;
 using System.Collections.Generic;
+using System.Linq;
+using UnityEngine;
+using ColossalFramework.Plugins;
 
 namespace PloppableRICO
 {
@@ -38,33 +40,46 @@ namespace PloppableRICO
 
             foreach (var buildingData in XMLManager.xmlData.Values)
             {
-
-                var prefab = PrefabCollection<BuildingInfo>.FindLoaded(buildingData.name);
-                if (prefab != null)
+                try
                 {
-                    //Ploppables have an atlas. 
-                    if (prefab.m_Atlas != null)
+                    var prefab = PrefabCollection<BuildingInfo>.FindLoaded(buildingData.name);
+                    if (prefab != null)
                     {
-                        if (prefab.m_buildingAI is PloppableRICO.PloppableExtractor || prefab.m_buildingAI is PloppableResidential
-                            || prefab.m_buildingAI is PloppableOffice || prefab.m_buildingAI is PloppableCommercial ||
-                            prefab.m_buildingAI is PloppableIndustrial)
+                        //Ploppables have an atlas. 
+                        if (prefab.m_Atlas != null)
                         {
-                            // Just assign any ploppable RICO prefab a ploppable ItemClass so it will reload. It gets set back once the mod loads. 
-                            prefab.m_class = ItemClassCollection.FindClass("Beautification Item");
-                            prefab.InitializePrefab();
+                            if (prefab.m_buildingAI is PloppableRICO.PloppableExtractor || prefab.m_buildingAI is PloppableResidential
+                                || prefab.m_buildingAI is PloppableOffice || prefab.m_buildingAI is PloppableCommercial ||
+                                prefab.m_buildingAI is PloppableIndustrial)
+                            {
+                                // Just assign any ploppable RICO prefab a ploppable ItemClass so it will reload. It gets set back once the mod loads. 
+                                prefab.m_class = ItemClassCollection.FindClass("Beautification Item");
+                                prefab.InitializePrefab();
+                            }
                         }
+                        //Growables Dont have an atlas. 
+                       /* else if (prefab.m_Atlas == null)
+                        {
+                            if (buildingData.category == Category.Residential) prefab.m_class = ItemClassCollection.FindClass("High Residential - Level1");
+                            if (buildingData.category == Category.Commercial) prefab.m_class = ItemClassCollection.FindClass("High Commercial - Level1");
+                            if (buildingData.category == Category.Industrial) prefab.m_class = ItemClassCollection.FindClass("Industrial - Level1");
+                            if (buildingData.category == Category.Office) prefab.m_class = ItemClassCollection.FindClass("Office - Level1");
+                            if (buildingData.category == Category.Residential) prefab.m_class = ItemClassCollection.FindClass("High Residential - Level1");
+
+                            prefab.InitializePrefab();
+                            prefab.m_placementStyle = ItemClass.Placement.Automatic;
+
+                        }
+                        */
                     }
-                    //Growables Dont have an atlas. 
-                    else if (prefab.m_Atlas == null)
-                    {
-                        if (buildingData.category == Category.Residential) prefab.m_class = ItemClassCollection.FindClass("High Residential - Level1");
-                        prefab.InitializePrefab();
-                    }
+                }
+                catch (Exception e)
+                {
+                    Debug.LogException(e);
                 }
             }
         }
-
-
+        
         public static bool IsModEnabled(UInt64 id)
         {
             return PluginManager.instance.GetPluginsInfo().Any(mod => (mod.publishedFileID.AsUInt64 == id && mod.isEnabled));

@@ -58,6 +58,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AI\WorkplaceAI.cs" />
+    <Compile Include="BuildingData.cs" />
     <Compile Include="ConvertPrefabs.cs" />
     <Compile Include="GUI\BuilidngPreview.cs" />
     <Compile Include="GUI\CategoryUtils.cs" />

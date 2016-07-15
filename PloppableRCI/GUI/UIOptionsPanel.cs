@@ -213,6 +213,8 @@ namespace PloppableRICO
 
             popBalanceEnabled = UIUtils.CreateCheckBox(enableRICOPanel, 180, "Use WG Realistic Pop");
 
+            //pollutionEnabled = UIUtils.CreateCheckBox(enableRICOPanel, 210, "Enable Pollution");
+
 
             //Education Ratio Panel
             //educationRatiosEnabled = UIUtils.CreateCheckBox(this, "Enable Education");
@@ -301,10 +303,10 @@ namespace PloppableRICO
             else if (uiCategory.selectedIndex == 7) currentSelection.UICategory = "oil";
             else if (uiCategory.selectedIndex == 8) currentSelection.UICategory = "forest";
             else if (uiCategory.selectedIndex == 9) currentSelection.UICategory = "ore";
-            else if (uiCategory.selectedIndex == 10) currentSelection.UICategory = "leisure";
-            else if (uiCategory.selectedIndex == 11) currentSelection.UICategory = "tourist";
+            else if (uiCategory.selectedIndex == 10) currentSelection.UICategory = "tourist";
+            else if (uiCategory.selectedIndex == 11) currentSelection.UICategory = "leisure";
 
-
+            currentSelection.level = level.selectedIndex + 1;
             currentSelection.ricoEnabled = ricoEnabled.isChecked;
             currentSelection.RealityIgnored = !popBalanceEnabled.isChecked; 
 
@@ -329,17 +331,17 @@ namespace PloppableRICO
             //If selected asset has local settings, update option UI elements with those settings. 
             if (buildingData.hasLocal)
             {
+                currentSelection = buildingData.local;
                 UpdateElements(buildingData.local.service);
                 UpdateValues(buildingData.local);
                 label.text = "Local Settings";
-                currentSelection = buildingData.local;
                 disableEvents = false;
                 return;
             }
             else if (buildingData.hasAuthor)
             {
-                UpdateElements(buildingData.author.service);
                 currentSelection = buildingData.author;
+                UpdateElements(buildingData.author.service);
                 UpdateValues(buildingData.author);
                 label.text = "Author Settings";
                 ricoEnabled.Disable();
@@ -355,11 +357,10 @@ namespace PloppableRICO
             }
             else if (buildingData.hasMod)
             {
+                currentSelection = buildingData.mod;
                 label.text = "Mod Settings";
                 UpdateElements(buildingData.mod.service);
-                UpdateValues(buildingData.mod);
-
-                currentSelection = buildingData.mod;
+                UpdateValues(buildingData.mod);           
                 ricoEnabled.Disable();
                 service.Disable();
                 subService.Disable();
@@ -455,8 +456,8 @@ namespace PloppableRICO
                 else if (buildingData.UICategory == "oil") uiCategory.selectedIndex = 7;
                 else if (buildingData.UICategory == "forest") uiCategory.selectedIndex = 8;
                 else if (buildingData.UICategory == "ore") uiCategory.selectedIndex = 9;
-                else if (buildingData.UICategory == "leisure") uiCategory.selectedIndex = 10;
-                else if (buildingData.UICategory == "tourist") uiCategory.selectedIndex = 11;
+                else if (buildingData.UICategory == "tourist") uiCategory.selectedIndex = 10;
+                else if (buildingData.UICategory == "leisure") uiCategory.selectedIndex = 11;
 
                 level.selectedIndex = (buildingData.level - 1);
 

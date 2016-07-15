@@ -36,8 +36,6 @@ namespace PloppableRICO
             get { return nameFilter.text.Trim(); }
         }
 
-       
-
         public event PropertyChangedEventHandler<int> eventFilteringChanged;
 
         public override void Start()

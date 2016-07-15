@@ -168,7 +168,8 @@ namespace PloppableRICO
             m_buildingSelection.relativePosition = Vector3.zero;
             m_buildingSelection.rowsData = new FastList<object>();
             m_buildingSelection.selectedIndex = -1;
-         
+
+            
 
             // Building Options
             m_buildingOptions = right.AddUIComponent<UIBuildingOptions>();
@@ -186,17 +187,24 @@ namespace PloppableRICO
 
         public void UpdateBuildingInfo(BuildingData building) {
 
-            //Debug.Log(building.name);
-            currentSelection = XMLManager.xmlData[building.prefab];
-            m_buildingOptions.SelectionChanged(currentSelection);
-            m_savePanel.SelectionChanged(currentSelection);
-            m_buildingPreview.Show(currentSelection);
+            if (building != null)
+            {
+                //Debug.Log(building.name);
+                currentSelection = XMLManager.xmlData[building.prefab];
+                m_buildingOptions.SelectionChanged(currentSelection);
+                m_savePanel.SelectionChanged(currentSelection);
+                m_buildingPreview.Show(currentSelection);
+            }
         }
 
         public void Save() {
 
             m_buildingOptions.SaveRICO();
+        }
 
+        public void UpdateSelection()
+        {
+            m_buildingSelection.Refresh();
         }
 
         private FastList<object> Filter()

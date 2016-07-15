@@ -247,13 +247,13 @@ namespace PloppableRICO
             if (refButton != null)
             {
                 Debug.Log(prefab.name + " Button Destroyed");
+                refButton.isVisible = false;
                 GameObject.Destroy(refButton.gameObject);
             }  
          }
       
         public void DrawPanels (UIScrollablePanel panel, string name)
 		{
-			
 			panel = UIView.GetAView ().FindUIComponent ("PloppableBuildingPanel").AddUIComponent<UIScrollablePanel> ();
 			panel.size = new Vector2 (763, 109);
 			panel.relativePosition = new Vector2 (50, 0);
