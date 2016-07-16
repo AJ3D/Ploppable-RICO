@@ -7,6 +7,7 @@ namespace PloppableRICO
     public class UIBuildingItem : UIPanel, IUIFastListRow
     {
         private UILabel m_name;
+        private UISprite m_mod;
         private UISprite m_author;
         private UISprite m_local;
         private UIPanel m_background;
@@ -38,7 +39,9 @@ namespace PloppableRICO
 
             background.width = width;
             m_name.relativePosition = new Vector3(10f, 5f);
-            m_author.relativePosition = new Vector3(300f, 10f);
+
+            m_mod.relativePosition = new Vector3(280f, 10f);
+            m_author.relativePosition = new Vector3(310f, 10f);
             m_local.relativePosition = new Vector3(340f, 10f);
         }
 
@@ -75,6 +78,11 @@ namespace PloppableRICO
             //nameLabel.textAlignment = UIHorizontalAlignment.Center;
 
             //Check boxes that indicate what settings are present. 
+
+            m_mod = AddUIComponent<UISprite>();
+            m_mod.size = new Vector2(20, 20);
+            m_mod.spriteName = "AchievementCheckedFalse";
+
             m_author = AddUIComponent<UISprite>();
             m_author.size = new Vector2(20, 20);
             m_author.spriteName = "AchievementCheckedFalse";
@@ -101,6 +109,9 @@ namespace PloppableRICO
 
             if (m_building.hasLocal) m_local.spriteName = "AchievementCheckedTrue";
             else m_local.spriteName = "AchievementCheckedFalse";
+
+            if (m_building.hasMod) m_mod.spriteName = "AchievementCheckedTrue";
+            else m_mod.spriteName = "AchievementCheckedFalse";
 
             if (isRowOdd)
             {

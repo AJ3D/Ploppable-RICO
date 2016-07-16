@@ -35,6 +35,10 @@ namespace PloppableRICO
                             ConvertPrefab( buildingData.author, buildingData.name);
                         }
                     }
+                    else if (buildingData.hasMod)
+                    {
+                        ConvertPrefab(buildingData.mod, buildingData.name);
+                    }
                 }
             }
         }

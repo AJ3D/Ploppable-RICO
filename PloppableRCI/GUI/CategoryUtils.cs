@@ -14,13 +14,19 @@ namespace PloppableRICO
         Education,
         Power,
         Water,
-        Health
+        Health,
+        Residential,
+        Commercial,
+        Office,
+        Industrial
     }
 
     public class CategoryIcons
     {
 
-        public static readonly string[] atlases = {"Ingame", "Ingame" , "Ingame", "Ingame", "Ingame", "Ingame" };
+        public static readonly string[] atlases = {"Ingame", "Ingame" , "Ingame", "Ingame", "Ingame", "Ingame",
+
+            "Thumbnails" , "Thumbnails","Thumbnails", "Thumbnails" };
 
         public static readonly string[] spriteNames = {
 
@@ -28,10 +34,17 @@ namespace PloppableRICO
             "ToolbarIconBeautification",
             "ToolbarIconEducation",
             "ToolbarIconElectricity",
-            "ToolbarIconWater",
-            "ToolbarIconHealthcare"
+            "ToolbarIconWaterAndSewage",
+            "ToolbarIconHealthcare",
+            "ZoningResidentialHigh",
+            "ZoningCommercialHigh",
+            "ZoningOffice" ,
+            "ZoningIndustrial"
         };
 
-        public static readonly string[] tooltips = {"Monuments","Beautification", "Education", "Power", "Water", "Health" };
+        public static readonly string[] tooltips = {"Monuments","Beautification", "Education", "Power", "Water", "Health",
+            "Residential", "Commercial", "Office", "Industrial"
+                
+        };
     }
 }

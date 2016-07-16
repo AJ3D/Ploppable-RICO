@@ -81,7 +81,7 @@ namespace PloppableRICO
                 }
             }
 
-            ricoDefStream.Close();
+            //ricoDefStream.Close();
             return null;
         }
         private static void addCrpShit(PloppableRICODefinition ricoDef)

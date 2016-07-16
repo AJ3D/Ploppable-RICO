@@ -10,8 +10,13 @@ using System.Text.RegularExpressions;
 namespace PloppableRICO
 {
     [XmlType( "Building" )]
-    public class RICOBuilding
+    public class RICOBuilding : ICloneable
     {
+        public object Clone()
+        {
+            return this.MemberwiseClone();
+        }
+
         public RICOBuilding()
         {
             dbKey = 0;

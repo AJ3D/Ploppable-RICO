@@ -8,6 +8,26 @@ namespace PloppableRICO
         // Figuring all this was a pain (no documentation whatsoever)
         // So if your are using it for your mod consider thanking me (SamsamTS)
         // Extended Public Transport UI's code helped me a lot so thanks a lot AcidFire
+        public static UITextField CreateTextField(UIComponent parent)
+        {
+            UITextField textField = parent.AddUIComponent<UITextField>();
+
+            textField.size = new Vector2(90f, 20f);
+            textField.padding = new RectOffset(6, 6, 3, 3);
+            textField.builtinKeyNavigation = true;
+            textField.isInteractive = true;
+            textField.readOnly = false;
+            textField.horizontalAlignment = UIHorizontalAlignment.Center;
+            textField.selectionSprite = "EmptySprite";
+            textField.selectionBackgroundColor = new Color32(0, 172, 234, 255);
+            textField.normalBgSprite = "TextFieldPanelHovered";
+            textField.disabledBgSprite = "TextFieldPanel";
+            textField.textColor = new Color32(0, 0, 0, 255);
+            textField.disabledTextColor = new Color32(0, 0, 0, 128);
+            textField.color = new Color32(255, 255, 255, 255);
+
+            return textField;
+        }
 
         public static UIButton CreateButton(UIComponent parent)
         {
@@ -62,7 +82,7 @@ namespace PloppableRICO
 
             checkBox.eventCheckChanged += (c, state) =>
             {
-                if (!state)
+                if (!checkBox.isChecked)
                 {
                     basePanel.height = 0;
                     basePanel.isVisible = false;
@@ -76,13 +96,110 @@ namespace PloppableRICO
             return basePanel;
         }
 
-        public static UICheckBox CreateCheckBox(UIComponent parent , string label)
+        public static UIDropDown CreateDropDown(UIComponent parent, float offset, string label)
+        {
+            UIPanel container = parent.AddUIComponent<UIPanel>();
+            container.height = 25;
+            container.relativePosition = new Vector3(0, offset, 0);
+
+            UILabel serviceLabel = container.AddUIComponent<UILabel>();
+            serviceLabel.textScale = 0.8f;
+            serviceLabel.text = label;
+            serviceLabel.relativePosition = new Vector3(15, 6, 0);
+
+
+            UIDropDown dropDown = container.AddUIComponent<UIDropDown>();
+            dropDown.size = new Vector2(120f, 25f);
+            dropDown.listBackground = "GenericPanelLight";
+            dropDown.itemHeight = 20;
+            dropDown.itemHover = "ListItemHover";
+            dropDown.itemHighlight = "ListItemHighlight";
+            dropDown.normalBgSprite = "ButtonMenu";
+            dropDown.disabledBgSprite = "ButtonMenuDisabled";
+            dropDown.hoveredBgSprite = "ButtonMenuHovered";
+            dropDown.focusedBgSprite = "ButtonMenu";
+            dropDown.listWidth = 120;
+            dropDown.listHeight = 500;
+            dropDown.foregroundSpriteMode = UIForegroundSpriteMode.Stretch;
+            dropDown.popupColor = new Color32(45, 52, 61, 255);
+            dropDown.popupTextColor = new Color32(170, 170, 170, 255);
+            dropDown.zOrder = 1;
+            dropDown.textScale = 0.7f;
+            dropDown.verticalAlignment = UIVerticalAlignment.Middle;
+            dropDown.horizontalAlignment = UIHorizontalAlignment.Left;
+
+            dropDown.textFieldPadding = new RectOffset(8, 0, 8, 0);
+            dropDown.itemPadding = new RectOffset(14, 0, 8, 0);
+
+            dropDown.relativePosition = new Vector3(112, 0, 0);
+
+            UIButton button = dropDown.AddUIComponent<UIButton>();
+            dropDown.triggerButton = button;
+            button.text = "";
+            button.size = new Vector2(120f, 20f);
+            button.relativePosition = new Vector3(0f, 0f);
+            button.textVerticalAlignment = UIVerticalAlignment.Middle;
+            button.textHorizontalAlignment = UIHorizontalAlignment.Left;
+            button.normalFgSprite = "IconDownArrow";
+            button.hoveredFgSprite = "IconDownArrowHovered";
+            button.pressedFgSprite = "IconDownArrowPressed";
+            button.focusedFgSprite = "IconDownArrowFocused";
+            button.disabledFgSprite = "IconDownArrowDisabled";
+            button.foregroundSpriteMode = UIForegroundSpriteMode.Fill;
+            button.horizontalAlignment = UIHorizontalAlignment.Right;
+            button.verticalAlignment = UIVerticalAlignment.Middle;
+            button.zOrder = 0;
+            button.textScale = 0.8f;
+
+            dropDown.eventSizeChanged += new PropertyChangedEventHandler<Vector2>((c, t) =>
+            {
+                button.size = t; dropDown.listWidth = (int)t.x;
+            });
+
+            return dropDown;
+        }
+
+        public static UICheckBox CreateCheckBox(UIComponent parent, int offset, string label)
+        {
+            UIPanel container = parent.AddUIComponent<UIPanel>();
+            container.height = 25;
+            container.width = 240;
+            container.relativePosition = new Vector3(0, offset, 0);
+
+            UICheckBox checkBox = container.AddUIComponent<UICheckBox>();
+
+            checkBox.width = container.width;
+            checkBox.height = 20f;
+            checkBox.clipChildren = true;
+            checkBox.relativePosition = new Vector3(200, 6);
+
+            UISprite sprite = checkBox.AddUIComponent<UISprite>();
+            sprite.spriteName = "ToggleBase";
+            sprite.size = new Vector2(16f, 16f);
+            sprite.relativePosition = Vector3.zero;
+
+            checkBox.checkedBoxObject = sprite.AddUIComponent<UISprite>();
+            ((UISprite)checkBox.checkedBoxObject).spriteName = "ToggleBaseFocused";
+            checkBox.checkedBoxObject.size = new Vector2(16f, 16f);
+            checkBox.checkedBoxObject.relativePosition = Vector3.zero;
+
+            UILabel serviceLabel = container.AddUIComponent<UILabel>();
+            serviceLabel.textScale = 0.8f;
+            serviceLabel.text = label;
+            serviceLabel.relativePosition = new Vector3(15, 6, 0);
+
+            return checkBox;
+        }
+
+
+        public static UICheckBox CreateCheckBar(UIComponent parent , string label)
         {
 
             UIPanel basePanel = parent.AddUIComponent<UIPanel>();
             basePanel.height = 25;
             basePanel.backgroundSprite = "ScrollbarTrack";
             basePanel.width = 245;
+            basePanel.relativePosition = new Vector3(0, 5);
 
             UICheckBox checkBox = basePanel.AddUIComponent<UICheckBox>();
             checkBox.width = basePanel.width;
@@ -175,7 +292,7 @@ namespace PloppableRICO
 
             UITextField textField = container.AddUIComponent<UITextField>();
 
-            textField.size = new Vector2(60f, 20f);
+            textField.size = new Vector2(80f, 20f);
             textField.padding = new RectOffset(6, 6, 3, 3);
             textField.builtinKeyNavigation = true;
             textField.isInteractive = true;
@@ -194,68 +311,7 @@ namespace PloppableRICO
             return textField;
         }
 
-        public static UIDropDown CreateDropDown(UIComponent parent, float offset, string label)
-        {
-            UIPanel container = parent.AddUIComponent<UIPanel>();
-            container.height = 25;
-            container.relativePosition = new Vector3(0, offset, 0);
-
-            UILabel serviceLabel = container.AddUIComponent<UILabel>();
-            serviceLabel.textScale = 0.8f;
-            serviceLabel.text = label;
-            serviceLabel.relativePosition = new Vector3(15, 6, 0);
-
-
-            UIDropDown dropDown = container.AddUIComponent<UIDropDown>();
-            dropDown.size = new Vector2(120f, 25f);
-            dropDown.listBackground = "GenericPanelLight";
-            dropDown.itemHeight = 25;
-            dropDown.itemHover = "ListItemHover";
-            dropDown.itemHighlight = "ListItemHighlight";
-            dropDown.normalBgSprite = "ButtonMenu";
-            dropDown.disabledBgSprite = "ButtonMenuDisabled";
-            dropDown.hoveredBgSprite = "ButtonMenuHovered";
-            dropDown.focusedBgSprite = "ButtonMenu";
-            dropDown.listWidth = 90;
-            dropDown.listHeight = 500;
-            dropDown.foregroundSpriteMode = UIForegroundSpriteMode.Stretch;
-            dropDown.popupColor = new Color32(45, 52, 61, 255);
-            dropDown.popupTextColor = new Color32(170, 170, 170, 255);
-            dropDown.zOrder = 1;
-            dropDown.textScale = 0.7f;
-            dropDown.verticalAlignment = UIVerticalAlignment.Middle;
-            dropDown.horizontalAlignment = UIHorizontalAlignment.Left;
-           
-            dropDown.textFieldPadding = new RectOffset(8, 0, 8, 0);
-            dropDown.itemPadding = new RectOffset(14, 0, 8, 0);
-
-            dropDown.relativePosition = new Vector3(112, 0, 0);
-
-            UIButton button = dropDown.AddUIComponent<UIButton>();
-            dropDown.triggerButton = button;
-            button.text = "";
-            button.size = dropDown.size;
-            button.relativePosition = new Vector3(0f, 0f);
-            button.textVerticalAlignment = UIVerticalAlignment.Middle;
-            button.textHorizontalAlignment = UIHorizontalAlignment.Left;
-            button.normalFgSprite = "IconDownArrow";
-            button.hoveredFgSprite = "IconDownArrowHovered";
-            button.pressedFgSprite = "IconDownArrowPressed";
-            button.focusedFgSprite = "IconDownArrowFocused";
-            button.disabledFgSprite = "IconDownArrowDisabled";
-            button.foregroundSpriteMode = UIForegroundSpriteMode.Fill;
-            button.horizontalAlignment = UIHorizontalAlignment.Right;
-            button.verticalAlignment = UIVerticalAlignment.Middle;
-            button.zOrder = 0;
-            button.textScale = 0.8f;
-
-            dropDown.eventSizeChanged += new PropertyChangedEventHandler<Vector2>((c, t) =>
-            {
-                button.size = t; dropDown.listWidth = (int)t.x;
-            });
-
-            return dropDown;
-        }
+       
 
         public static void ResizeIcon(UISprite icon, Vector2 maxSize)
         {

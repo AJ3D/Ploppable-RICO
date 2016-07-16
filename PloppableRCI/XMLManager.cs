@@ -38,10 +38,10 @@ namespace PloppableRICO
                 var prefab = PrefabCollection<BuildingInfo>.GetLoaded(i);
 
                 //Add one entry for every ploppable building
-                if ( prefab.m_class.m_service == ItemClass.Service.Beautification ||
-                   prefab.m_class.m_service == ItemClass.Service.Monument ||
-                   prefab.m_class.m_service == ItemClass.Service.Electricity ||
-                   prefab.m_class.m_service == ItemClass.Service.Education)
+                //if ( prefab.m_class.m_service == ItemClass.Service.Beautification ||
+                  // prefab.m_class.m_service == ItemClass.Service.Monument ||
+                   //prefab.m_class.m_service == ItemClass.Service.Electricity ||
+                  // prefab.m_class.m_service == ItemClass.Service.Education)
                 {
                     var buildingData = new BuildingData
                     {
@@ -71,7 +71,7 @@ namespace PloppableRICO
             //If settings mod is active, load its settings. (disabled for now)
             if (Util.IsModEnabled(629850626uL))
             {
-                //ModSettings();
+                ModSettings();
             }
 
         }
@@ -209,7 +209,7 @@ namespace PloppableRICO
             }
         }
 
-        //Load settings from settings mods. (Currently disabled)
+        //Load settings from settings mods. 
         public void ModSettings()
         {
             var workshopModSettingsPath = Path.Combine(Util.SettingsModPath("629850626"), "WorkshopRICOSettings.xml");
@@ -226,7 +226,10 @@ namespace PloppableRICO
                 if (PrefabCollection<BuildingInfo>.FindLoaded(buildingDef.name) != null)
                 {
                     var buildingPrefab = PrefabCollection<BuildingInfo>.FindLoaded(buildingDef.name);
-                    //Add settings mod settings here
+                    var mod = new RICOBuilding();
+                    mod = buildingDef;
+                    prefabHash[buildingPrefab].mod = mod;
+                    prefabHash[buildingPrefab].hasMod = true;
 
                 }
             }
