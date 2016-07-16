@@ -1,11 +1,6 @@
 ﻿using System;
-using System.Reflection;
-using System.Collections.Generic;
-using UnityEngine;
-using System.Linq;
-using ColossalFramework.UI;
-using ColossalFramework.DataBinding;
 
+using System.Reflection;
 
 
 namespace PloppableRICO.Detour
@@ -24,8 +19,11 @@ namespace PloppableRICO.Detour
 		private static MethodInfo _BuildingTool_CheckCollidingBuildings_original;
 		private static MethodInfo _BuildingTool_CheckCollidingBuildings_detour;
 
-        public static void Deploy ()
+		public static void Deploy ()
 		{
+
+
+
 			if (!deployed) {
 
 				_BuildingTool_CheckCollidingBuildings_original = typeof(BuildingTool).GetMethod (
@@ -43,10 +41,10 @@ namespace PloppableRICO.Detour
 					new Type [] {typeof(BuildingInfo), typeof(Building).MakeByRefType()}, 
 					null
 				);
-     
-                _BuildingTool_CheckCollidingBuildings_state = RedirectionHelper.RedirectCalls (_BuildingTool_CheckCollidingBuildings_original, _BuildingTool_CheckCollidingBuildings_detour);
-            
-                deployed = true;
+					
+				_BuildingTool_CheckCollidingBuildings_state = RedirectionHelper.RedirectCalls (_BuildingTool_CheckCollidingBuildings_original, _BuildingTool_CheckCollidingBuildings_detour);
+
+				deployed = true;
 
 				//Debug.Log("BuildingTool Methods detoured");
 			}
@@ -56,13 +54,13 @@ namespace PloppableRICO.Detour
 		{
 			
 			if (deployed) {
-
-
 				RedirectionHelper.RevertRedirect (_BuildingTool_CheckCollidingBuildings_original, _BuildingTool_CheckCollidingBuildings_state);
 				_BuildingTool_CheckCollidingBuildings_original = null;
 				_BuildingTool_CheckCollidingBuildings_detour = null;
 
-                deployed = false;
+
+				deployed = false;
+
 				//Debug.Log("BuildingTool Methods restored");
 			}
 		}
@@ -72,14 +70,18 @@ namespace PloppableRICO.Detour
 		{
 			int publicServiceIndex = ItemClass.GetPublicServiceIndex (info.m_class.m_service);
 
-			//This exempts RICO buildings from the wrath of the BuildingTool. 
+
+			///////////////////////This exempts RICO buildings from the wrath of the BuildingTool. 
+
 			if (info.m_buildingAI is PloppableOffice || info.m_buildingAI is PloppableExtractor || info.m_buildingAI is PloppableResidential || info.m_buildingAI is PloppableCommercial || info.m_buildingAI is PloppableIndustrial) {
 				return true;
-				
+				//////////////////////////////////////
 			} else {
 				
 				return (publicServiceIndex != -1 && !info.m_autoRemove) || (building.m_flags & Building.Flags.Untouchable) != Building.Flags.None || building.m_fireIntensity != 0;
 			}
 		}
-    }
+
+
+	}
 }

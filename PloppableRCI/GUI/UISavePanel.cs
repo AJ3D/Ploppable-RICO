@@ -2,7 +2,6 @@
 using ColossalFramework.UI;
 using System.IO;
 using System.Xml.Serialization;
-using System.Xml;
 
 namespace PloppableRICO
 {
@@ -39,8 +38,6 @@ namespace PloppableRICO
             autoLayout = true;
             autoLayoutDirection = LayoutDirection.Vertical;
             autoLayoutPadding.top = 5;
-            autoLayoutPadding.left = 5;
-            autoLayoutPadding.right = 5;
             builtinKeyNavigation = true;
             clipChildren = true;
             freeScroll = false;
@@ -60,121 +57,67 @@ namespace PloppableRICO
         {
             save = UIUtils.CreateButton(this);
             save.text = "Save";
-            save.width = 140;
 
             addLocal = UIUtils.CreateButton(this);
             addLocal.text = "Add Local";
-            addLocal.width = 140;
 
             addLocal.eventClick += (c, p) =>
             {
-                if (!currentSelection.hasLocal)
-                {
+                if (currentSelection.hasLocal == false) {
 
-                    currentSelection.local = new PloppableRICODefinition.Building();
-
+                    var newlocal = new RICOBuilding();
                     currentSelection.hasLocal = true;
-
-                    //Set some basic settings for assets with no settings
+                    currentSelection.local = newlocal;
                     currentSelection.local.name = currentSelection.name;
-                    currentSelection.local.ricoEnabled = true;
-                    currentSelection.local.service = "residential";
-                    currentSelection.local.subService = "low";
-                    currentSelection.local.level = 1;
-                    currentSelection.local.UICategory = "reslow";
-                    currentSelection.local.constructionCost = 10;
-                    currentSelection.local.workplaceCount = 10;
 
-
-                    //If selected asset has author settings, copy those to local
-                    if (currentSelection.hasAuthor)
-                    {
-                        currentSelection.local = (PloppableRICODefinition.Building)currentSelection.author.Clone();
-                    }
-                    else if (currentSelection.hasMod)
-                    {
-                        currentSelection.local = (PloppableRICODefinition.Building)currentSelection.mod.Clone();
-                    }
-
-                    currentSelection.local.name = currentSelection.name;
-                    //currentSelection.local = (PloppableRICODefinition.Building)newlocal.Clone();
-
-                    if (enabled) RICOSettingsPanel.instance.UpdateBuildingInfo(currentSelection);
-                    if (enabled) RICOSettingsPanel.instance.UpdateSelection();
-                    Save();
                 }
+
             };
 
             removeLocal = UIUtils.CreateButton(this);
-            removeLocal.eventClick += (c, p) =>
-            {
-                currentSelection.local = null;
-                currentSelection.hasLocal = false;
-                RICOSettingsPanel.instance.UpdateBuildingInfo(currentSelection);
-
-                if (enabled) RICOSettingsPanel.instance.UpdateSelection();
-                Save();
-
-            };
             removeLocal.text = "Remove Local";
-            removeLocal.width = 140;
 
             save.eventClick += (c, p) =>
             {
-                Save();
-            };
-        }
+                //Serialize the new RICO settings. 
+                //XMLManager.SaveLocal(currentSelection.local);
+                RICOSettingsPanel.instance.Save();
 
-        public void Save()
-        {
-
-            RICOSettingsPanel.instance.Save();
-
-            if (!File.Exists("LocalRICOSettings.xml"))
-            {
-
-                var newlocalSettings = new PloppableRICODefinition();
-                var xmlSerializer = new XmlSerializer(typeof(PloppableRICODefinition));
-
-                using (XmlWriter writer = XmlWriter.Create("LocalRICOSettings.xml"))
+                if (File.Exists("LocalRICOSettings.xml") && currentSelection.local != null)
                 {
-                    xmlSerializer.Serialize(writer, newlocalSettings);
-                }
-            }
+                    
+                    PloppableRICODefinition localSettings;
+                    var newlocalSettings = new PloppableRICODefinition();
 
-            if (File.Exists("LocalRICOSettings.xml"))
-            {
-                PloppableRICODefinition localSettings;
-                var newlocalSettings = new PloppableRICODefinition();
+                    var xmlSerializer = new XmlSerializer(typeof(PloppableRICODefinition));
 
-                var xmlSerializer = new XmlSerializer(typeof(PloppableRICODefinition));
-
-                using (StreamReader streamReader = new System.IO.StreamReader("LocalRICOSettings.xml"))
-                {
-                    localSettings = xmlSerializer.Deserialize(streamReader) as PloppableRICODefinition;
-                }
-
-                //Loop though all buildings in the file. If they arent the current selection, write them back to file. 
-                foreach (var buildingDef in localSettings.Buildings)
-                {
-                    if (buildingDef.name != currentSelection.name)
+                    using (StreamReader streamReader = new System.IO.StreamReader("LocalRICOSettings.xml"))
                     {
-                        newlocalSettings.Buildings.Add(buildingDef);
+                        localSettings = xmlSerializer.Deserialize(streamReader) as PloppableRICODefinition;
                     }
-                }
-
-                //If current selection has local settings, add them to file. 
-                if (currentSelection.hasLocal)
-                {
+                    
+                    foreach (var buildingDef in localSettings.Buildings)
+                    {
+                        if (buildingDef.name != currentSelection.local.name)
+                        {
+                            newlocalSettings.Buildings.Add(buildingDef);
+                        }
+                    }
+                    
+                    //newBuildingData.name = newBuildingData.name;
                     newlocalSettings.Buildings.Add(currentSelection.local);
+
+                    using (TextWriter writer = new StreamWriter("LocalRICOSettings.xml"))
+                    {
+                        xmlSerializer.Serialize(writer, newlocalSettings);
+                    }
+                    
                 }
 
-                using (TextWriter writer = new StreamWriter("LocalRICOSettings.xml"))
-                {
-                    xmlSerializer.Serialize(writer, newlocalSettings);
-                }
+            };
 
-            }
+            reset = UIUtils.CreateButton(this);
+            reset.text = "Reset";
 
         }
     }

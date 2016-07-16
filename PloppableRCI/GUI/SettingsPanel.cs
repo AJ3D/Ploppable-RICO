@@ -102,7 +102,8 @@ namespace PloppableRICO
             }
             catch (Exception e)
             {
-                    Destroy();
+                Debug.LogException(e); // I know it's your piece of cake but i got annoyed by the warning. Tail.
+                Destroy();
             }
         }
 
@@ -168,8 +169,7 @@ namespace PloppableRICO
             m_buildingSelection.relativePosition = Vector3.zero;
             m_buildingSelection.rowsData = new FastList<object>();
             m_buildingSelection.selectedIndex = -1;
-
-            
+         
 
             // Building Options
             m_buildingOptions = right.AddUIComponent<UIBuildingOptions>();
@@ -187,37 +187,30 @@ namespace PloppableRICO
 
         public void UpdateBuildingInfo(BuildingData building) {
 
-            if (building != null)
-            {
-                //Debug.Log(building.name);
-                currentSelection = XMLManager.xmlData[building.prefab];
-                m_buildingOptions.SelectionChanged(currentSelection);
-                m_savePanel.SelectionChanged(currentSelection);
-                m_buildingPreview.Show(currentSelection);
-            }
+            //Debug.Log(building.name);
+
+            currentSelection = XMLManager.prefabHash[building.prefab];
+            m_buildingOptions.SelectionChanged(currentSelection);
+            m_savePanel.SelectionChanged(currentSelection);
+            m_buildingPreview.Show(currentSelection);
         }
 
         public void Save() {
-
             m_buildingOptions.SaveRICO();
-        }
 
-        public void UpdateSelection()
-        {
-            m_buildingSelection.Refresh();
         }
 
         private FastList<object> Filter()
         {
-            //Debug.Log("Filtered Called");
+            Debug.Log("Filtered Called");
             List<BuildingData> list = new List<BuildingData>();
-            foreach (var bData in XMLManager.xmlData.Values)
+            foreach (var bData in XMLManager.prefabHash.Values)
             {
                 if (bData != null)
                 {
                     //var prefab = PrefabCollection<BuildingInfo>.GetLoaded(id.id);
                     list.Add(bData);
-                    //Debug.Log(bData.name);
+                    Debug.Log(bData.name);
                 }
             }
 
@@ -234,10 +227,10 @@ namespace PloppableRICO
                     if (category == Category.None || !m_filter.IsZoneSelected(category)) continue;
                 }
 
-                 //Name
-                 if (!m_filter.buildingName.IsNullOrWhiteSpace() && !item.name.ToLower().Contains(m_filter.buildingName.ToLower())) continue;
+                // Name
+                // if (!m_filter.buildingName.IsNullOrWhiteSpace() && !item.name.ToLower().Contains(m_filter.buildingName.ToLower())) continue;
 
-                //Debug.Log(item.category + " " + item.displayName);
+                Debug.Log(item.category + " " + item.displayName);
 
                 filtered.Add(item);
             }
@@ -255,13 +248,13 @@ namespace PloppableRICO
 
             List<BuildingData> list = new List<BuildingData>();
 
-            foreach (var bData in XMLManager.xmlData.Values)
+            foreach (var bData in XMLManager.prefabHash.Values)
             {
                 if (bData != null)
                 {
                     //var prefab = PrefabCollection<BuildingInfo>.GetLoaded(id.id);
                     list.Add(bData);
-                    //Debug.Log(bData.name);
+                    Debug.Log(bData.name);
                 }
             }
 

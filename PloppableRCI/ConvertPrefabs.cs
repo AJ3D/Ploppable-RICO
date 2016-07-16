@@ -12,51 +12,44 @@ namespace PloppableRICO
         public void run()
         {
             //Loop through the dictionary, and apply any RICO settings. 
-            foreach (var buildingData in XMLManager.xmlData.Values)
+            foreach (var buildingData in XMLManager.prefabHash.Values)
             {
-                if (buildingData != null)
+                if ( buildingData != null)
                 {
                     //If asset has local settings, apply those. 
-                    if (buildingData.hasLocal)
+                    if ( buildingData.hasLocal)
                     {
                         //If local settings disable RICO, dont convert
-                        if (buildingData.local.ricoEnabled)
+                        if ( buildingData.local.ricoEnabled)
                         {
-                            ConvertPrefab(buildingData.local, buildingData.name);
+                            ConvertPrefab( buildingData.local, buildingData.name);
+                            continue;
                         }
                     }
-                    //assign author settings. 
-                    else if (buildingData.hasAuthor)
+
+                    if (buildingData.hasAuthor)
                     {
-                        if (buildingData.author.ricoEnabled)
+                        if ( buildingData.author.ricoEnabled)
                         {
-                            ConvertPrefab(buildingData.author, buildingData.name);
+                            Util.TRACE( " RUN " + buildingData.name );
+                            ConvertPrefab( buildingData.author, buildingData.name);
                         }
-                        //assign Mod settings
-
-                        //Debug.Log(buildingData.author.name + " is " + buildingData.author.service);
-                    }
-                    else if (buildingData.hasMod)
-                    {
-
-                        ConvertPrefab(buildingData.mod, buildingData.name);
                     }
                 }
             }
         }
 
-        public void ConvertPrefab(PloppableRICODefinition.Building buildingData, string name)
+        public void ConvertPrefab(RICOBuilding buildingData, string name)
         {
             var prefab = PrefabCollection<BuildingInfo>.FindLoaded(name);
 
-
-            if (prefab != null)
+            if ( prefab != null)
             {
-                prefab.m_UIPriority = -1;
-                
                 if (buildingData.service == "residential")
                 {
                     var ai = prefab.gameObject.AddComponent<PloppableResidential>();
+                    if ( ai == null ) throw ( new Exception( "Residential-AI not found." ) );
+
                     ai.m_ricoData = buildingData;
                     ai.m_constructionCost = buildingData.constructionCost;
                     ai.m_homeCount = buildingData.homeCount;
@@ -64,8 +57,8 @@ namespace PloppableRICO
                 }
                 else if (buildingData.service == "office")
                 {
-                    
                     var ai = prefab.gameObject.AddComponent<PloppableOffice>();
+                    if ( ai == null ) throw ( new Exception( "Office-AI not found." ) );
                     ai.m_ricoData = buildingData;
                     ai.m_workplaceCount = buildingData.workplaceCount;
                     ai.m_constructionCost = buildingData.constructionCost;
@@ -74,20 +67,23 @@ namespace PloppableRICO
                 else if (buildingData.service == "industrial")
                 {
                     var ai = prefab.gameObject.AddComponent<PloppableIndustrial>();
+                    if ( ai == null ) throw ( new Exception( "Industrial-AI not found." ) );
+
                     ai.m_ricoData = buildingData;
                     ai.m_workplaceCount = buildingData.workplaceCount;
                     ai.m_constructionCost = buildingData.constructionCost;
                     ai.m_pollutionEnabled = buildingData.pollutionEnabled;
 
-                    if (Util.industryServices.Contains(buildingData.subService))
+                    if ( Util.industryServices.Contains(buildingData.subService))
                         InitializePrefab(prefab, ai, Util.ucFirst(buildingData.subService) + " - Processing");
                     else
                         InitializePrefab(prefab, ai, "Industrial - Level" + buildingData.level);
                 }
                 else if (buildingData.service == "extractor")
                 {
-
                     var ai = prefab.gameObject.AddComponent<PloppableExtractor>();
+                    if ( ai == null ) throw ( new Exception( "Extractor-AI not found." ) );
+
                     ai.m_ricoData = buildingData;
                     ai.m_workplaceCount = buildingData.workplaceCount;
                     ai.m_constructionCost = buildingData.constructionCost;
@@ -101,6 +97,8 @@ namespace PloppableRICO
                 {
                     string itemClass = "";
                     var ai = prefab.gameObject.AddComponent<PloppableCommercial>();
+                    if ( ai == null ) throw ( new Exception( "Commercial-AI not found." ) );
+
                     ai.m_ricoData = buildingData;
                     ai.m_workplaceCount = buildingData.workplaceCount;
                     ai.m_constructionCost = buildingData.constructionCost;
@@ -131,7 +129,6 @@ namespace PloppableRICO
             prefab.m_buildingAI.m_info = prefab;
             prefab.InitializePrefab();
             prefab.m_class = ItemClassCollection.FindClass(aiClass);
-            //prefab.m_placementStyle = ItemClass.Placement.Manual;
         }
     }
 }

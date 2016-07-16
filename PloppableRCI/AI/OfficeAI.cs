@@ -8,7 +8,7 @@ namespace PloppableRICO
    	{
 		public int m_workplaceCount = 1;
 		public int m_constructionCost = 1;
-        public PloppableRICODefinition.Building m_ricoData;
+        public RICOBuilding m_ricoData;
         public int[] workplaceCount;
 
         // Here plays the music
@@ -29,29 +29,10 @@ namespace PloppableRICO
             }
         }
 
-        public void CalculateBaseLevels(Randomizer r, int width, int length, out int level0, out int level1, out int level2, out int level3)
+        public void CalculateBaseWorkplaceCount(Randomizer r, int width, int length, out int level0, out int level1, out int level2, out int level3)
         {
             base.CalculateWorkplaceCount(r, width, length, out level0, out level1, out level2, out level3);;
         }
-
-        public void CalculateLevels(Randomizer r, int width, int length, out int level0, out int level1, out int level2, out int level3)
-        {
-            ItemClass itemClass = this.m_info.m_class;
-            ItemClass.SubService subService = itemClass.m_subService;
-            int[] workplaceDistribution = { 0, 0, 0, 0, 0 };
-            
-            if (m_ricoData.workplaceDistribution != null)
-                workplaceDistribution = m_ricoData.workplaceDistribution;
-            else
-                switch (itemClass.m_level)
-                {
-                    case ItemClass.Level.Level1: workplaceDistribution = new int[] { 100, 0, 40, 50, 10 }; break;
-                    case ItemClass.Level.Level2: workplaceDistribution = new int[] { 100, 0, 20, 50, 30 }; break;
-                    default: workplaceDistribution = new int[] { 100, 0, 0, 40, 60 }; break;
-                }
-
-            WorkplaceAIHelper.distributeWorkplaceLevels(r, workplaceDistribution, m_workplaceCount, out level0, out level1, out level2, out level3);
-		}
 
         // and from here on is silence
         public override void SimulationStep(ushort buildingID, ref Building buildingData, ref Building.Frame frameData)

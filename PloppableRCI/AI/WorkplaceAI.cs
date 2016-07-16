@@ -2,14 +2,16 @@
 ﻿using UnityEngine;
 using ColossalFramework;
 using ColossalFramework.Math;
+using System.Linq;
+using System.Collections.Generic;
 
 namespace PloppableRICO
 {
     public interface IWorkplaceLevelCalculator
     {
-        void CalculateWorkplaceCount(Randomizer r, int width, int length, out int level0, out int level1, out int level2, out int level3);
-        void CalculateLevels(Randomizer r, int width, int length, out int level0, out int level1, out int level2, out int level3);
-        void CalculateBaseLevels(Randomizer r, int width, int length, out int level0, out int level1, out int level2, out int level3);
+        //void CalculateWorkplaceCount(Randomizer r, int width, int length, out int level0, out int level1, out int level2, out int level3);
+        //void CalculateLevels(int width, int length, out int level0, out int level1, out int level2, out int level3);
+        void CalculateBaseWorkplaceCount(Randomizer r, int width, int length, out int level0, out int level1, out int level2, out int level3);
     }
 
     public static class WorkplaceAIHelper
@@ -21,33 +23,19 @@ namespace PloppableRICO
             return result;
         }
 
-        public static void CalculateWorkplaceCount(PloppableRICODefinition.Building ricoData, IWorkplaceLevelCalculator ai, Randomizer r, int width, int length, out int level0, out int level1, out int level2, out int level3)
+        public static void CalculateWorkplaceCount(RICOBuilding ricoData, IWorkplaceLevelCalculator ai, Randomizer r, int width, int length, out int level0, out int level1, out int level2, out int level3)
         {
             SetWorkplaceLevels(out level0, out level1, out level2, out level3, 0, 0, 0, 0);
-            PloppableRICODefinition.Building rc = ricoData;
+            RICOBuilding rc = ricoData;
 
-            if (rc == null)
-                WorkplaceAIHelper.SetWorkplaceLevels(out level0, out level1, out level2, out level3, 10, 20, 30, 40);
-            else
+            if ( rc != null )
+            {
                 // reality mod is running and the xml file says ignore-reality="false"
-                if (rc.useReality)
-                    ai.CalculateBaseLevels(r, width, length, out level0, out level1, out level2, out level3);
+                if ( rc.useReality )
+                    ai.CalculateBaseWorkplaceCount( r, width, length, out level0, out level1, out level2, out level3 );
                 else
-                {
-                    if (rc.workplaceCount > 0)
-                        ai.CalculateLevels(r, width, length, out level0, out level1, out level2, out level3);
-                    if (rc.workplaceDetailsEnabled)
-                        // this adds to the results of the usual workplaces calculation
-                        WorkplaceAIHelper.SetWorkplaceLevels(out level0, out level1, out level2, out level3, rc.uneducated + level0, rc.educated + level1, rc.wellEducated + level2, rc.highEducated + level3);
-                    // Comment that out and uncomment the following to ignore "workplaces" 
-                    // and just use the details setting
-                    // WorkplaceAIHelper.SetWorkplaceLevels(out level0, out level1, out level2, out level3, m_ricoData);
-                }
-        }
-
-        public static void SetWorkplaceLevels(out int level0, out int level1, out int level2, out int level3, PloppableRICODefinition.Building ricoData)
-        {
-            SetWorkplaceLevels(out level0, out level1, out level2, out level3, new int[] { ricoData.uneducated, ricoData.educated, ricoData.wellEducated, ricoData.highEducated });
+                    SetWorkplaceLevels( out level0, out level1, out level2, out level3, deviateWorkplaces( ricoData.workplaces, ricoData.workplaceDeviation ) );
+            }
         }
 
         public static void SetWorkplaceLevels(out int level0, out int level1, out int level2, out int level3, int l0, int l1, int l2, int l3)
@@ -62,36 +50,46 @@ namespace PloppableRICO
             level2 = values[2];
             level3 = values[3];
         }
-        
-        public static void distributeWorkplaceLevels(Randomizer r, int[] workplaceDistribution, int widths, out int level0, out int level1, out int level2, out int level3)
+
+        public static void distributeWorkplaceLevels( RICOBuilding ricoData, out int level0, out int level1, out int level2, out int level3 )
+        {
+            distributeWorkplaceLevels( ricoData.workplaceCount, Util.WorkplaceDistributionOf(ricoData.service, ricoData.subService, "Level" + ricoData.level.ToString() ), ricoData.workplaceDeviation, out level0, out level1, out level2, out level3 );
+        }
+
+
+        public static void distributeWorkplaceLevels( int workplaces, int[] workplaceDistribution, int[] workplaceDeviation, out int level0, out int level1, out int level2, out int level3 )
+        {
+            var jobs = distributeWorkplaceLevels( workplaces, workplaceDistribution, workplaceDeviation);
+            SetWorkplaceLevels( out level0, out level1, out level2, out level3, jobs );
+
+        }
+
+        public static int[] distributeWorkplaceLevels( int workplaces, int[] workplaceDistribution, int[] workplaceDeviation)
         {
             int[] wd = workplaceDistribution;
-
-            level0 = 0; level1 = 0; level2 = 0; level3 = 0;
-            int num = Mathf.Max(200, widths * workplaceDistribution[0] + r.Int32(100u)) / 100;
-            int num2 = wd[1] + wd[2] + wd[3] + wd[4];
-
-            if (num <= 0)
-                return;
-
-            if (num2 != 0)
+            int[] wv = workplaceDeviation;
+           
+            if (wd == null)
             {
-                level0 = (num * wd[1] + r.Int32((uint)num2)) / num2;
-                num -= level0;
+                return new int[] { };
             }
-            num2 = wd[2] + wd[3] + wd[4];
-            if (num2 != 0)
-            {
-                level1 = (num * wd[2] + r.Int32((uint)num2)) / num2;
-                num -= level1;
-            }
-            num2 = wd[3] + wd[4];
-            if (num2 != 0)
-            {
-                level2 = (num * wd[3] + r.Int32((uint)num2)) / num2;
-                num -= level2;
-            }
-            level3 = num;
+            float @base = (float)wd[0];
+
+            // distribute 
+            int[] jobs = wd.Skip(1).Select(
+                    share => (int)((float)workplaces * ((float)share / @base))
+                  ).ToArray();
+
+            return jobs;
+        }
+
+        public static int[] deviateWorkplaces( int[] workplaces, int[] deviatons )
+        {
+            if (deviatons != null)
+                return workplaces.Select(
+                    (jobc, i) => (int)new System.Random().Next( jobc - deviatons[i], jobc + deviatons[i] )
+                ).ToArray();
+            return workplaces;
         }
     }
 }
