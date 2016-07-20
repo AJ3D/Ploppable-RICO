@@ -72,7 +72,6 @@ namespace PloppableRICO
                 {
 
                     currentSelection.local = new RICOBuilding();
-
                     currentSelection.hasLocal = true;
 
                     //Set some basic settings for assets with no settings
@@ -83,7 +82,8 @@ namespace PloppableRICO
                     currentSelection.local.level = 1;
                     currentSelection.local.uiCategory = "reslow";
                     currentSelection.local.constructionCost = 10;
-                    currentSelection.local.workplaces = new int[] { int.Parse("10"), -1, -1, -1 };
+                    currentSelection.local.homeCount = 10;
+                    currentSelection.local.workplaces = new int[] {10, -1, -1, -1};
 
 
                     //If selected asset has author settings, copy those to local

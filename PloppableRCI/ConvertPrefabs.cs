@@ -27,7 +27,7 @@ namespace PloppableRICO
                         }
                     }
 
-                    if (buildingData.hasAuthor)
+                    else if (buildingData.hasAuthor)
                     {
                         if ( buildingData.author.ricoEnabled)
                         {

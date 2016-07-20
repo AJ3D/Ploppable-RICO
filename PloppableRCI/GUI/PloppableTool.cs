@@ -14,6 +14,7 @@ namespace PloppableRICO
     /// 
     public class PloppableTool : ToolBase
     {
+        private static GameObject _gameObject;
         private static PloppableTool _instance;
         public static PloppableTool instance
         {
@@ -28,10 +29,15 @@ namespace PloppableRICO
         int types = 11;
         UISprite[] TabSprites = new UISprite[12];
         UIScrollablePanel[] BuildingPanels = new UIScrollablePanel[12];
+        UIScrollablePanel currentSelection = new UIScrollablePanel();
+
         UIButton[] TabButtons = new UIButton[12];
 
         UIButton[] LeftButtons = new UIButton[12];
         UIButton[] RightButtons = new UIButton[12];
+
+        UIButton LeftButton = new UIButton();
+        UIButton RightButton = new UIButton();
 
         string[] Names = new string[]{
             "ResidentialLow",
@@ -55,17 +61,49 @@ namespace PloppableRICO
         {
             if (_instance == null)
             {
+                /*
                 GameObject gameController = GameObject.FindWithTag("GameController");
                 _instance = gameController.AddComponent<PloppableTool>();
                 _instance.name = "PloppableTool";
                 _instance.DrawPloppablePanel();
                 _instance.PopulateAssets();
                 _instance.enabled = false;
-                GameObject.FindObjectOfType<ToolController>().Tools[0].enabled = true;
+                //GameObject.FindObjectOfType<ToolController>().Tools[0].enabled = true;
+                */
+                try
+                {
+                    // Destroy the UI if already exists
+                    //_gameObject = GameObject.Find("PloppableTool");
+                    //Destroy();
 
+                    // Creating our own gameObect, helps finding the UI in ModTools
+                    _gameObject = new GameObject("PloppableTool");
+                    _gameObject.transform.parent = UIView.GetAView().transform;
+                    _instance = _gameObject.AddComponent<PloppableTool>();
+                    //_instance.name = "PloppableTool";
+                    _instance.DrawPloppablePanel();
+                    _instance.PopulateAssets();
+                    //_instance.enabled = false;
+                }
+                catch (Exception e)
+                {
+                    Debug.LogException(e);
+                }
             }
         }
 
+        public static void Destroy()
+        {
+            try
+            {
+                if (_gameObject != null)
+                    GameObject.Destroy(_gameObject);
+            }
+            catch (Exception e)
+            {
+                Debug.LogException(e);
+            }
+        }
         public void DrawPloppablePanel()
         {
             if (PloppableButton == null)
@@ -100,6 +138,7 @@ namespace PloppableRICO
                 Tabs.pivot = UIPivotPoint.BottomCenter;
                 Tabs.padding = new RectOffset(0, 3, 0, 0);
 
+                //var i =
 
                 for (int i = 0; i <= types; i++)
                 {
@@ -121,29 +160,7 @@ namespace PloppableRICO
                     BuildingPanels[i].scrollWheelAmount = 109;
                     BuildingPanels[i].horizontalScrollbar.stepSize = 1f;
                     BuildingPanels[i].horizontalScrollbar.incrementAmount = 109f;
-
-                    LeftButtons[i] = new UIButton();
-                    RightButtons[i] = new UIButton();
-
-                    LeftButtons[i] = BuildingPanel.AddUIComponent<UIButton>();
-                    RightButtons[i] = BuildingPanel.AddUIComponent<UIButton>();
-
-                    LeftButtons[i].size = new Vector2(32, 32);
-                    RightButtons[i].size = new Vector2(32, 32);
-
-                    LeftButtons[i].normalBgSprite = "ArrowLeft";
-                    LeftButtons[i].pressedBgSprite = "ArrowLeftPressed";
-                    LeftButtons[i].hoveredBgSprite = "ArrowLeftHovered";
-                    LeftButtons[i].disabledBgSprite = "ArrowLeftDisabled";
-
-                    LeftButtons[i].relativePosition = new Vector3(16, 33);
-                    RightButtons[i].relativePosition = new Vector3(812, 33);
-
-                    RightButtons[i].normalBgSprite = "ArrowRight";
-                    RightButtons[i].pressedBgSprite = "ArrowRightPressed";
-                    RightButtons[i].hoveredBgSprite = "ArrowRightHovered";
-                    RightButtons[i].disabledBgSprite = "ArrowRightDisabled";
-
+                    BuildingPanels[i].scrollWithArrowKeys = true;
 
 
                     TabButtons[i] = new UIButton();  //draw RICO tabstrip. 
@@ -155,7 +172,7 @@ namespace PloppableRICO
                     TabButtons[i].hoveredBgSprite = "SubBarButtonBaseHovered";
                     TabButtons[i].focusedBgSprite = "SubBarButtonBaseFocused";
                     TabButtons[i].state = UIButton.ButtonState.Normal;
-                    TabButtons[i].isEnabled = enabled;
+                    //TabButtons[i].isEnabled = enabled;
                     TabButtons[i].name = Names[i] + "Button";
                     TabButtons[i].tabStrip = true;
 
@@ -171,6 +188,43 @@ namespace PloppableRICO
                     else {
                         SetSprites(TabSprites[i], "IconPolicy" + Names[i]);
                     }
+                }
+                
+                LeftButton = BuildingPanel.AddUIComponent<UIButton>();
+                RightButton = BuildingPanel.AddUIComponent<UIButton>();
+
+                LeftButton.size = new Vector2(32, 32);
+                RightButton.size = new Vector2(32, 32);
+
+                LeftButton.normalBgSprite = "ArrowLeft";
+                LeftButton.pressedBgSprite = "ArrowLeftPressed";
+                LeftButton.hoveredBgSprite = "ArrowLeftHovered";
+                LeftButton.disabledBgSprite = "ArrowLeftDisabled";
+
+                LeftButton.relativePosition = new Vector3(16, 33);
+                RightButton.relativePosition = new Vector3(812, 33);
+
+
+                //LeftButton.anchor = UIAnchorStyle.None;
+
+                RightButton.normalBgSprite = "ArrowRight";
+                RightButton.pressedBgSprite = "ArrowRightPressed";
+                RightButton.hoveredBgSprite = "ArrowRightHovered";
+                RightButton.disabledBgSprite = "ArrowRightDisabled";
+
+                currentSelection = BuildingPanels[0];
+
+                RightButton.eventClick += (sender, e) => ArrowClicked(sender, e, currentSelection);
+                LeftButton.eventClick += (sender, e) => ArrowClicked(sender, e, currentSelection);
+
+                if (BuildingPanels[0].childCount > 7)
+                {
+                    LeftButton.isVisible = true;
+                    RightButton.isVisible = true;
+                }
+                else {
+                    LeftButton.isVisible = false;
+                    RightButton.isVisible = false;
                 }
 
                 //Couldnt get this to work in the loop.
@@ -204,6 +258,18 @@ namespace PloppableRICO
                 showThemeManager.text = "Settings";
                 showThemeManager.eventClick += (c, p) => RICOSettingsPanel.instance.Toggle();
             }
+        }
+
+        public void ArrowClicked(UIComponent component, UIMouseEventParameter eventParam, UIScrollablePanel selected) {
+
+            if (component == LeftButton)
+            {
+                currentSelection.scrollPosition = currentSelection.scrollPosition - new Vector2(109, 0);
+            }
+            else {
+                currentSelection.scrollPosition = currentSelection.scrollPosition + new Vector2(109, 0);
+            }
+
         }
 
         public void PopulateAssets()
@@ -404,12 +470,25 @@ namespace PloppableRICO
         void PloppablebuttonClicked(UIComponent component, UIMouseEventParameter eventParam)
         {
             component.Focus();
-            enabled = true;
+            //enabled = true;
             BuildingPanel.isVisible = true;
         }
 
         void TabClicked(UIComponent component, UIMouseEventParameter eventParam, UIScrollablePanel panel, UIButton button, UISprite sprite)
         {
+            currentSelection = panel;
+
+            if (panel.childCount > 7)
+            {
+                LeftButton.isVisible = true;
+                RightButton.isVisible = true;
+            }
+            else {
+                LeftButton.isVisible = false;
+                RightButton.isVisible = false;
+            }
+
+
             foreach (UIScrollablePanel pan in BuildingPanels)
             {
 
@@ -437,6 +516,7 @@ namespace PloppableRICO
             }
         }
 
+        /*
         protected override void OnDisable()
         {
             if (BuildingPanel != null)
@@ -447,9 +527,9 @@ namespace PloppableRICO
         protected override void OnEnable()
         {
             UIView.GetAView().FindUIComponent<UITabstrip>("MainToolstrip").selectedIndex = -1;
-            base.OnEnable();
+            //base.OnEnable();
         }
-
+        */
     }
 }
 

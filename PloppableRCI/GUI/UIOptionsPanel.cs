@@ -213,16 +213,18 @@ namespace PloppableRICO
 
             popBalanceEnabled = UIUtils.CreateCheckBox(enableRICOPanel, 180, "Use WG Realistic Pop");
 
+            //popBalanceEnabled = UIUtils.CreateCheckBox(enableRICOPanel, 210, "Use Education Ratios");
+
             //pollutionEnabled = UIUtils.CreateCheckBox(enableRICOPanel, 210, "Enable Pollution");
 
 
             //Education Ratio Panel
             //educationRatiosEnabled = UIUtils.CreateCheckBox(this, "Enable Education");
             //educationPanel = UIUtils.CreatePanel(this, 120, educationRatiosEnabled);
-            uneducated = UIUtils.CreateTextField(enableRICOPanel, 210, "Uneducated");
-            educated = UIUtils.CreateTextField(enableRICOPanel, 230, "Educated");
-            welleducated = UIUtils.CreateTextField(enableRICOPanel, 260, "Well Educated");
-            highlyeducated = UIUtils.CreateTextField(enableRICOPanel, 290, "Highly Educated");
+            //uneducated = UIUtils.CreateTextField(enableRICOPanel, 210, "Uneducated");
+            //educated = UIUtils.CreateTextField(enableRICOPanel, 230, "Educated");
+            //welleducated = UIUtils.CreateTextField(enableRICOPanel, 260, "Well Educated");
+            //highlyeducated = UIUtils.CreateTextField(enableRICOPanel, 290, "Highly Educated");
 
         }
 
@@ -290,8 +292,8 @@ namespace PloppableRICO
             }
 
             currentSelection.constructionCost = int.Parse(construction.text);
-            currentSelection.workplaces = new int[] { int.Parse(manual.text), -1, -1, -1 };
-            currentSelection.homeCount = int.Parse(homes.text);
+            currentSelection.workplaces = new int[] {int.Parse(manual.text), -1, -1, -1 };
+            currentSelection.homeCount = int.Parse(manual.text);
 
             if (uiCategory.selectedIndex == 0)  currentSelection.uiCategory = "reslow";
             else if (uiCategory.selectedIndex == 1) currentSelection.uiCategory = "reshigh"; 

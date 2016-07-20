@@ -39,7 +39,7 @@ namespace PloppableRICO
 
                 //Add one entry for every ploppable building
                 //if ( prefab.m_class.m_service == ItemClass.Service.Beautification ||
-                  // prefab.m_class.m_service == ItemClass.Service.Monument ||
+                  /// prefab.m_class.m_service == ItemClass.Service.Monument ||
                    //prefab.m_class.m_service == ItemClass.Service.Electricity ||
                   // prefab.m_class.m_service == ItemClass.Service.Education)
                 {
