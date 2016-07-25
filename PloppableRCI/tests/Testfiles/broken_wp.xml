@@ -1,0 +1,19 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<PloppableRICODefinition>
+<Buildings>
+  
+<Building 
+	name="Club Alpha" 
+	service="office" 
+	sub-service="none" 
+	level="1" 
+	ui-category="comlow"
+	workplaces="20,20,20"
+	ignore-reality="true" 
+	construction-cost="14200301" >
+    
+    </Building>
+    
+</Buildings>
+  
+</PloppableRICODefinition>
