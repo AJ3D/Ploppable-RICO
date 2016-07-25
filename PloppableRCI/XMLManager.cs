@@ -19,6 +19,9 @@ namespace PloppableRICO
     ///This class reads the XML settings, and applies RICO settings to prefabs. Its based on boformers Sub-Building Enabler mod. Many thanks to him for his work. 
     /// </summary>
     /// 
+#if DEBUG
+    [ProfilerAspect()]
+#endif
     public class XMLManager
     {
         public static Dictionary<BuildingInfo, BuildingData> prefabHash;
@@ -50,7 +53,7 @@ namespace PloppableRICO
                         category = AssignCategory(prefab)
                     };
 
-                    Util.TRACE( String.Format("XMLManager.run : prefab.name = {0}, category = {1}", prefab.name, prefab.category) );
+                    Profiler.Info( String.Format("XMLManager.run : prefab.name = {0}, category = {1}", prefab.name, prefab.category) );
                     prefabList.Add( buildingData );
                     prefabHash[prefab] = buildingData;
                 }
@@ -60,9 +63,9 @@ namespace PloppableRICO
             //and then finaly settings from settings mods. 
 
             //If local settings are present, load them. 
-            if (File.Exists("LocalRICOSettings.xml"))
+            if ( File.Exists( "LocalRICOSettings.xml" ) )
             {
-                LocalSettings();
+                RicoSettings( "LocalRICOSettings.xml" );
             }
 
             //Import settings from asset folders. 
@@ -71,90 +74,74 @@ namespace PloppableRICO
             //If settings mod is active, load its settings. (disabled for now)
             if (Util.IsModEnabled(629850626uL))
             {
-                ModSettings();
-            }
-
-        }
-
-        //Load local RICO settings. 
-        public void LocalSettings()
-        {
-            try
-            {
-                PloppableRICODefinition localSettings = null;
-
-                var xmlSerializer = new XmlSerializer(typeof(PloppableRICODefinition));
-
-                using (StreamReader streamReader = new System.IO.StreamReader("LocalRICOSettings.xml"))
-                {
-                    localSettings = xmlSerializer.Deserialize(streamReader) as PloppableRICODefinition;
-                }
-
-                foreach (var buildingDef in localSettings.Buildings)
-                {
-                    if (PrefabCollection<BuildingInfo>.FindLoaded(buildingDef.name) != null)
-                    {
-                        var buildingPrefab = PrefabCollection<BuildingInfo>.FindLoaded(buildingDef.name);
-                        if (buildingPrefab != null)
-                        {
-                            //Add local RICO settings to dictionary
-                            var local = new RICOBuilding();
-                            local = buildingDef;
-                            prefabHash[buildingPrefab].local = local;
-                            prefabHash[buildingPrefab].hasLocal = true;
-                        }
-                    }
-                }
-            }
-            catch (Exception e)
-            {
-                Debug.LogException(e);
+                var workshopModSettingsPath = Path.Combine(Util.SettingsModPath("629850626"), "WorkshopRICOSettings.xml");
+                RicoSettings( workshopModSettingsPath );
             }
         }
+        
 
         //Load RICO Settings from asset folders
         public void AssetSettings()
         {
             var checkedPaths = new List<string>();
-            var allParseErrors = new List<string>();
+            var foo = new Dictionary<string,string>();
 
-            for (uint i = 0; i < PrefabCollection<BuildingInfo>.LoadedCount(); i++)
+
+            for ( uint i = 0 ; i < PrefabCollection<BuildingInfo>.LoadedCount() ; i++ )
             {
                 var prefab = PrefabCollection<BuildingInfo>.GetLoaded(i);
-                if (prefab == null)
+                if ( prefab == null )
                     continue;
 
                 // search for PloppableRICODefinition.xml
                 var asset = PackageManager.FindAssetByName( prefab.name );
 
-                if ( asset == null || asset.package == null)
+                if ( asset == null || asset.package == null )
                     continue;
 
                 var crpPath = asset.package.packagePath;
-                if (crpPath == null)
-                    continue;
-                
-                // New, search also for files like assetname.rico, first existing wins
-                var ricoDefPaths = new List<String> {
-                    Path.Combine(Path.GetDirectoryName(crpPath), "PloppableRICODefinition.xml"),
-                    Path.Combine(Path.GetDirectoryName(crpPath), Path.GetFileNameWithoutExtension(crpPath) + ".rico"),
-                };
-
-                var ricoDefPath = ricoDefPaths.Find( (p) => File.Exists(p) );
-
-                if ( ricoDefPath == null || ricoDefPath == "" )
+                if ( crpPath == null )
                     continue;
 
-                // skip files which were already parsed
-                if ( checkedPaths.Contains(ricoDefPath))
-                    continue;
-                checkedPaths.Add(ricoDefPath);
+                var ricoDefPath = Path.Combine(Path.GetDirectoryName(crpPath), "PloppableRICODefinition.xml");
 
-                if ( !File.Exists(ricoDefPath))
+                if ( !checkedPaths.Contains( ricoDefPath ) )
+                {
+                    checkedPaths.Add( ricoDefPath );
+                    foo.Add( asset.package.packageName, ricoDefPath );
+                }
+            }
+
+            RicoSettings( foo );
+        }
+
+        public void RicoSettings( string ricoFileName )
+        {
+            RicoSettings( new List<string>() { ricoFileName } );
+        }
+
+        public void RicoSettings( List<string> ricoFileNames )
+        {
+            var foo = new Dictionary<string, string>();
+            foreach ( var fileName in ricoFileNames )
+                foo.Add( "", fileName );
+
+            RicoSettings( foo );
+        }
+
+        void RicoSettings( Dictionary<string, string> foo )
+        {
+            var allParseErrors = new List<string>();
+
+            foreach ( var packageId in foo.Keys )
+            {
+                var ricoDefPath = foo[packageId];
+
+                if ( !File.Exists( ricoDefPath ) )
                     continue;
 
                 PloppableRICODefinition ricoDef = null;
-                ricoDef = RICOReader.ParseRICODefinition( asset.name, ricoDefPath );
+                ricoDef = RICOReader.ParseRICODefinition( packageId, ricoDefPath );
 
                 if ( ricoDef != null )
                 {
@@ -163,8 +150,8 @@ namespace PloppableRICO
                     {
                         j++;
                         BuildingInfo pf;
-                        
-                        pf = Util.FindPrefab( buildingDef.name, asset.package.packageName );
+
+                        pf = Util.FindPrefab( buildingDef.name, packageId );
 
                         if ( pf == null )
                         {
@@ -172,14 +159,14 @@ namespace PloppableRICO
                             {
                                 pf = prefabHash.Values
                                     .Select( ( p ) => p.prefab )
-                                    .First( ( p ) => p.name.StartsWith( asset.package.packageName ) );
+                                    .First( ( p ) => p.name.StartsWith( packageId ) );
                             }
-                            catch {}
+                            catch { }
                         }
-                        
+
                         if ( pf == null )
                         {
-                            ricoDef.errors.Add( String.Format( "Error while processing RICO - file {0} at building #{1}. ({2})", asset.name, j, "Building has not been loaded. Either it is broken, deactivated or not subscribed to." + buildingDef.name + " not loaded. (" + asset.package.packageName + ")" ) );
+                            ricoDef.errors.Add( String.Format( "Error while processing RICO - file {0} at building #{1}. ({2})", packageId, j, "Building has not been loaded. Either it is broken, deactivated or not subscribed to." + buildingDef.name + " not loaded. (" + packageId + ")" ) );
                             continue;
                         }
 
@@ -199,40 +186,16 @@ namespace PloppableRICO
                 }
             }
 
-            if (allParseErrors.Count > 0)
+            if ( allParseErrors.Count > 0 )
             {
                 var errorMessage = new StringBuilder();
-                foreach (var error in allParseErrors)
-                    errorMessage.Append(error).Append('\n');
+                foreach ( var error in allParseErrors )
+                    errorMessage.Append( error ).Append( '\n' );
 
-                UIView.library.ShowModal<ExceptionPanel>("ExceptionPanel").SetMessage("Ploppable RICO", errorMessage.ToString(), true);
+                UIView.library.ShowModal<ExceptionPanel>( "ExceptionPanel" ).SetMessage( "Ploppable RICO", errorMessage.ToString(), true );
             }
-        }
 
-        //Load settings from settings mods. 
-        public void ModSettings()
-        {
-            var workshopModSettingsPath = Path.Combine(Util.SettingsModPath("629850626"), "WorkshopRICOSettings.xml");
-            var xmlSerializer = new XmlSerializer(typeof(PloppableRICODefinition));
 
-            PloppableRICODefinition workshopSettings = null;
-
-            using (StreamReader streamReader = new System.IO.StreamReader(workshopModSettingsPath))
-            {
-                workshopSettings = xmlSerializer.Deserialize(streamReader) as PloppableRICODefinition;
-            }
-            foreach (var buildingDef in workshopSettings.Buildings)
-            {
-                if (PrefabCollection<BuildingInfo>.FindLoaded(buildingDef.name) != null)
-                {
-                    var buildingPrefab = PrefabCollection<BuildingInfo>.FindLoaded(buildingDef.name);
-                    var mod = new RICOBuilding();
-                    mod = buildingDef;
-                    prefabHash[buildingPrefab].mod = mod;
-                    prefabHash[buildingPrefab].hasMod = true;
-
-                }
-            }
         }
 
         private Category AssignCategory(BuildingInfo prefab)
@@ -274,7 +237,6 @@ namespace PloppableRICO
             
             if (File.Exists("LocalRICOSettings.xml") && newBuildingData != null)
             {
-
                 PloppableRICODefinition localSettings = null;
                 var newlocalSettings = new PloppableRICODefinition();
 

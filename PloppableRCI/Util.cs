@@ -7,6 +7,9 @@ using System.IO;
 
 namespace PloppableRICO
 {
+#if DEBUG
+    [ProfilerAspect()]
+#endif
     public static class Util
     {
         public static FileInfo crpFileIn( DirectoryInfo d )
@@ -102,16 +105,6 @@ namespace PloppableRICO
 
         }
 
-        public static void TRACE( string line )
-        {
-            try
-            {
-                var fw = new System.IO.StreamWriter(@"d:\log.txt", true);
-                fw.WriteLine( line );
-                fw.Close();
-            }
-            catch { }
-        }
 
         public static int MaxLevelOf( string service, string subservice )
         {
@@ -151,7 +144,7 @@ namespace PloppableRICO
 
         public static BuildingInfo FindPrefab(string prefabName, string packageName)
         {
-            Util.TRACE( String.Format( "Find prefab: prefabName = {0}, packageName {1}", prefabName, packageName ) );
+            Profiler.Info( String.Format( "Find prefab: prefabName = {0}, packageName {1}", prefabName, packageName ) );
 
             var prefab = PrefabCollection<BuildingInfo>.FindLoaded(prefabName);
             if (prefab == null)
@@ -163,7 +156,7 @@ namespace PloppableRICO
             if (prefab == null)
                 prefab = PrefabCollection<BuildingInfo>.FindLoaded(packageName + "." + ColossalFramework.IO.PathEscaper.Escape(prefabName) + "_Data");
 
-            Util.TRACE( String.Format( "Find Asset: found = {0}", (prefab != null).ToString() ) );
+            Profiler.Info( String.Format( "Find Asset: found = {0}", (prefab != null).ToString() ) );
             return prefab;
         }
 

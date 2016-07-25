@@ -11,6 +11,9 @@ using UnityEngine;
 
 namespace PloppableRICO
 {
+#if DEBUG
+    [ProfilerAspect()]
+#endif
     public class RicoWriter
     {
         public static bool saveRicoData(string fileName, PloppableRICODefinition RicoDefinition)
@@ -28,6 +31,7 @@ namespace PloppableRICO
             return false;
         }
 
+
         public static string ricoDataXml( PloppableRICODefinition RicoDefinition )
         {
             try
@@ -44,6 +48,9 @@ namespace PloppableRICO
         }
     }
 
+#if DEBUG
+    [ProfilerAspect()]
+#endif
     public class RICOReader
     {
         public static List<String> LastErrors;

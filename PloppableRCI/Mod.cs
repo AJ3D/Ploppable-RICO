@@ -4,13 +4,15 @@ using UnityEngine;
 
 namespace PloppableRICO
 {
-	public class PloppableRICOMod : IUserMod
+#if DEBUG
+    [ProfilerAspect()]
+#endif
+    public class PloppableRICOMod : IUserMod
 	{
 		public string Name
 		{
 			get
 			{
-                Util.TRACE( "HELLO" );
                 return "Ploppable RICO";
 			}
 		}
@@ -18,7 +20,6 @@ namespace PloppableRICO
 		{
 			get
 			{
-                Util.TRACE( "WORLD" );
                 return "Allows Plopping of RICO Buildings";
 			}
 		}

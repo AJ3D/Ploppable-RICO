@@ -7,6 +7,10 @@ namespace PloppableRICO
     /// <summary>
     ///This class assigns the RICO settings to the prefabs. 
     /// </summary>
+    ///
+#if DEBUG
+    [ProfilerAspect()]
+#endif
     public class ConvertPrefabs
     {
         public void run()
@@ -31,7 +35,7 @@ namespace PloppableRICO
                     {
                         if ( buildingData.author.ricoEnabled)
                         {
-                            Util.TRACE( " RUN " + buildingData.name );
+                            Profiler.Info( " RUN " + buildingData.name );
                             ConvertPrefab( buildingData.author, buildingData.name);
                         }
                     }
