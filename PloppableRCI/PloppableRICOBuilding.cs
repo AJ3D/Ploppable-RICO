@@ -414,27 +414,27 @@ namespace PloppableRICO
 
                 if ( !new Regex( @"^(residential|commercial|office|industrial|extractor)$" ).IsMatch( service ) )
                 {
-                    errors.Add( "The building has " + ( service == "" ? "no " : "an incorrect " ) + "service. Make up your mind already." );
+                    errors.Add( "The building has " + ( service == "" ? "no " : "an incorrect " ) + "service." );
                 }
-                if ( !new Regex( @"^(high|low|generic|farming|oil|forest|ore|none)$" ).IsMatch( subService ) )
+                if ( !new Regex(@"^(high|low|generic|farming|oil|forest|ore|none|tourist|leisure)$").IsMatch( subService ) )
                 {
-                    errors.Add( "The building has " + ( service == "" ? "no " : "an incorrect " ) + "sub-service. Do you want to know more?" );
+                    errors.Add( "The building has " + ( service == "" ? "no " : "an incorrect " ) + "sub-service."  );
                 }
 
                 if ( !new Regex( @"^[12345]$" ).IsMatch( level.ToString() ) )
                 {
-                    errors.Add( String.Format( "The building has an incorrect level. Can't be THAT hard to choose between 1 to 5." ) );
+                    errors.Add( String.Format( "The building has an incorrect level." ) );
                 }
 
-                if ( !new Regex( @"^(comlow|comhigh|reslow|reshigh|office|industrial|oil|ore|farming|forest)$" ).IsMatch( uiCategory ) )
+                if ( !new Regex(@"^(comlow|comhigh|reslow|reshigh|office|industrial|oil|ore|farming|forest|tourist|leisure)$").IsMatch( uiCategory ) )
                 {
-                    errors.Add( "The building has an incorrect ui-category. It's not as complicated as it seems." );
+                    errors.Add( "The building has an incorrect ui-category." );
                 }
 
                 if ( service == "residential" )
                 {
                     if ( homeCount == 0 )
-                        errors.Add( "Service is 'residential' but no homes are set. Am I supposed to guess? Fine: 42?" );
+                        errors.Add( "Service is 'residential' but no homes are set." );
                 }
                 else
                 {

@@ -78,17 +78,19 @@ namespace PloppableRICO
             
             if ( ricoDef != null )
             {
+
+
                 if ( insanityOK || ricoDef.isValid )
                 {
                     LastErrors.AddRange( ricoDef.errors.Select( (n,i) =>
                         string.Format( "Error while processing RICO - file {0} at building #{1} ({2})", packageName, i, n ) 
                     ) );
-
                     return ricoDef;
                 }
             }
 
             //ricoDefStream.Close();
+
             return null;
         }
         private static void addCrpShit(PloppableRICODefinition ricoDef)
@@ -108,6 +110,7 @@ namespace PloppableRICO
 
         public static PloppableRICODefinition DeserializeRICODefinition( string packageName, Stream ricoDefStream, List<string> errors)
         {
+
             try
             {
                 XmlAttributes attrs = new XmlAttributes();
@@ -119,11 +122,14 @@ namespace PloppableRICO
                 XmlAttributeOverrides attrOverrides = new XmlAttributeOverrides();
                 attrOverrides.Add( typeof( RICOBuilding ), "Building", attrs );
 
+;
                 var streamReader = new System.IO.StreamReader(ricoDefStream);
                 var xmlSerializer = new XmlSerializer(typeof(PloppableRICODefinition), attrOverrides);
                 var result = xmlSerializer.Deserialize(streamReader) as PloppableRICODefinition;
+
                 foreach ( var building in result.Buildings )
                     building.parent = result;
+
                 streamReader.Close();
                 result.clean();
                 return result;

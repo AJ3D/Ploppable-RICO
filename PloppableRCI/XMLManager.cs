@@ -118,14 +118,19 @@ namespace PloppableRICO
 
         public void RicoSettings(string ricoFileName, bool isLocal = false, bool isAuthored = false, bool isMod = false)
         {
+
             RicoSettings(new List<string>() { ricoFileName }, isLocal, isAuthored, isMod);
         }
 
         public void RicoSettings(List<string> ricoFileNames, bool isLocal = false, bool isAuthored = false, bool isMod = false)
         {
             var foo = new Dictionary<string, string>();
+
             foreach (var fileName in ricoFileNames)
+            { 
                 foo.Add("", fileName);
+                
+            }
 
             RicoSettings(foo, isLocal, isAuthored, isMod);
         }
@@ -139,9 +144,13 @@ namespace PloppableRICO
                 var ricoDefPath = foo[packageId];
 
                 if (!File.Exists(ricoDefPath))
+                {
                     continue;
+                }
 
                 PloppableRICODefinition ricoDef = null;
+
+                //if (isMod) ricoDef = RICOReader.ParseRICODefinition(packageId, ricoDefPath, insanityOK: true);
                 ricoDef = RICOReader.ParseRICODefinition(packageId, ricoDefPath);
 
                 if (ricoDef != null)
@@ -188,7 +197,6 @@ namespace PloppableRICO
                             {
                                 prefabHash[pf].mod = buildingDef;
                                 prefabHash[pf].hasMod = true;
-                                Debug.Log(pf.name + " Has Mod Settings");
                             }
                         }
 
@@ -209,8 +217,6 @@ namespace PloppableRICO
 
                 UIView.library.ShowModal<ExceptionPanel>("ExceptionPanel").SetMessage("Ploppable RICO", errorMessage.ToString(), true);
             }
-
-
         }
 
         private Category AssignCategory(BuildingInfo prefab)
@@ -240,6 +246,28 @@ namespace PloppableRICO
             {
                 return Category.Health;
             }
+            else if (prefab.m_buildingAI is ResidentialBuildingAI)
+            {
+                return Category.Residential;
+            }
+            else if (prefab.m_buildingAI is IndustrialExtractorAI)
+            {
+                return Category.Industrial;
+            }
+            else if (prefab.m_buildingAI is IndustrialBuildingAI)
+            {
+                return Category.Industrial;
+            }
+            else if (prefab.m_buildingAI is OfficeBuildingAI)
+            {
+                return Category.Office;
+            }
+            else if (prefab.m_buildingAI is CommercialBuildingAI)
+            {
+                return Category.Commercial;
+            }
+
+
 
             else return Category.Beautification;
 

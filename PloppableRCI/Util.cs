@@ -181,16 +181,18 @@ namespace PloppableRICO
 
                 var prefab = PrefabCollection<BuildingInfo>.GetLoaded(i);
 
-                if (prefab.m_buildingAI is PloppableRICO.PloppableExtractor || prefab.m_buildingAI is PloppableResidential
-                    || prefab.m_buildingAI is PloppableOffice || prefab.m_buildingAI is PloppableCommercial ||
-                    prefab.m_buildingAI is PloppableIndustrial)
-                {
-
-                    // Just assign any RICO prefab a ploppable ItemClass so it will reload. It gets set back once the mod loads. 
-                    prefab.m_class = ItemClassCollection.FindClass("Beautification Item");
-                    prefab.InitializePrefab();
-                }
-            }
+               //f (prefab.m_isCustomContent)
+                
+                    if (prefab.m_buildingAI is PloppableRICO.PloppableExtractor || prefab.m_buildingAI is PloppableRICO.PloppableResidential
+                        || prefab.m_buildingAI is PloppableRICO.PloppableOffice || prefab.m_buildingAI is PloppableRICO.PloppableCommercial ||
+                        prefab.m_buildingAI is PloppableRICO.PloppableIndustrial)
+                    {
+                        // Just assign any RICO prefab a ploppable ItemClass so it will reload. It gets set back once the mod loads. 
+                        prefab.m_class = ItemClassCollection.FindClass("Beautification Item");
+                        prefab.InitializePrefab();
+                        //prefab.m_placementStyle = ItemClass.Placement.Automatic;
+                    }
+                }        
         }
 
 

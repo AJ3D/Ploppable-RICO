@@ -17,6 +17,7 @@ namespace PloppableRICO
         private static GameObject _gameObject;
         private static PloppableTool _instance;
         public static PloppableTool instance
+
         {
             get { return _instance; }
         }
@@ -32,9 +33,6 @@ namespace PloppableRICO
         UIScrollablePanel currentSelection = new UIScrollablePanel();
 
         UIButton[] TabButtons = new UIButton[12];
-
-        UIButton[] LeftButtons = new UIButton[12];
-        UIButton[] RightButtons = new UIButton[12];
 
         UIButton LeftButton = new UIButton();
         UIButton RightButton = new UIButton();
@@ -314,7 +312,7 @@ namespace PloppableRICO
         {
             Debug.Log(prefab.name + " About to try");
             var uiView = UIView.GetAView();
-            var refButton = uiView.FindUIComponent(prefab.name);
+            var refButton = (UIButton)uiView.FindUIComponent(prefab.name);
 
             if (refButton != null)
             {

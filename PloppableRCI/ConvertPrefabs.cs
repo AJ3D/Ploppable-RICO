@@ -51,81 +51,92 @@ namespace PloppableRICO
         {
             var prefab = PrefabCollection<BuildingInfo>.FindLoaded(name);
 
-            if ( prefab != null)
+            int num2;
+            int num3;
+            prefab.GetWidthRange(out num2, out num3);
+            int num4;
+            int num5;
+            prefab.GetLengthRange(out num4, out num5);
+
+            //This filters out Larger Footprint buildings. 
+            if (!(prefab.m_cellWidth < num2 || prefab.m_cellWidth > num3 || prefab.m_cellLength < num4 || prefab.m_cellLength > num5))
             {
-                if (buildingData.service == "residential")
+
+                if (prefab != null)
                 {
-                    var ai = prefab.gameObject.AddComponent<PloppableResidential>();
-                    if ( ai == null ) throw ( new Exception( "Residential-AI not found." ) );
+                    if (buildingData.service == "residential")
+                    {
+                        var ai = prefab.gameObject.AddComponent<PloppableResidential>();
+                        if (ai == null) throw (new Exception("Residential-AI not found."));
 
-                    ai.m_ricoData = buildingData;
-                    ai.m_constructionCost = buildingData.constructionCost;
-                    ai.m_homeCount = buildingData.homeCount;
-                    InitializePrefab(prefab, ai, Util.ucFirst(buildingData.subService) + " Residential - Level" + buildingData.level);
-                }
-                else if (buildingData.service == "office")
-                {
-                    var ai = prefab.gameObject.AddComponent<PloppableOffice>();
-                    if ( ai == null ) throw ( new Exception( "Office-AI not found." ) );
-                    ai.m_ricoData = buildingData;
-                    ai.m_workplaceCount = buildingData.workplaceCount;
-                    ai.m_constructionCost = buildingData.constructionCost;
-                    InitializePrefab(prefab, ai, "Office - Level" + buildingData.level);
-                }
-                else if (buildingData.service == "industrial")
-                {
-                    var ai = prefab.gameObject.AddComponent<PloppableIndustrial>();
-                    if ( ai == null ) throw ( new Exception( "Industrial-AI not found." ) );
+                        ai.m_ricoData = buildingData;
+                        ai.m_constructionCost = buildingData.constructionCost;
+                        ai.m_homeCount = buildingData.homeCount;
+                        InitializePrefab(prefab, ai, Util.ucFirst(buildingData.subService) + " Residential - Level" + buildingData.level);
+                    }
+                    else if (buildingData.service == "office")
+                    {
+                        var ai = prefab.gameObject.AddComponent<PloppableOffice>();
+                        if (ai == null) throw (new Exception("Office-AI not found."));
+                        ai.m_ricoData = buildingData;
+                        ai.m_workplaceCount = buildingData.workplaceCount;
+                        ai.m_constructionCost = buildingData.constructionCost;
+                        InitializePrefab(prefab, ai, "Office - Level" + buildingData.level);
+                    }
+                    else if (buildingData.service == "industrial")
+                    {
+                        var ai = prefab.gameObject.AddComponent<PloppableIndustrial>();
+                        if (ai == null) throw (new Exception("Industrial-AI not found."));
 
-                    ai.m_ricoData = buildingData;
-                    ai.m_workplaceCount = buildingData.workplaceCount;
-                    ai.m_constructionCost = buildingData.constructionCost;
-                    ai.m_pollutionEnabled = buildingData.pollutionEnabled;
+                        ai.m_ricoData = buildingData;
+                        ai.m_workplaceCount = buildingData.workplaceCount;
+                        ai.m_constructionCost = buildingData.constructionCost;
+                        ai.m_pollutionEnabled = buildingData.pollutionEnabled;
 
-                    if ( Util.industryServices.Contains(buildingData.subService))
-                        InitializePrefab(prefab, ai, Util.ucFirst(buildingData.subService) + " - Processing");
-                    else
-                        InitializePrefab(prefab, ai, "Industrial - Level" + buildingData.level);
-                }
-                else if (buildingData.service == "extractor")
-                {
-                    var ai = prefab.gameObject.AddComponent<PloppableExtractor>();
-                    if ( ai == null ) throw ( new Exception( "Extractor-AI not found." ) );
+                        if (Util.industryServices.Contains(buildingData.subService))
+                            InitializePrefab(prefab, ai, Util.ucFirst(buildingData.subService) + " - Processing");
+                        else
+                            InitializePrefab(prefab, ai, "Industrial - Level" + buildingData.level);
+                    }
+                    else if (buildingData.service == "extractor")
+                    {
+                        var ai = prefab.gameObject.AddComponent<PloppableExtractor>();
+                        if (ai == null) throw (new Exception("Extractor-AI not found."));
 
-                    ai.m_ricoData = buildingData;
-                    ai.m_workplaceCount = buildingData.workplaceCount;
-                    ai.m_constructionCost = buildingData.constructionCost;
-                    ai.m_pollutionEnabled = buildingData.pollutionEnabled;
+                        ai.m_ricoData = buildingData;
+                        ai.m_workplaceCount = buildingData.workplaceCount;
+                        ai.m_constructionCost = buildingData.constructionCost;
+                        ai.m_pollutionEnabled = buildingData.pollutionEnabled;
 
-                    if (Util.industryServices.Contains(buildingData.subService))
-                        InitializePrefab(prefab, ai, Util.ucFirst(buildingData.subService) + " - Extractor");
-                }
+                        if (Util.industryServices.Contains(buildingData.subService))
+                            InitializePrefab(prefab, ai, Util.ucFirst(buildingData.subService) + " - Extractor");
+                    }
 
-                else if (buildingData.service == "commercial")
-                {
-                    string itemClass = "";
-                    var ai = prefab.gameObject.AddComponent<PloppableCommercial>();
-                    if ( ai == null ) throw ( new Exception( "Commercial-AI not found." ) );
+                    else if (buildingData.service == "commercial")
+                    {
+                        string itemClass = "";
+                        var ai = prefab.gameObject.AddComponent<PloppableCommercial>();
+                        if (ai == null) throw (new Exception("Commercial-AI not found."));
 
-                    ai.m_ricoData = buildingData;
-                    ai.m_workplaceCount = buildingData.workplaceCount;
-                    ai.m_constructionCost = buildingData.constructionCost;
-                    
-                    // high and low
-                    if ( Util.vanillaCommercialServices.Contains(buildingData.subService) )
-                        itemClass = Util.ucFirst(buildingData.subService) + " Commercial - Level" + buildingData.level;
-                    else
-                        if (Util.isADinstalled())
+                        ai.m_ricoData = buildingData;
+                        ai.m_workplaceCount = buildingData.workplaceCount;
+                        ai.m_constructionCost = buildingData.constructionCost;
+
+                        // high and low
+                        if (Util.vanillaCommercialServices.Contains(buildingData.subService))
+                            itemClass = Util.ucFirst(buildingData.subService) + " Commercial - Level" + buildingData.level;
+                        else if (Util.isADinstalled())
+                        {
                             if (buildingData.subService == "tourist")
                                 itemClass = "Tourist Commercial - Land";
                             else if (buildingData.subService == "leisure")
                                 itemClass = "Leisure Commercial";
-                            else
-                                itemClass = "High Commercial - Level" + buildingData.level;
+                        }
                         else
                             itemClass = "High Commercial - Level" + buildingData.level;
 
-                    InitializePrefab(prefab, ai, itemClass);
+                        InitializePrefab(prefab, ai, itemClass);
+                    }
                 }
             }
         }
@@ -135,8 +146,13 @@ namespace PloppableRICO
             prefab.m_buildingAI = ai;
             ai.m_constructionTime = 0;
             prefab.m_buildingAI.m_info = prefab;
-            prefab.InitializePrefab();
+
+            if (prefab.m_isCustomContent)
+            {
+                prefab.InitializePrefab();
+            }
             prefab.m_class = ItemClassCollection.FindClass(aiClass);
+            prefab.m_placementStyle = ItemClass.Placement.Manual;
         }
     }
 }

@@ -292,8 +292,9 @@ namespace PloppableRICO
             }
 
             currentSelection.constructionCost = int.Parse(construction.text);
-            currentSelection.workplaces = new int[] {int.Parse(manual.text), -1, -1, -1 };
+            currentSelection.workplaces = new int[] { int.Parse(manual.text), -1, -1, -1 };
             currentSelection.homeCount = int.Parse(manual.text);
+
 
             if (uiCategory.selectedIndex == 0)  currentSelection.uiCategory = "reslow";
             else if (uiCategory.selectedIndex == 1) currentSelection.uiCategory = "reshigh"; 

@@ -17,6 +17,7 @@ using NUnit.Framework;
 
             PloppableRICO.WorkplaceAIHelper.distributeWorkplaceLevels(
                 80,
+
                 new int[] { 100, 50, 25, 15, 10 },
                 new int[] { 0, 0, 0, 0 },
                 out level0, out level1, out level2, out level3);
