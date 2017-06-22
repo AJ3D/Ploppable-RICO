@@ -6,7 +6,7 @@ using UnityEngine;
 namespace PloppableRICO
 {
     public class PloppableExtractor : IndustrialExtractorAI, IWorkplaceLevelCalculator
-	{
+    {
         public bool m_pollutionEnabled = true;
         public int m_constructionCost = 1;
         public int m_workplaceCount = 1;
@@ -20,9 +20,9 @@ namespace PloppableRICO
         }
 
         public override void CalculateWorkplaceCount(ColossalFramework.Math.Randomizer r, int width, int length, out int level0, out int level1, out int level2, out int level3)
-		{
+        {
             // See IndustrialAI.cs
-            if ( workplaceCount != null)
+            if (workplaceCount != null)
                 WorkplaceAIHelper.SetWorkplaceLevels(out level0, out level1, out level2, out level3, workplaceCount);
             else
             {
@@ -45,6 +45,11 @@ namespace PloppableRICO
                 return;
 
             base.GetPollutionRates(productionRate, cityPlanningPolicies, out groundPollution, out noisePollution);
+        }
+
+        public override bool CheckUnlocking()
+        {
+            return true;
         }
 
         // Not much to see from here on
@@ -94,7 +99,8 @@ namespace PloppableRICO
             Util.buildingFlags(ref buildingData);
         }
 
-        protected override void SimulationStepActive(ushort buildingID, ref Building buildingData, ref Building.Frame frameData)
+    
+    protected override void SimulationStepActive(ushort buildingID, ref Building buildingData, ref Building.Frame frameData)
         {
 
             Util.buildingFlags(ref buildingData);
@@ -129,10 +135,12 @@ namespace PloppableRICO
             return base.m_info.GetUncheckedLocalizedTitle();
         }
 
+        /*
         public override BuildingInfo GetUpgradeInfo(ushort buildingID, ref Building data)
         {
 
             return null; //this will cause a check to fail in CheckBuildingLevel, and prevent the building form leveling. 
         }
+        */
     }
 }

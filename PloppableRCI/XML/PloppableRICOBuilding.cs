@@ -37,6 +37,8 @@ namespace PloppableRICO
             level = 0;
             pollutionRadius = 0;
 
+            density = 0;
+
             fireHazard = 0;
             fireTolerance = 0;
             fireSize = 255;
@@ -97,6 +99,14 @@ namespace PloppableRICO
             set { var v = _service; _service = value; HandleSetterEvents( value != v ); }
         }
         string _service;
+
+        [XmlAttribute("density")]
+        public int density
+        {
+            get { return _density; }
+            set { var v = _density; _density = value; HandleSetterEvents(value != v); }
+        }
+        int _density;
 
         [XmlAttribute( "sub-service" )]
         public string subService
@@ -409,10 +419,10 @@ namespace PloppableRICO
                     String.Format( @"[^<>:/\\\|\?\*{0}]", "\"" )
                 ).IsMatch( name ) || name == "* unnamed" )
                 {
-                    errors.Add( String.Format( "The building has {0} name. May I suggest Brian?", name == "" || name == "* unnamed" ? "no" : "a funny" ) );
+                    errors.Add( String.Format( "The building has {0} name.", name == "" || name == "* unnamed" ? "no" : "a funny" ) );
                 }
 
-                if ( !new Regex( @"^(residential|commercial|office|industrial|extractor)$" ).IsMatch( service ) )
+                if ( !new Regex( @"^(residential|commercial|office|industrial|extractor|none|dummy)$" ).IsMatch( service ) )
                 {
                     errors.Add( "The building has " + ( service == "" ? "no " : "an incorrect " ) + "service." );
                 }
@@ -439,7 +449,7 @@ namespace PloppableRICO
                 else
                 {
                     if ( ( workplaceCount == 0 ) && service != "" && service != "none" )
-                        errors.Add( String.Format( "{0} provides jobs but no jobs are set! Do I look like a goddamn chrystal ball?", service ) );
+                        errors.Add( String.Format( "{0} provides jobs but no jobs are set.", service ) );
                 }
 
                 if ( !( RegexXML4IntegerValues.IsMatch( workplacesString ) || RegexXmlIntegerValue.IsMatch( workplacesString ) ) )

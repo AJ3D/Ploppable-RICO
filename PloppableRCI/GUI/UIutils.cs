@@ -136,7 +136,7 @@ namespace PloppableRICO
             UIButton button = dropDown.AddUIComponent<UIButton>();
             dropDown.triggerButton = button;
             button.text = "";
-            button.size = new Vector2(120f, 20f);
+            button.size = new Vector2(120f, 25f);
             button.relativePosition = new Vector3(0f, 0f);
             button.textVerticalAlignment = UIVerticalAlignment.Middle;
             button.textHorizontalAlignment = UIHorizontalAlignment.Left;
@@ -145,6 +145,7 @@ namespace PloppableRICO
             button.pressedFgSprite = "IconDownArrowPressed";
             button.focusedFgSprite = "IconDownArrowFocused";
             button.disabledFgSprite = "IconDownArrowDisabled";
+            button.spritePadding = new RectOffset(3,3,3,3);
             button.foregroundSpriteMode = UIForegroundSpriteMode.Fill;
             button.horizontalAlignment = UIHorizontalAlignment.Right;
             button.verticalAlignment = UIVerticalAlignment.Middle;

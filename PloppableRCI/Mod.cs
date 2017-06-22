@@ -5,7 +5,7 @@ using UnityEngine;
 namespace PloppableRICO
 {
 #if DEBUG
-    [ProfilerAspect()]
+    //[ProfilerAspect()]
 #endif
     public class PloppableRICOMod : IUserMod
 	{

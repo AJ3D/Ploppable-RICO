@@ -8,15 +8,13 @@ namespace PloppableRICO
     ///This class assigns the RICO settings to the prefabs. 
     /// </summary>
     ///
-#if DEBUG
-    [ProfilerAspect()]
-#endif
+
     public class ConvertPrefabs
     {
         public void run()
         {
             //Loop through the dictionary, and apply any RICO settings. 
-            foreach (var buildingData in XMLManager.prefabHash.Values)
+            foreach (var buildingData in RICOPrefabManager.prefabHash.Values)
             {
                 if ( buildingData != null)
                 {
@@ -35,13 +33,16 @@ namespace PloppableRICO
                     {
                         if ( buildingData.author.ricoEnabled)
                         {
-                            Profiler.Info( " RUN " + buildingData.name );
+                            //Profiler.Info( " RUN " + buildingData.name );
                             ConvertPrefab( buildingData.author, buildingData.name);
+                            continue;
                         }
                     }
                     else if (buildingData.hasMod)
                     {
+                        Debug.Log(buildingData.name + "Has Local");
                         ConvertPrefab(buildingData.mod, buildingData.name);
+                        continue;
                     }
                 }
             }
@@ -53,18 +54,38 @@ namespace PloppableRICO
 
             int num2;
             int num3;
-            prefab.GetWidthRange(out num2, out num3);
+            //prefab.GetWidthRange(out num2, out num3);
             int num4;
             int num5;
-            prefab.GetLengthRange(out num4, out num5);
+            //prefab.GetLengthRange(out num4, out num5);
 
             //This filters out Larger Footprint buildings. 
-            if (!(prefab.m_cellWidth < num2 || prefab.m_cellWidth > num3 || prefab.m_cellLength < num4 || prefab.m_cellLength > num5))
-            {
+            //if (!(prefab.m_cellWidth < num2 || prefab.m_cellWidth > num3 || prefab.m_cellLength < num4 || prefab.m_cellLength > num5))
+           // {
 
                 if (prefab != null)
                 {
-                    if (buildingData.service == "residential")
+
+                    if (buildingData.service == "dummy")
+                    {
+                        var ai = prefab.gameObject.AddComponent<DummyBuildingAI>();
+
+                    prefab.m_buildingAI = ai;
+                    prefab.m_buildingAI.m_info = prefab;
+                    try
+                    {
+                        prefab.InitializePrefab();
+                    }
+                    catch
+                    {
+                        Debug.Log("InitPrefab Failed" + prefab.name);
+                    }
+                    prefab.m_placementStyle = ItemClass.Placement.Manual;
+                 
+
+                }
+
+                   else if (buildingData.service == "residential")
                     {
                         var ai = prefab.gameObject.AddComponent<PloppableResidential>();
                         if (ai == null) throw (new Exception("Residential-AI not found."));
@@ -137,22 +158,28 @@ namespace PloppableRICO
 
                         InitializePrefab(prefab, ai, itemClass);
                     }
-                }
+                //}
             }
         }
 
         private void InitializePrefab(BuildingInfo prefab, PrivateBuildingAI ai, String aiClass)
         {
             prefab.m_buildingAI = ai;
-            ai.m_constructionTime = 0;
+            ai.m_constructionTime = 30;
             prefab.m_buildingAI.m_info = prefab;
 
-            if (prefab.m_isCustomContent)
+            try
             {
                 prefab.InitializePrefab();
             }
+            catch {
+                Debug.Log("InitPrefab Failed" + prefab.name);
+            }
+
             prefab.m_class = ItemClassCollection.FindClass(aiClass);
-            prefab.m_placementStyle = ItemClass.Placement.Manual;
+            prefab.m_placementStyle = ItemClass.Placement.Automatic;
+            prefab.m_autoRemove = true;
+            //prefab.m_dontSpawnNormally = false;
         }
     }
 }

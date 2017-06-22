@@ -1,14 +1,13 @@
 ﻿using System;
 using System.Linq;
 using ColossalFramework.Plugins;
-using ColossalFramework.Steamworks;
 using System.Collections.Generic;
 using System.IO;
 
 namespace PloppableRICO
 {
 #if DEBUG
-    [ProfilerAspect()]
+    //[ProfilerAspect()]
 #endif
     public static class Util
     {
@@ -139,12 +138,15 @@ namespace PloppableRICO
         // returns s but with first character upper cased
         public static string ucFirst(String s)
         {
+            if (s == "forest"){
+                return "Forestry";
+            }else
             return s.Substring(0, 1).ToUpper() + s.Substring(1);
         }
 
         public static BuildingInfo FindPrefab(string prefabName, string packageName)
         {
-            Profiler.Info( String.Format( "Find prefab: prefabName = {0}, packageName {1}", prefabName, packageName ) );
+            //Profiler.Info( String.Format( "Find prefab: prefabName = {0}, packageName {1}", prefabName, packageName ) );
 
             var prefab = PrefabCollection<BuildingInfo>.FindLoaded(prefabName);
             if (prefab == null)
@@ -156,7 +158,7 @@ namespace PloppableRICO
             if (prefab == null)
                 prefab = PrefabCollection<BuildingInfo>.FindLoaded(packageName + "." + ColossalFramework.IO.PathEscaper.Escape(prefabName) + "_Data");
 
-            Profiler.Info( String.Format( "Find Asset: found = {0}", (prefab != null).ToString() ) );
+            //Profiler.Info( String.Format( "Find Asset: found = {0}", (prefab != null).ToString() ) );
             return prefab;
         }
 
@@ -178,21 +180,24 @@ namespace PloppableRICO
 
             for (uint i = 0; i < PrefabCollection<BuildingInfo>.LoadedCount(); i++)
             {
+                if (PrefabCollection<BuildingInfo>.GetLoaded(i) != null)
+                {
+                    var prefab = PrefabCollection<BuildingInfo>.GetLoaded(i);
 
-                var prefab = PrefabCollection<BuildingInfo>.GetLoaded(i);
+                    //f (prefab.m_isCustomContent)
 
-               //f (prefab.m_isCustomContent)
-                
                     if (prefab.m_buildingAI is PloppableRICO.PloppableExtractor || prefab.m_buildingAI is PloppableRICO.PloppableResidential
                         || prefab.m_buildingAI is PloppableRICO.PloppableOffice || prefab.m_buildingAI is PloppableRICO.PloppableCommercial ||
                         prefab.m_buildingAI is PloppableRICO.PloppableIndustrial)
                     {
                         // Just assign any RICO prefab a ploppable ItemClass so it will reload. It gets set back once the mod loads. 
                         prefab.m_class = ItemClassCollection.FindClass("Beautification Item");
+                        prefab.m_placementStyle = ItemClass.Placement.Manual;
                         prefab.InitializePrefab();
-                        //prefab.m_placementStyle = ItemClass.Placement.Automatic;
+
                     }
-                }        
+                }
+            }  
         }
 
 
@@ -218,12 +223,12 @@ namespace PloppableRICO
 
         public static bool isADinstalled() {
 
-            return Steam.IsDlcInstalled(369150u);
+            return SteamHelper.IsDLCOwned(SteamHelper.DLC.AfterDarkDLC);
         }
 
         public static bool isSFinstalled()
         {
-            return Steam.IsDlcInstalled(420610u);
+            return SteamHelper.IsDLCOwned(SteamHelper.DLC.SnowFallDLC);
         }
 
       

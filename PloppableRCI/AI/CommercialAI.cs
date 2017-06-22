@@ -10,6 +10,8 @@ namespace PloppableRICO
         public string m_subtype = "low";
         public RICOBuilding m_ricoData;
         public int[] workplaceCount;
+       
+
 
         // Good morning Vietnam!
         public override int GetConstructionCost()
@@ -17,8 +19,8 @@ namespace PloppableRICO
             return WorkplaceAIHelper.GetConstructionCost(m_constructionCost, this.m_info.m_class.m_service, this.m_info.m_class.m_subService, this.m_info.m_class.m_level);
         }
 
-        public override void CalculateWorkplaceCount (Randomizer r, int width, int length, out int level0,out int level1,out int level2, out int level3)
-		{
+        public override void CalculateWorkplaceCount(Randomizer r, int width, int length, out int level0, out int level1, out int level2, out int level3)
+        {
             // See IndustrialAI.cs
             if (workplaceCount != null)
                 WorkplaceAIHelper.SetWorkplaceLevels(out level0, out level1, out level2, out level3, workplaceCount);
@@ -39,28 +41,34 @@ namespace PloppableRICO
         public override void SimulationStep(ushort buildingID, ref Building buildingData, ref Building.Frame frameData)
         {
 
-            Util.buildingFlags(ref buildingData);
+            var data = RICOBuildingManager.RICOInstanceData[(int)buildingData.m_buildIndex];
+
+            // only apply settings for plopped RICO assets. 
+            if (data.plopped) Util.buildingFlags(ref buildingData);
 
             base.SimulationStep(buildingID, ref buildingData, ref frameData);
 
-            Util.buildingFlags(ref buildingData);
+            if (data.plopped) Util.buildingFlags(ref buildingData);
 
         }
 
         protected override void SimulationStepActive(ushort buildingID, ref Building buildingData, ref Building.Frame frameData)
         {
 
-            Util.buildingFlags(ref buildingData);
+            var data = RICOBuildingManager.RICOInstanceData[(int)buildingData.m_buildIndex];
+
+            // only apply settings for plopped RICO assets. 
+            if (data.plopped) Util.buildingFlags(ref buildingData);
 
             base.SimulationStepActive(buildingID, ref buildingData, ref frameData);
 
-            Util.buildingFlags(ref buildingData);
+            if (data.plopped) Util.buildingFlags(ref buildingData);
 
         }
-        
+
         public override bool ClearOccupiedZoning()
         {
-            return true;
+            return false;
         }
 
         public override void GetWidthRange(out int minWidth, out int maxWidth)
@@ -82,7 +90,19 @@ namespace PloppableRICO
 
         public override BuildingInfo GetUpgradeInfo(ushort buildingID, ref Building data)
         {
-            return null; //this will cause a check to fail in CheckBuildingLevel, and prevent the building form leveling. 
+            var rdata = RICOBuildingManager.RICOInstanceData[(int)data.m_buildIndex];
+
+            if (rdata.plopped) //if plopped, dont level.
+
+            {
+
+                return null; //this will cause a check to fail in CheckBuildingLevel, and prevent the building form leveling
+            }
+
+            else {
+
+                return base.GetUpgradeInfo(buildingID, ref data); //if it grew, let it level. 
+            }
         }
     }
 }

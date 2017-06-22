@@ -273,7 +273,7 @@ namespace PloppableRICO
         public void PopulateAssets()
         {
 
-            foreach (var buildingData in XMLManager.prefabHash.Values)
+            foreach (var buildingData in RICOPrefabManager.prefabHash.Values)
             {
                 if (buildingData != null)
                 {
@@ -308,11 +308,15 @@ namespace PloppableRICO
             }
         }
 
+
         public void RemoveUIButton(BuildingInfo prefab)
         {
             Debug.Log(prefab.name + " About to try");
             var uiView = UIView.GetAView();
-            var refButton = (UIButton)uiView.FindUIComponent(prefab.name);
+            var refButton = new UIButton();
+
+            if (prefab != null) refButton = uiView.FindUIComponent<UIButton>(prefab.name);
+
 
             if (refButton != null)
             {
@@ -409,16 +413,20 @@ namespace PloppableRICO
                 BuildingButton.size = new Vector2(109, 100); //apply settings to building buttons. 
                 BuildingButton.atlas = BuildingPrefab.m_Atlas;
 
-                BuildingButton.normalFgSprite = BuildingPrefab.m_Thumbnail;
-                BuildingButton.focusedFgSprite = BuildingPrefab.m_Thumbnail + "Focused";
-                BuildingButton.hoveredFgSprite = BuildingPrefab.m_Thumbnail + "Hovered";
-                BuildingButton.pressedFgSprite = BuildingPrefab.m_Thumbnail + "Pressed";
-                BuildingButton.disabledFgSprite = BuildingPrefab.m_Thumbnail + "Disabled";
+           
 
                 if (BuildingPrefab.m_Thumbnail == null || BuildingPrefab.m_Thumbnail == "")
                 {
-
                     BuildingButton.normalFgSprite = "ToolbarIconProps";
+                }
+                else {
+
+                    BuildingButton.normalFgSprite = BuildingPrefab.m_Thumbnail;
+                    BuildingButton.focusedFgSprite = BuildingPrefab.m_Thumbnail + "Focused";
+                    BuildingButton.hoveredFgSprite = BuildingPrefab.m_Thumbnail + "Hovered";
+                    BuildingButton.pressedFgSprite = BuildingPrefab.m_Thumbnail + "Pressed";
+                    BuildingButton.disabledFgSprite = BuildingPrefab.m_Thumbnail + "Disabled";
+
                 }
 
                 BuildingButton.objectUserData = BuildingPrefab;

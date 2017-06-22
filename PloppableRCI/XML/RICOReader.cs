@@ -12,7 +12,7 @@ using UnityEngine;
 namespace PloppableRICO
 {
 #if DEBUG
-    [ProfilerAspect()]
+   // [ProfilerAspect()]
 #endif
     public class RicoWriter
     {
@@ -49,7 +49,7 @@ namespace PloppableRICO
     }
 
 #if DEBUG
-    [ProfilerAspect()]
+    //[ProfilerAspect()]
 #endif
     public class RICOReader
     {

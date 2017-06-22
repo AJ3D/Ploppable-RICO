@@ -1,5 +1,4 @@
 ﻿using ColossalFramework;
-using ColossalFramework.Steamworks;
 using ColossalFramework.UI;
 using System;
 using System.Collections.Generic;
@@ -190,7 +189,7 @@ namespace PloppableRICO
             if (building != null)
             {
                 //Debug.Log(building.name);
-                currentSelection = XMLManager.prefabHash[building.prefab];
+                currentSelection = RICOPrefabManager.prefabHash[building.prefab];
                 m_buildingOptions.SelectionChanged(currentSelection);
                 m_savePanel.SelectionChanged(currentSelection);
                 m_buildingPreview.Show(currentSelection);
@@ -211,7 +210,7 @@ namespace PloppableRICO
         {
             //Debug.Log("Filtered Called");
             List<BuildingData> list = new List<BuildingData>();
-            foreach (var bData in XMLManager.prefabHash.Values)
+            foreach (var bData in RICOPrefabManager.prefabHash.Values)
             {
                 if (bData != null)
                 {
@@ -255,7 +254,7 @@ namespace PloppableRICO
 
             List<BuildingData> list = new List<BuildingData>();
 
-            foreach (var bData in XMLManager.prefabHash.Values)
+            foreach (var bData in RICOPrefabManager.prefabHash.Values)
             {
                 if (bData != null)
                 {

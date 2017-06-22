@@ -83,7 +83,7 @@ namespace PloppableRICO
                     currentSelection.local.uiCategory = "reslow";
                     currentSelection.local.constructionCost = 10;
                     currentSelection.local.homeCount = 10;
-                    currentSelection.local.workplaces = new int[] {10, -1 ,-1, -1};
+                    currentSelection.local.workplaces = new int[] {5, 5 ,5, 5};
 
 
                     //If selected asset has author settings, copy those to local

@@ -72,6 +72,11 @@ namespace PloppableRICO
 
         }
 
+        public override bool CheckUnlocking()
+        {
+            return true;
+        }
+
         protected override void SimulationStepActive(ushort buildingID, ref Building buildingData, ref Building.Frame frameData)
         {
             PloppableRICO.Util.buildingFlags(ref buildingData);
