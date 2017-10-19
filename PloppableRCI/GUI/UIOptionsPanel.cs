@@ -11,7 +11,7 @@ namespace PloppableRICO
     public class UIBuildingOptions : UIScrollablePanel
 
     {
-
+        
         string[] Service = new string[]{
         "None",
         "Residential",
@@ -23,12 +23,15 @@ namespace PloppableRICO
         };
 
         string[] OfficeSub = new string[]{
-        "None",
+        "Generic",
+        "IT Cluster"
         };
 
         string[] ResSub = new string[]{
         "High",
         "Low",
+        "High Eco",
+        "Low Eco"
         };
 
         string[] ComSub = new string[]{
@@ -36,6 +39,7 @@ namespace PloppableRICO
         "Low",
         "Tourist",
         "Leisure",
+        "Eco"
         };
 
         string[] IndustrialSub = new string[]{
@@ -297,7 +301,9 @@ namespace PloppableRICO
             {
                 currentSelection.service = "residential";
                 if (subService.selectedIndex == 0) currentSelection.subService = "high";
-                else currentSelection.subService = "low";
+                else if (subService.selectedIndex == 1) currentSelection.subService = "low";
+                else if (subService.selectedIndex == 2) currentSelection.subService = "high eco";
+                else if (subService.selectedIndex == 3) currentSelection.subService = "low eco";
             }
             else if (service.selectedIndex == 2)
             {
@@ -312,7 +318,9 @@ namespace PloppableRICO
             else if (service.selectedIndex == 3)
             {
                 currentSelection.service = "office";
-                currentSelection.subService = "none";
+
+                if (subService.selectedIndex == 0) currentSelection.subService = "none";
+                else if (subService.selectedIndex == 1) currentSelection.subService = "high tech";
             }
             else if (service.selectedIndex == 4)
             {
@@ -321,6 +329,7 @@ namespace PloppableRICO
                 else if (subService.selectedIndex == 1) currentSelection.subService = "low";
                 else if (subService.selectedIndex == 2) currentSelection.subService = "tourist";
                 else if (subService.selectedIndex == 3) currentSelection.subService = "leisure";
+                else if (subService.selectedIndex == 4) currentSelection.subService = "eco";
             }
             else if (service.selectedIndex == 5)
             {
@@ -469,10 +478,14 @@ namespace PloppableRICO
                 {
                 manual.text = buildingData.homeCount.ToString();
                 service.selectedIndex = 1;
-                if (buildingData.subService == "high") subService.selectedIndex = 0;
-                else subService.selectedIndex = 1;
 
-                }
+
+                if (currentSelection.subService == "high") subService.selectedIndex = 0;
+                else if (currentSelection.subService == "low") subService.selectedIndex = 1;
+                else if (currentSelection.subService == "high eco") subService.selectedIndex = 2;
+                else if (currentSelection.subService == "low eco") subService.selectedIndex = 3;
+
+            }
 
                 else if (buildingData.service == "industrial")
                 {
@@ -490,9 +503,12 @@ namespace PloppableRICO
                 else if (buildingData.service == "office")
                 {             
                     service.selectedIndex = 3;
-                    subService.selectedIndex = 0;
                     subService.items = OfficeSub;
-                }
+
+                if (currentSelection.subService == "none") subService.selectedIndex = 0;
+                else if (currentSelection.subService == "high tech") subService.selectedIndex = 1;
+
+            }
 
                 else if (buildingData.service == "commercial")
                 {
@@ -503,6 +519,7 @@ namespace PloppableRICO
                 else if (currentSelection.subService == "low") subService.selectedIndex = 1;
                 else if (currentSelection.subService == "tourist") subService.selectedIndex = 2;
                 else if (currentSelection.subService == "leisure") subService.selectedIndex = 3;
+                else if (currentSelection.subService == "eco") subService.selectedIndex = 4;
 
             }
 
@@ -574,8 +591,7 @@ namespace PloppableRICO
                 {
                     level.items = Level;
                     subService.items = OfficeSub;
-                    subService.selectedIndex = 0;
-                pollutionEnabled.isVisible = false;
+                    pollutionEnabled.isVisible = false;
             }
                 else if (service == "industrial")
                 {
@@ -591,7 +607,7 @@ namespace PloppableRICO
                 {
                     level.items = Level;
                     subService.items = ComSub;
-                pollutionEnabled.isVisible = false;
+                    pollutionEnabled.isVisible = false;
             }
                 else if (service == "none" || service == "dummy")
                 {

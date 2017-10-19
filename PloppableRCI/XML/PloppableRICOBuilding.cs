@@ -426,7 +426,7 @@ namespace PloppableRICO
                 {
                     errors.Add( "The building has " + ( service == "" ? "no " : "an incorrect " ) + "service." );
                 }
-                if ( !new Regex(@"^(high|low|generic|farming|oil|forest|ore|none|tourist|leisure)$").IsMatch( subService ) )
+                if ( !new Regex(@"^(high|low|generic|farming|oil|forest|ore|none|tourist|leisure|high tech|eco|high eco|low eco)$").IsMatch( subService ) )
                 {
                     errors.Add( "The building has " + ( service == "" ? "no " : "an incorrect " ) + "sub-service."  );
                 }

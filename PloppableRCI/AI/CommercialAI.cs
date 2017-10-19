@@ -44,25 +44,23 @@ namespace PloppableRICO
             var data = RICOBuildingManager.RICOInstanceData[(int)buildingData.m_buildIndex];
 
             // only apply settings for plopped RICO assets. 
-            if (data.plopped) Util.buildingFlags(ref buildingData);
+            Util.buildingFlags(ref buildingData);
 
             base.SimulationStep(buildingID, ref buildingData, ref frameData);
 
-            if (data.plopped) Util.buildingFlags(ref buildingData);
+            Util.buildingFlags(ref buildingData);
 
         }
 
         protected override void SimulationStepActive(ushort buildingID, ref Building buildingData, ref Building.Frame frameData)
         {
 
-            var data = RICOBuildingManager.RICOInstanceData[(int)buildingData.m_buildIndex];
-
             // only apply settings for plopped RICO assets. 
-            if (data.plopped) Util.buildingFlags(ref buildingData);
+            Util.buildingFlags(ref buildingData);
 
             base.SimulationStepActive(buildingID, ref buildingData, ref frameData);
 
-            if (data.plopped) Util.buildingFlags(ref buildingData);
+            Util.buildingFlags(ref buildingData);
 
         }
 
@@ -90,19 +88,10 @@ namespace PloppableRICO
 
         public override BuildingInfo GetUpgradeInfo(ushort buildingID, ref Building data)
         {
-            var rdata = RICOBuildingManager.RICOInstanceData[(int)data.m_buildIndex];
-
-            if (rdata.plopped) //if plopped, dont level.
-
-            {
+           
 
                 return null; //this will cause a check to fail in CheckBuildingLevel, and prevent the building form leveling
-            }
-
-            else {
-
-                return base.GetUpgradeInfo(buildingID, ref data); //if it grew, let it level. 
-            }
+            
         }
     }
 }

@@ -72,12 +72,13 @@ namespace PloppableRICO.Detour
 
             //This exempts RICO buildings from the wrath of the BuildingTool. 
 
-            var data = RICOBuildingManager.RICOInstanceData[(int)building.m_buildIndex];
+            //var data = RICOBuildingManager.RICOInstanceData[(int)building.m_buildIndex];
 
             //only plopped RICO buildings are spared. 
-            if ((info.m_buildingAI is PloppableOffice || info.m_buildingAI is PloppableExtractor || info.m_buildingAI is PloppableResidential || info.m_buildingAI is PloppableCommercial || info.m_buildingAI is PloppableIndustrial) & data.plopped) {
-
-              return true;
+            //if ((info.m_buildingAI is PloppableOffice || info.m_buildingAI is PloppableExtractor || info.m_buildingAI is PloppableResidential || info.m_buildingAI is PloppableCommercial || info.m_buildingAI is PloppableIndustrial) & data.plopped) {
+                if (info.m_buildingAI is PloppableOffice || info.m_buildingAI is PloppableExtractor || info.m_buildingAI is PloppableResidential || info.m_buildingAI is PloppableCommercial || info.m_buildingAI is PloppableIndustrial)
+                {
+                    return true;
 
 			} else {
 				

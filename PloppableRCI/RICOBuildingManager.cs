@@ -27,9 +27,9 @@ namespace PloppableRICO
 		public override void OnCreated(ISerializableData serializableData)
 		{
 
-            RICOInstanceData = new RICOInstanceData[33000];
+            RICOInstanceData = new RICOInstanceData[63000];
 
-            for (uint i = 0; i < 32000; i++)
+            for (uint i = 0; i < 62000; i++)
             {
                 RICOInstanceData[i] = new RICOInstanceData();
             }

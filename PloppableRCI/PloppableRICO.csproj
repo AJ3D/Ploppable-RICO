@@ -78,7 +78,6 @@
     <Compile Include="RICOBuildingManager.cs" />
     <Compile Include="ConvertPrefabs.cs" />
     <Compile Include="XML\CrpDataProvider.cs" />
-    <Compile Include="Detours\BuildingToolDetour.cs" />
     <Compile Include="GUI\BuilidngPreview.cs" />
     <Compile Include="GUI\CategoryUtils.cs" />
     <Compile Include="GUI\FastList.cs" />

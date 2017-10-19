@@ -166,6 +166,7 @@ namespace PloppableRICO
         //This is run in the SimulationStep of all the ploppable AI's. 
         public static void buildingFlags(ref Building buildingData) {
 
+            //A set of flags to apply to RICO buildings before/after each sim step. Sloppy, but it avoids having to mess with simstep code. 
             buildingData.m_garbageBuffer = 100;
             buildingData.m_majorProblemTimer = 0;
             buildingData.m_levelUpProgress = 0;
@@ -191,7 +192,8 @@ namespace PloppableRICO
                         prefab.m_buildingAI is PloppableRICO.PloppableIndustrial)
                     {
                         // Just assign any RICO prefab a ploppable ItemClass so it will reload. It gets set back once the mod loads. 
-                        prefab.m_class = ItemClassCollection.FindClass("Beautification Item");
+                        //ConvertPrefabs.InitializePrefab(prefab, ResidentialBuildingAI, ItemClass.ser)
+                        prefab.m_class = ItemClassCollection.FindClass("Low Residential - Level1");
                         prefab.m_placementStyle = ItemClass.Placement.Manual;
                         prefab.InitializePrefab();
 
@@ -231,7 +233,12 @@ namespace PloppableRICO
             return SteamHelper.IsDLCOwned(SteamHelper.DLC.SnowFallDLC);
         }
 
-      
+        public static bool isGCinstalled()
+        {
+            return SteamHelper.IsDLCOwned(SteamHelper.DLC.GreenCitiesDLC);
+        }
+
+
     }
 
 }
