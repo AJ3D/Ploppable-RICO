@@ -1,3 +1,4 @@
+
 using System.Collections.Generic;
 using System.IO;
 using System.Xml.Serialization;
@@ -14,12 +15,12 @@ namespace PloppableRICO
         public FileInfo sourceFile;
 
         [XmlIgnore]
-        public bool isDirty 
-        { 
-            get 
+        public bool isDirty
+        {
+            get
             {
-                foreach ( var building in Buildings)
-                    if ( building.isDirty )
+                foreach (var building in Buildings)
+                    if (building.isDirty)
                         return true;
                 return _isDirty;
             }
@@ -28,43 +29,43 @@ namespace PloppableRICO
 
         public void clean()
         {
-            foreach ( var building in Buildings )
+            foreach (var building in Buildings)
                 building.clean();
             _isDirty = false;
 
         }
-        public PloppableRICODefinition ()
+        public PloppableRICODefinition()
         {
             Buildings = new List<RICOBuilding>();
         }
 
-        public RICOBuilding addBuilding( RICOBuilding buildingDef = null )
+        public RICOBuilding addBuilding(RICOBuilding buildingDef = null)
         {
             _isDirty = true;
 
-            if ( buildingDef == null )
+            if (buildingDef == null)
             {
                 buildingDef = new RICOBuilding();
                 buildingDef.name = "* unnamed";
                 buildingDef.parent = this;
             }
 
-            Buildings.Add( buildingDef );
+            Buildings.Add(buildingDef);
 
             return buildingDef;
         }
 
-        public RICOBuilding removeBuilding( int index )
+        public RICOBuilding removeBuilding(int index)
         {
-            if ( index < 0 && index >= this.Buildings.Count )
+            if (index < 0 && index >= this.Buildings.Count)
                 return null;
 
-            return removeBuilding( Buildings[index] );
+            return removeBuilding(Buildings[index]);
         }
 
-        public RICOBuilding removeBuilding( RICOBuilding buildingDef )
+        public RICOBuilding removeBuilding(RICOBuilding buildingDef)
         {
-            Buildings.Remove( buildingDef );
+            Buildings.Remove(buildingDef);
             _isDirty = true;
             return buildingDef;
         }
@@ -75,41 +76,41 @@ namespace PloppableRICO
             get
             {
                 var errors = new List<string>();
-                foreach ( var building in Buildings )
-                    errors.AddRange( building.errors );
-                if ( Buildings.Count() == 0 )
-                    errors.Add( String.Format( "XML-Error while deserializing RICO - file." ) );
+                foreach (var building in Buildings)
+                    errors.AddRange(building.errors);
+                if (Buildings.Count() == 0)
+                    errors.Add(String.Format("XML-Error while deserializing RICO - file."));
                 return errors;
             }
         }
 
         [XmlIgnore]
         public bool isValid
-        { 
+        {
             get { return errors.Count() == 0; }
         }
 
-        public delegate void BuildingChangedEventHandler( object sender, BuildingChangedEventArgs e );
+        public delegate void BuildingChangedEventHandler(object sender, BuildingChangedEventArgs e);
         public event BuildingChangedEventHandler BuildingDirtynessChanged;
         public event BuildingChangedEventHandler BuildingPropertyChanged;
 
-        public void RaiseBuildingDirtynessChanged( RICOBuilding building )
+        public void RaiseBuildingDirtynessChanged(RICOBuilding building)
         {
-            if ( BuildingDirtynessChanged != null )
+            if (BuildingDirtynessChanged != null)
             {
                 var e = new BuildingChangedEventArgs();
                 e.building = building;
-                BuildingDirtynessChanged( this, e );
+                BuildingDirtynessChanged(this, e);
             }
         }
 
-        public void RaiseBuildingPropertyChanged( RICOBuilding building )
+        public void RaiseBuildingPropertyChanged(RICOBuilding building)
         {
-            if ( BuildingPropertyChanged != null )
+            if (BuildingPropertyChanged != null)
             {
                 var e = new BuildingChangedEventArgs();
                 e.building = building;
-                BuildingPropertyChanged( this, e );
+                BuildingPropertyChanged(this, e);
             }
         }
     }

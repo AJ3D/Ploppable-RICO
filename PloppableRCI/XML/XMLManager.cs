@@ -28,15 +28,15 @@ namespace PloppableRICO
         public void Run()
         {
 
-                //This is the data object that holds all of the RICO settings. Its read by the tool panel and the settings panel.
-                //It contains one entry for every building, and any RICO settings they may have.
-             
-                prefabHash = new Dictionary<BuildingInfo, BuildingData>();
-                prefabList = new List<BuildingData>();
-                //Loop though all prefabs
+            //This is the data object that holds all of the RICO settings. Its read by the tool panel and the settings panel.
+            //It contains one entry for every building, and any RICO settings they may have.
 
-                for (uint i = 0; i < PrefabCollection<BuildingInfo>.LoadedCount(); i++)
-                {
+            prefabHash = new Dictionary<BuildingInfo, BuildingData>();
+            prefabList = new List<BuildingData>();
+            //Loop though all prefabs
+
+            for (uint i = 0; i < PrefabCollection<BuildingInfo>.LoadedCount(); i++)
+            {
 
                 if (PrefabCollection<BuildingInfo>.GetLoaded(i) != null)
                 {
@@ -57,31 +57,32 @@ namespace PloppableRICO
                         prefabHash[prefab] = buildingData;
                     }
                 }
-                }
-                
-                //RICO settings can come from 3 sources. Local settings are applied first, followed by asset author settings,
-                //and then finaly settings from settings mods.
-
-                //If local settings are present, load them.
-                if (File.Exists("LocalRICOSettings.xml"))
-                {
-                    RicoSettings("LocalRICOSettings.xml", isLocal: true);
-                }
-
-                //Import settings from asset folders.
-                Debug.Log("Trying Asset");
-                AssetSettings();
-
-                //If settings mod is active, load its settings.
-                if (Util.IsModEnabled(629850626uL))
-                {
-                    var workshopModSettingsPath = Path.Combine(Util.SettingsModPath("629850626"), "WorkshopRICOSettings.xml");
-                    RicoSettings(workshopModSettingsPath, isMod: true);
-
-                }    
             }
 
-        public int SetPrefabDensity(BuildingInfo prefab) {
+            //RICO settings can come from 3 sources. Local settings are applied first, followed by asset author settings,
+            //and then finaly settings from settings mods.
+
+            //If local settings are present, load them.
+            if (File.Exists("LocalRICOSettings.xml"))
+            {
+                RicoSettings("LocalRICOSettings.xml", isLocal: true);
+            }
+
+            //Import settings from asset folders.
+            Debug.Log("Trying Asset");
+            AssetSettings();
+
+            //If settings mod is active, load its settings.
+            if (Util.IsModEnabled(629850626uL))
+            {
+                var workshopModSettingsPath = Path.Combine(Util.SettingsModPath("629850626"), "WorkshopRICOSettings.xml");
+                RicoSettings(workshopModSettingsPath, isMod: true);
+
+            }
+        }
+
+        public int SetPrefabDensity(BuildingInfo prefab)
+        {
 
             if (prefab.m_collisionHeight < 20) return 0; //under 4, assign low
             else if (prefab.m_collisionHeight >= 20 & prefab.m_collisionHeight < 45) return 1; //medium
@@ -135,9 +136,9 @@ namespace PloppableRICO
             var foo = new Dictionary<string, string>();
 
             foreach (var fileName in ricoFileNames)
-            { 
+            {
                 foo.Add("", fileName);
-                
+
             }
 
             RicoSettings(foo, isLocal, isAuthored, isMod);
@@ -278,8 +279,8 @@ namespace PloppableRICO
         //This is called by the settings panel. It will serialize any new local settings the player sets in game. 
         public static void SaveLocal(RICOBuilding newBuildingData)
         {
-            Debug.Log( "SaveLocal");
-            
+            Debug.Log("SaveLocal");
+
             if (File.Exists("LocalRICOSettings.xml") && newBuildingData != null)
             {
                 PloppableRICODefinition localSettings = null;
@@ -307,7 +308,7 @@ namespace PloppableRICO
                 {
                     xmlSerializer.Serialize(writer, newlocalSettings);
                 }
-            } 
+            }
         }
     }
 
@@ -366,6 +367,3 @@ namespace PloppableRICO
         }
     }
 }
-
-
-

@@ -1,4 +1,3 @@
-
 using System;
 using UnityEngine;
 
@@ -94,20 +93,21 @@ namespace PloppableRICO
                     ai.m_constructionCost = buildingData.constructionCost;
                     ai.m_homeCount = buildingData.homeCount;
 
+
                     //If GC installed, apply eco service if set
-                    if (Util.isGCinstalled())      
+                    if (Util.isGCinstalled())
                     {
                         Debug.Log("Green Cites Installed");
 
-                        if (buildingData.service == "low eco")
+                        if (buildingData.subService == "low eco")
                         {
-                            InitializePrefab(prefab, ai, "Low Residential Eco - Level" + buildingData.level);
+                            InitializePrefab(prefab, ai, "Low Residential - Level" + buildingData.level);
                         }
-                        else if (buildingData.service == "high eco")
+                        else if (buildingData.subService == "high eco")
                         {
-                            InitializePrefab(prefab, ai, "High Residential Eco - Level" + buildingData.level);
+                            InitializePrefab(prefab, ai, "High Residential - Level" + buildingData.level);
                         }
-                        else if (buildingData.service == "high")
+                        else if (buildingData.subService == "high")
                         {
                             InitializePrefab(prefab, ai, "High Residential - Level" + buildingData.level);
                         }
@@ -119,7 +119,7 @@ namespace PloppableRICO
                     //if no DLC, apply normal services
                     else {
 
-                        if (buildingData.service == "high eco" || buildingData.service == "high")
+                        if (buildingData.subService == "high eco" || buildingData.service == "high")
                         {
                             InitializePrefab(prefab, ai, "High" + " Residential - Level" + buildingData.level);
                         }
@@ -142,9 +142,9 @@ namespace PloppableRICO
                     //Apply IT cluster if DLC installed
                     if (Util.isGCinstalled())
                     {
-                        if (buildingData.service == "high tech")
+                        if (buildingData.subService == "high tech")
                         {
-                            InitializePrefab(prefab, ai, "Office - Hightech");
+                            InitializePrefab(prefab, ai, "Office - Level3");
                         }
                         else
                             InitializePrefab(prefab, ai, "Office - Level" + buildingData.level);
@@ -153,14 +153,15 @@ namespace PloppableRICO
                     //If no DLC, make IT buildngs level 3 office. 
                     else {
 
-                        if (buildingData.service == "high tech") {
+                        if (buildingData.service == "high tech")
+                        {
 
                             InitializePrefab(prefab, ai, "Office - Level3");
                         }
                         else
-                        InitializePrefab(prefab, ai, "Office - Level" + buildingData.level);
+                            InitializePrefab(prefab, ai, "Office - Level" + buildingData.level);
                     }
-                    
+
                 }
                 else if (buildingData.service == "industrial")
                 {
@@ -212,18 +213,20 @@ namespace PloppableRICO
                             itemClass = "Tourist Commercial - Land";
                         else if (buildingData.subService == "leisure")
                             itemClass = "Leisure Commercial";
+                        else itemClass = Util.ucFirst(buildingData.subService) + " Commercial - Level" + buildingData.level;
                     }
 
                     //apply GC subservice if DLC installed
                     else if (Util.isGCinstalled())
                     {
                         if (buildingData.subService == "eco")
-                            itemClass = "Eco Commercial";
+                            itemClass = "Low Commercial - Level3";
+                        else {
+                            itemClass = Util.ucFirst(buildingData.subService) + " Commercial - Level" + buildingData.level;
+                        }
                     }
 
                     //use com high as default if no DLCs installed yet DLC settings found
-                    else
-                        itemClass = "High Commercial - Level" + buildingData.level;
 
                     InitializePrefab(prefab, ai, itemClass);
                 }
@@ -247,7 +250,7 @@ namespace PloppableRICO
             }
 
             prefab.m_class = ItemClassCollection.FindClass(aiClass);
-            prefab.m_placementStyle = ItemClass.Placement.Automatic;
+            prefab.m_placementStyle = ItemClass.Placement.Manual;
             prefab.m_autoRemove = true;
             //prefab.m_dontSpawnNormally = false;
         }

@@ -1,5 +1,8 @@
 ﻿using System;
 using ColossalFramework.Math;
+using ICities;
+using UnityEngine;
+
 
 namespace PloppableRICO
 {
@@ -10,10 +13,16 @@ namespace PloppableRICO
         public string m_subtype = "low";
         public RICOBuilding m_ricoData;
         public int[] workplaceCount;
-       
+
 
 
         // Good morning Vietnam!
+
+        protected override int GetConstructionTime()
+        {
+            return 0;
+        }
+
         public override int GetConstructionCost()
         {
             return WorkplaceAIHelper.GetConstructionCost(m_constructionCost, this.m_info.m_class.m_service, this.m_info.m_class.m_subService, this.m_info.m_class.m_level);
@@ -21,6 +30,7 @@ namespace PloppableRICO
 
         public override void CalculateWorkplaceCount(Randomizer r, int width, int length, out int level0, out int level1, out int level2, out int level3)
         {
+           
             // See IndustrialAI.cs
             if (workplaceCount != null)
                 WorkplaceAIHelper.SetWorkplaceLevels(out level0, out level1, out level2, out level3, workplaceCount);
@@ -41,7 +51,7 @@ namespace PloppableRICO
         public override void SimulationStep(ushort buildingID, ref Building buildingData, ref Building.Frame frameData)
         {
 
-            var data = RICOBuildingManager.RICOInstanceData[(int)buildingData.m_buildIndex];
+      
 
             // only apply settings for plopped RICO assets. 
             Util.buildingFlags(ref buildingData);
@@ -88,10 +98,10 @@ namespace PloppableRICO
 
         public override BuildingInfo GetUpgradeInfo(ushort buildingID, ref Building data)
         {
-           
 
-                return null; //this will cause a check to fail in CheckBuildingLevel, and prevent the building form leveling
-            
+
+            return null; //this will cause a check to fail in CheckBuildingLevel, and prevent the building form leveling
+
         }
     }
 }

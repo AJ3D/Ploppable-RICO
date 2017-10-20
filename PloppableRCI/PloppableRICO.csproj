@@ -39,9 +39,6 @@
     <SkipPostSharp>True</SkipPostSharp>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="GrowableOverhaul">
-      <HintPath>..\..\..\AppData\Local\Colossal Order\Cities_Skylines\Addons\Mods\GrowableOverhaul\GrowableOverhaul.dll</HintPath>
-    </Reference>
     <Reference Include="nunit.framework, Version=3.4.1.0, Culture=neutral, PublicKeyToken=2638cd05610744eb, processorArchitecture=MSIL">
       <HintPath>packages\NUnit.3.4.1\lib\net35\nunit.framework.dll</HintPath>
       <Private>True</Private>
@@ -75,9 +72,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AI\WorkplaceAI.cs" />
-    <Compile Include="RICOBuildingManager.cs" />
     <Compile Include="ConvertPrefabs.cs" />
-    <Compile Include="XML\CrpDataProvider.cs" />
     <Compile Include="GUI\BuilidngPreview.cs" />
     <Compile Include="GUI\CategoryUtils.cs" />
     <Compile Include="GUI\FastList.cs" />
@@ -89,6 +84,7 @@
     <Compile Include="GUI\UISavePanel.cs" />
     <Compile Include="GUI\UITitlebar.cs" />
     <Compile Include="GUI\UIutils.cs" />
+    <Compile Include="XML\CrpDataProvider.cs" />
     <Compile Include="XML\PloppableRICOBuilding.cs" />
     <Compile Include="XML\PloppableRICODefinition.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -100,16 +96,9 @@
     <Compile Include="GUI\PloppableTool.cs" />
     <Compile Include="AI\CommercialAI.cs" />
     <Compile Include="Detours\RedirectionHelper.cs" />
-    <Compile Include="Redirection\RedirectionHelper.cs" />
-    <Compile Include="Redirection\RedirectionUtil.cs" />
-    <Compile Include="Redirection\RedirectMethodAttribute.cs" />
-    <Compile Include="Redirection\Redirector.cs" />
-    <Compile Include="Redirection\RedirectReverseAttribute.cs" />
     <Compile Include="XML\RICOReader.cs" />
     <Compile Include="XML\SteamDataProvider.cs" />
-    <Compile Include="Redirection\TargetTypeAttribute.cs" />
-    <Compile Include="Redirection\Tuple.cs" />
-    <Compile Include="XML\RICOPrefabManager.cs" />
+    <Compile Include="XML\XMLManager.cs" />
     <Compile Include="Loading.cs" />
     <Compile Include="Detours\ToolDetour.cs" />
     <Compile Include="Util.cs" />

@@ -17,6 +17,11 @@ namespace PloppableRICO
             return WorkplaceAIHelper.GetConstructionCost(m_constructionCost, this.m_info.m_class.m_service, this.m_info.m_class.m_subService, this.m_info.m_class.m_level);
         }
 
+        protected override int GetConstructionTime()
+        {
+            return 0;
+        }
+
         public override void CalculateWorkplaceCount(Randomizer r, int width, int length, out int level0, out int level1, out int level2, out int level3)
         {
             // See IndustrialAI.cs

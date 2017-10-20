@@ -24,14 +24,14 @@ namespace PloppableRICO
 
         string[] OfficeSub = new string[]{
         "Generic",
-        "IT Cluster"
+        //"IT Cluster"
         };
 
         string[] ResSub = new string[]{
         "High",
         "Low",
-        "High Eco",
-        "Low Eco"
+        //"High Eco",
+        //"Low Eco"
         };
 
         string[] ComSub = new string[]{
@@ -39,7 +39,7 @@ namespace PloppableRICO
         "Low",
         "Tourist",
         "Leisure",
-        "Eco"
+        //"Eco"
         };
 
         string[] IndustrialSub = new string[]{
@@ -102,20 +102,11 @@ namespace PloppableRICO
         public UIDropDown level;
         public UIDropDown uiCategory;
 
-        //Education Ratio
-        public UICheckBox educationRatiosEnabled;
-        public UIPanel educationPanel;
 
-        public UITextField uneducated;
-        public UITextField educated;
-        public UITextField welleducated;
-        public UITextField highlyeducated;
 
         public UITextField manual;
 
-        public UICheckBox manualHomesEnabled;
-        public UIPanel manualHomesPanel;
-        public UITextField homes;
+
 
         //Pollution
         public UICheckBox pollutionEnabled;
@@ -221,52 +212,8 @@ namespace PloppableRICO
 
             //popBalanceEnabled = UIUtils.CreateCheckBox(enableRICOPanel, 210, "Use Education Ratios");
 
-            pollutionEnabled = UIUtils.CreateCheckBox(enableRICOPanel, 360, "Enable Pollution");
+            pollutionEnabled = UIUtils.CreateCheckBox(enableRICOPanel, 210, "Enable Pollution");
 
-
-           // Education Ratio Panel
-            educationRatiosEnabled = UIUtils.CreateCheckBox(enableRICOPanel, 210, "Enable Education Ratios");
-           
-
-            //UIPanel ratiopanel = enableRICOPanel.AddUIComponent<UIPanel>();
-            //ratiopanel.relativePosition = new Vector3(0,-230);
-            //ratiopanel.size = new Vector2(250, 150);
-
-
-            //educationPanel = UIUtils.CreatePanel(enableRICOPanel, 240, educationRatiosEnabled);
-
-            uneducated = UIUtils.CreateTextField(enableRICOPanel, 240, "Uneducated");
-            educated = UIUtils.CreateTextField(enableRICOPanel, 270, "Educated");
-            welleducated = UIUtils.CreateTextField(enableRICOPanel, 300, "Well Educated");
-            highlyeducated = UIUtils.CreateTextField(enableRICOPanel, 330, "Highly Educated");
-
-            educationRatiosEnabled.eventCheckChanged += (c, state) =>
-            {
-                if (!state)
-                {
-                    var d = Util.WorkplaceDistributionOf(currentSelection.service, currentSelection.subService, "Level" + currentSelection.level);
-                    var a = WorkplaceAIHelper.distributeWorkplaceLevels(int.Parse(manual.text), d, new int[] { 0, 0, 0, 0 });
-
-                    uneducated.text = a[0].ToString();
-                    educated.text= a[1].ToString();
-                    welleducated.text = a[2].ToString();
-                    highlyeducated.text = a[3].ToString();
-
-                    uneducated.Disable();
-                    educated.Disable();
-                    welleducated.Disable();
-                    highlyeducated.Disable();
-                }
-
-                else {
-
-                    uneducated.Enable();
-                    educated.Enable();
-                    welleducated.Enable();
-                    highlyeducated.Enable();
-
-                }
-            };
 
         }
 
@@ -286,11 +233,11 @@ namespace PloppableRICO
             }
         }
 
-        public void SaveRICO() {
+        public void SaveRICO()
+        {
 
             //Reads current settings from UI elements, and saves them to the XMLData. 
 
-           currentSelection.educationRatioEnabled = educationRatiosEnabled.isChecked;
 
             if (service.selectedIndex == 0)
             {
@@ -302,8 +249,8 @@ namespace PloppableRICO
                 currentSelection.service = "residential";
                 if (subService.selectedIndex == 0) currentSelection.subService = "high";
                 else if (subService.selectedIndex == 1) currentSelection.subService = "low";
-                else if (subService.selectedIndex == 2) currentSelection.subService = "high eco";
-                else if (subService.selectedIndex == 3) currentSelection.subService = "low eco";
+               // else if (subService.selectedIndex == 2) currentSelection.subService = "high eco";
+                //else if (subService.selectedIndex == 3) currentSelection.subService = "low eco";
             }
             else if (service.selectedIndex == 2)
             {
@@ -320,7 +267,7 @@ namespace PloppableRICO
                 currentSelection.service = "office";
 
                 if (subService.selectedIndex == 0) currentSelection.subService = "none";
-                else if (subService.selectedIndex == 1) currentSelection.subService = "high tech";
+                //else if (subService.selectedIndex == 1) currentSelection.subService = "high tech";
             }
             else if (service.selectedIndex == 4)
             {
@@ -329,7 +276,7 @@ namespace PloppableRICO
                 else if (subService.selectedIndex == 1) currentSelection.subService = "low";
                 else if (subService.selectedIndex == 2) currentSelection.subService = "tourist";
                 else if (subService.selectedIndex == 3) currentSelection.subService = "leisure";
-                else if (subService.selectedIndex == 4) currentSelection.subService = "eco";
+                //else if (subService.selectedIndex == 4) currentSelection.subService = "eco";
             }
             else if (service.selectedIndex == 5)
             {
@@ -347,14 +294,19 @@ namespace PloppableRICO
 
             }
 
-            currentSelection.constructionCost = int.Parse(construction.text);
+            var d = Util.WorkplaceDistributionOf(currentSelection.service, currentSelection.subService, "Level" + currentSelection.level);
+            var a = WorkplaceAIHelper.distributeWorkplaceLevels(int.Parse(manual.text), d, new int[] { 0, 0, 0, 0 });
 
+            currentSelection.workplaces = a; 
+
+            currentSelection.constructionCost = int.Parse(construction.text);
+            
             currentSelection.homeCount = int.Parse(manual.text);
 
 
-            if (uiCategory.selectedIndex == 0)  currentSelection.uiCategory = "reslow";
-            else if (uiCategory.selectedIndex == 1) currentSelection.uiCategory = "reshigh"; 
-            else if (uiCategory.selectedIndex == 2) currentSelection.uiCategory = "comlow"; 
+            if (uiCategory.selectedIndex == 0) currentSelection.uiCategory = "reslow";
+            else if (uiCategory.selectedIndex == 1) currentSelection.uiCategory = "reshigh";
+            else if (uiCategory.selectedIndex == 2) currentSelection.uiCategory = "comlow";
             else if (uiCategory.selectedIndex == 3) currentSelection.uiCategory = "comhigh";
             else if (uiCategory.selectedIndex == 4) currentSelection.uiCategory = "office";
             else if (uiCategory.selectedIndex == 5) currentSelection.uiCategory = "industrial";
@@ -368,24 +320,10 @@ namespace PloppableRICO
 
             currentSelection.level = level.selectedIndex + 1;
             currentSelection.ricoEnabled = ricoEnabled.isChecked;
-            currentSelection.RealityIgnored = !popBalanceEnabled.isChecked;
+            currentSelection.popbalanceEnabled = !popBalanceEnabled.isChecked;
 
-            var d = Util.WorkplaceDistributionOf(currentSelection.service, currentSelection.subService, "Level" + currentSelection.level);
-            var a = WorkplaceAIHelper.distributeWorkplaceLevels(int.Parse(manual.text), d, new int[] { 0, 0, 0, 0 });
-
-            if (educationRatiosEnabled.isChecked) {
-
-                currentSelection.workplaces[0] = int.Parse(uneducated.text);
-                currentSelection.workplaces[1] = int.Parse(educated.text);
-                currentSelection.workplaces[2] = int.Parse(welleducated.text);
-                currentSelection.workplaces[3] = int.Parse(highlyeducated.text);
-
-            } else currentSelection.workplaces = a;
-
-
-            //Debug.Log("Saved Data");
-
-        }
+       
+        }     
 
         public void SelectionChanged(BuildingData buildingData) {
 
@@ -467,12 +405,7 @@ namespace PloppableRICO
             //Updates the values in the RICO options panel to match the selected building. 
 
             manual.text = buildingData.workplaceCount.ToString();
-            educationRatiosEnabled.isChecked = currentSelection.educationRatioEnabled;
-
-            uneducated.text = currentSelection.workplaces[0].ToString();
-            educated.text = currentSelection.workplaces[1].ToString();
-            welleducated.text = currentSelection.workplaces[2].ToString();
-            highlyeducated.text = currentSelection.workplaces[3].ToString();
+          
 
             if (buildingData.service == "residential")
                 {
@@ -482,8 +415,8 @@ namespace PloppableRICO
 
                 if (currentSelection.subService == "high") subService.selectedIndex = 0;
                 else if (currentSelection.subService == "low") subService.selectedIndex = 1;
-                else if (currentSelection.subService == "high eco") subService.selectedIndex = 2;
-                else if (currentSelection.subService == "low eco") subService.selectedIndex = 3;
+               // else if (currentSelection.subService == "high eco") subService.selectedIndex = 2;
+                //else if (currentSelection.subService == "low eco") subService.selectedIndex = 3;
 
             }
 
@@ -506,7 +439,7 @@ namespace PloppableRICO
                     subService.items = OfficeSub;
 
                 if (currentSelection.subService == "none") subService.selectedIndex = 0;
-                else if (currentSelection.subService == "high tech") subService.selectedIndex = 1;
+                //else if (currentSelection.subService == "high tech") subService.selectedIndex = 1;
 
             }
 
@@ -519,7 +452,7 @@ namespace PloppableRICO
                 else if (currentSelection.subService == "low") subService.selectedIndex = 1;
                 else if (currentSelection.subService == "tourist") subService.selectedIndex = 2;
                 else if (currentSelection.subService == "leisure") subService.selectedIndex = 3;
-                else if (currentSelection.subService == "eco") subService.selectedIndex = 4;
+                //else if (currentSelection.subService == "eco") subService.selectedIndex = 4;
 
             }
 
@@ -558,7 +491,7 @@ namespace PloppableRICO
 
             level.selectedIndex = (buildingData.level - 1);
 
-                popBalanceEnabled.isChecked = !buildingData.RealityIgnored;
+                popBalanceEnabled.isChecked = !buildingData.popbalanceEnabled;
                 construction.text = buildingData.constructionCost.ToString();
 
                ricoEnabled.isChecked = buildingData.ricoEnabled;
@@ -569,29 +502,22 @@ namespace PloppableRICO
             //Reconfigure the RICO options panel to display relevant options for a given service.
             //This simply hides/shows different option fields for the various services. 
 
-            uneducated.isVisible = true;
-            educated.isVisible = true;
-            welleducated.isVisible = true;
-            highlyeducated.isVisible = true;
-            pollutionEnabled.isVisible = true;
+            pollutionEnabled.enabled = true;
+
 
             if (service == "residential")
                 {
                     level.items = resLevel;
                     subService.items = ResSub;
-
-                uneducated.isVisible = false;
-                educated.isVisible = false;
-                welleducated.isVisible = false;
-                highlyeducated.isVisible = false;
-                pollutionEnabled.isVisible = false;
+               
+                pollutionEnabled.enabled = false;
 
             }
                 else if (service == "office")
                 {
                     level.items = Level;
                     subService.items = OfficeSub;
-                    pollutionEnabled.isVisible = false;
+                    pollutionEnabled.enabled = false;
             }
                 else if (service == "industrial")
                 {
@@ -607,15 +533,12 @@ namespace PloppableRICO
                 {
                     level.items = Level;
                     subService.items = ComSub;
-                    pollutionEnabled.isVisible = false;
+                    pollutionEnabled.enabled = false;
             }
                 else if (service == "none" || service == "dummy")
                 {
-                uneducated.isVisible = false;
-                educated.isVisible = false;
-                welleducated.isVisible = false;
-                highlyeducated.isVisible = false;
-                pollutionEnabled.isVisible = false;
+
+                pollutionEnabled.enabled = false;
 
             }
             
