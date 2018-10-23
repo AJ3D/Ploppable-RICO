@@ -22,21 +22,21 @@ namespace PloppableRICO
             return 0;
         }
 
-        public override void CalculateWorkplaceCount(Randomizer r, int width, int length, out int level0, out int level1, out int level2, out int level3)
+        public override void CalculateWorkplaceCount(ItemClass.Level level, Randomizer r, int width, int length, out int level0, out int level1, out int level2, out int level3)
         {
             // See IndustrialAI.cs
             if (workplaceCount != null)
                 WorkplaceAIHelper.SetWorkplaceLevels(out level0, out level1, out level2, out level3, workplaceCount);
             else
             {
-                WorkplaceAIHelper.CalculateWorkplaceCount(m_ricoData, this, r, width, length, out level0, out level1, out level2, out level3);
+                WorkplaceAIHelper.CalculateWorkplaceCount(level, m_ricoData, this, r, width, length, out level0, out level1, out level2, out level3);
                 workplaceCount = new int[] { level0, level1, level2, level3 };
             }
         }
 
-        public void CalculateBaseWorkplaceCount(Randomizer r, int width, int length, out int level0, out int level1, out int level2, out int level3)
+        public void CalculateBaseWorkplaceCount(ItemClass.Level level, Randomizer r, int width, int length, out int level0, out int level1, out int level2, out int level3)
         {
-            base.CalculateWorkplaceCount(r, width, length, out level0, out level1, out level2, out level3);;
+            base.CalculateWorkplaceCount(level, r, width, length, out level0, out level1, out level2, out level3);;
         }
 
         // and from here on is silence

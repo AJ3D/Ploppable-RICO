@@ -11,7 +11,7 @@ namespace PloppableRICO
     {
         //void CalculateWorkplaceCount(Randomizer r, int width, int length, out int level0, out int level1, out int level2, out int level3);
         //void CalculateLevels(int width, int length, out int level0, out int level1, out int level2, out int level3);
-        void CalculateBaseWorkplaceCount(Randomizer r, int width, int length, out int level0, out int level1, out int level2, out int level3);
+        void CalculateBaseWorkplaceCount(ItemClass.Level level, Randomizer r, int width, int length, out int level0, out int level1, out int level2, out int level3);
     }
 
     public static class WorkplaceAIHelper
@@ -23,7 +23,7 @@ namespace PloppableRICO
             return result;
         }
 
-        public static void CalculateWorkplaceCount(RICOBuilding ricoData, IWorkplaceLevelCalculator ai, Randomizer r, int width, int length, out int level0, out int level1, out int level2, out int level3)
+        public static void CalculateWorkplaceCount(ItemClass.Level level, RICOBuilding ricoData, IWorkplaceLevelCalculator ai, Randomizer r, int width, int length, out int level0, out int level1, out int level2, out int level3)
         {
             SetWorkplaceLevels(out level0, out level1, out level2, out level3, 0, 0, 0, 0);
             RICOBuilding rc = ricoData;
@@ -32,7 +32,7 @@ namespace PloppableRICO
             {
                 // reality mod is running and the xml file says ignore-reality="false"
                 if ( rc.useReality )
-                    ai.CalculateBaseWorkplaceCount( r, width, length, out level0, out level1, out level2, out level3 );
+                    ai.CalculateBaseWorkplaceCount(level, r, width, length, out level0, out level1, out level2, out level3 );
                 else
                     SetWorkplaceLevels( out level0, out level1, out level2, out level3, deviateWorkplaces( ricoData.workplaces, ricoData.workplaceDeviation ) );
             }
