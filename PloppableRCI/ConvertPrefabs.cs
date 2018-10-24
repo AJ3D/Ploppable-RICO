@@ -119,7 +119,7 @@ namespace PloppableRICO
                     //if no DLC, apply normal services
                     else {
 
-                        if (buildingData.subService == "high eco" || buildingData.service == "high")
+                        if (buildingData.subService == "high eco" || buildingData.subService == "high")
                         {
                             InitializePrefab(prefab, ai, "High" + " Residential - Level" + buildingData.level);
                         }

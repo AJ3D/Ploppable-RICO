@@ -244,7 +244,7 @@ namespace PloppableRICO
             list = filtered;
 
             FastList<object> fastList = new FastList<object>();
-            fastList.m_buffer = list.ToArray();
+            fastList.m_buffer = list.OrderBy(x => x.displayName).ToArray();
             fastList.m_size = list.Count;
 
             return fastList;
@@ -265,7 +265,7 @@ namespace PloppableRICO
             }
 
             FastList<object> fastList = new FastList<object>();
-            fastList.m_buffer = list.ToArray();
+            fastList.m_buffer = list.OrderBy(x => x.displayName).ToArray();
             fastList.m_size = list.Count;
             return fastList;
         }
