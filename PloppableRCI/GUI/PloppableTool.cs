@@ -89,7 +89,12 @@ namespace PloppableRICO
                 }
             }
         }
-
+        
+        protected override void Awake()
+        {
+            this.m_toolController = ToolsModifierControl.toolController;
+        }
+        
         public static void Destroy()
         {
             try
