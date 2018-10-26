@@ -9,6 +9,7 @@
     <AssemblyName>PloppableRICO</AssemblyName>
     <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
     <DontImportPostSharp>True</DontImportPostSharp>
+    <LangVersion>7.3</LangVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
